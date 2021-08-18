@@ -12,10 +12,18 @@ contract WanderersPlanetPass is ERC721, ERC721Enumerable, ERC721Burnable, Ownabl
 
     Counters.Counter private _tokenIdCounter;
 
-    constructor() ERC721("Wanderers Planet Pass", "WANDERER-PASS") {}
+    string private baseURI;
 
-    function _baseURI() internal pure override returns (string memory) {
-        return "augh";
+    constructor(string memory baseURI_) ERC721("Wanderers Planet Pass", "WANDERER-PASS") {
+        baseURI = baseURI_;
+    }
+
+    function _baseURI() internal view override returns (string memory) {
+        return baseURI;
+    }
+
+    function updateBaseURI(string memory newBaseURI) public onlyOwner {
+        baseURI = newBaseURI;
     }
 
     function safeMint(address to) public onlyOwner {
