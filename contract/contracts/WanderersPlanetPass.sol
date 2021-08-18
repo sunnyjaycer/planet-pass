@@ -13,9 +13,17 @@ contract WanderersPlanetPass is ERC721, ERC721Enumerable, ERC721Burnable, Ownabl
     Counters.Counter private _tokenIdCounter;
 
     string private baseURI;
+    IERC721 public wanderers;
 
-    constructor(string memory baseURI_) ERC721("Wanderers Planet Pass", "WANDERER-PASS") {
+    // Mapping of whether a Wanderer has claimed their free home planet
+    mapping(uint256 => bool) public claimed;
+
+    // Mapping of Planet to who originally minted it
+    mapping(uint256 => address) public homePlanet;
+
+    constructor(string memory baseURI_, address wanderers_) ERC721("Wanderers Planet Pass", "WANDERER-PASS") {
         baseURI = baseURI_;
+        wanderers = IERC721(wanderers_);
     }
 
     function _baseURI() internal view override returns (string memory) {
@@ -26,9 +34,25 @@ contract WanderersPlanetPass is ERC721, ERC721Enumerable, ERC721Burnable, Ownabl
         baseURI = newBaseURI;
     }
 
-    function safeMint(address to) public onlyOwner {
+    // For minting one individual Wanderer's home planet
+    function safeMint(address to, uint256 wandererID_) public {
+        // Make sure token has not been used for claim already
+        require(!claimed[wandererID_], "Token already used for claim");
+        // Make sure sender actually owns the token
+        require(wanderers.ownerOf(wandererID_) == msg.sender, "Sender is not owner of token");
+
+        claimed[wandererID_] = true;
+        homePlanet[wandererID_] = msg.sender;
+
         _safeMint(to, _tokenIdCounter.current());
         _tokenIdCounter.increment();
+    }
+
+    // Batch mint for multiple Wanderers owned by same address
+    function safeMint(address to, uint256[] memory wandererIDs) public {
+        for (uint256 i = 0; i < wandererIDs.length; i++) {
+            safeMint(to, wandererIDs[i]);
+        }
     }
 
     // The following functions are overrides required by Solidity.
