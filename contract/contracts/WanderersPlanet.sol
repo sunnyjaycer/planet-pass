@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract WanderersPlanetPass is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
+contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
@@ -21,7 +21,7 @@ contract WanderersPlanetPass is ERC721, ERC721Enumerable, ERC721Burnable, Ownabl
     // Mapping of Planet to who originally minted it
     mapping(uint256 => address) public homePlanet;
 
-    constructor(string memory baseURI_, address wanderers_) ERC721("Wanderers Planet Pass", "WANDERER-PASS") {
+    constructor(string memory baseURI_, address wanderers_) ERC721("Wanderers Planet", "WANDERER-PLANET") {
         baseURI = baseURI_;
         wanderers = IERC721(wanderers_);
     }

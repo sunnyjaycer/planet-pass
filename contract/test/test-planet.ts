@@ -15,7 +15,7 @@ describe("Token", function () {
     dummyErc721 = await DummyErc721.connect(accounts[0]).deploy();
     await dummyErc721.deployed();
 
-    const PlanetPass = await ethers.getContractFactory("WanderersPlanetPass");
+    const PlanetPass = await ethers.getContractFactory("WanderersPlanet");
     planetPass = await PlanetPass.connect(accounts[0]).deploy("example.com/", dummyErc721.address);
     await planetPass.deployed();
   });
