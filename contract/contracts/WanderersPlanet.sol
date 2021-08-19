@@ -14,7 +14,7 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
     Counters.Counter private _tokenIdCounter;
 
     string private baseURI;
-    bytes32 immutable root; 
+    bytes32 immutable root;
 
     // Mapping of how many planets an address has claimed
     mapping(address => bool) public claimed;
@@ -25,7 +25,9 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
     // Mapping of planet to state
     mapping(uint256 => uint256) public planetState;
 
-    constructor(string memory baseURI_, bytes32 root_) ERC721("Wanderers Planet", "WANDERER-PLANET") {
+    constructor(string memory baseURI_, bytes32 root_)
+        ERC721("Wanderers Planet", "WANDERER-PLANET")
+    {
         baseURI = baseURI_;
         root = root_;
     }
@@ -39,9 +41,16 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
     }
 
     // Claim planets according to merkle proof
-    function claim(address to, uint256 quantity, bytes32[] calldata proof) public {
+    function claim(
+        address to,
+        uint256 quantity,
+        bytes32[] calldata proof
+    ) public {
         // Make sure merkle proof is valid
-        require(_verify(_leaf(msg.sender, quantity), proof), "Bad merkle proof");
+        require(
+            _verify(_leaf(msg.sender, quantity), proof),
+            "Bad merkle proof"
+        );
         // Make sure address has not claimed already
         require(!claimed[msg.sender], "Already claimed");
 
@@ -53,11 +62,19 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
         }
     }
 
-    function _leaf(address account, uint256 quantity) internal pure returns (bytes32) {
+    function _leaf(address account, uint256 quantity)
+        internal
+        pure
+        returns (bytes32)
+    {
         return keccak256(abi.encodePacked(account, quantity));
     }
 
-    function _verify(bytes32 leaf, bytes32[] memory proof) internal view returns (bool) {
+    function _verify(bytes32 leaf, bytes32[] memory proof)
+        internal
+        view
+        returns (bool)
+    {
         return MerkleProof.verify(proof, root, leaf);
     }
 
@@ -67,7 +84,10 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
     }
 
     // Update state for multiple planets
-    function setPlanetState(uint256[] memory ids, uint256 state) public onlyOwner {
+    function setPlanetState(uint256[] memory ids, uint256 state)
+        public
+        onlyOwner
+    {
         for (uint256 i = 0; i < ids.length; i++) {
             setPlanetState(ids[i], state);
         }
@@ -75,18 +95,19 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
 
     // The following functions are overrides required by Solidity.
 
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
-    internal
-    override(ERC721, ERC721Enumerable)
-    {
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override(ERC721, ERC721Enumerable) {
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
     function supportsInterface(bytes4 interfaceId)
-    public
-    view
-    override(ERC721, ERC721Enumerable)
-    returns (bool)
+        public
+        view
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
     {
         return super.supportsInterface(interfaceId);
     }

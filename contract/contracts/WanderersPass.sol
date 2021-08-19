@@ -50,7 +50,10 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
 
         for (uint256 i = 0; i < planetIds.length; i++) {
             // Make sure planet is owned by sender
-            require(planet.ownerOf(planetIds[i]) == msg.sender, "Not owner of planet");
+            require(
+                planet.ownerOf(planetIds[i]) == msg.sender,
+                "Not owner of planet"
+            );
 
             stamps[id].push(planetIds[i]);
             stampStates[id].push(planet.planetState(planetIds[i]));
@@ -59,10 +62,11 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
 
     // The following functions are overrides required by Solidity.
 
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
-        internal
-        override(ERC721, ERC721Enumerable)
-    {
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override(ERC721, ERC721Enumerable) {
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
