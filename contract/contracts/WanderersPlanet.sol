@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
     using Counters for Counters.Counter;
@@ -13,10 +14,10 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
     Counters.Counter private _tokenIdCounter;
 
     string private baseURI;
-    IERC721 public wanderers;
+    bytes32 immutable root; 
 
-    // Mapping of whether a Wanderer has claimed their free home planet
-    mapping(uint256 => bool) public claimed;
+    // Mapping of how many planets an address has claimed
+    mapping(address => bool) public claimed;
 
     // Mapping of Planet to who originally minted it
     mapping(uint256 => address) public minter;
@@ -24,9 +25,9 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
     // Mapping of planet to state
     mapping(uint256 => uint256) public planetState;
 
-    constructor(string memory baseURI_, address wanderers_) ERC721("Wanderers Planet", "WANDERER-PLANET") {
+    constructor(string memory baseURI_, bytes32 root_) ERC721("Wanderers Planet", "WANDERER-PLANET") {
         baseURI = baseURI_;
-        wanderers = IERC721(wanderers_);
+        root = root_;
     }
 
     function _baseURI() internal view override returns (string memory) {
@@ -37,25 +38,27 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
         baseURI = newBaseURI;
     }
 
-    // For minting one individual Wanderer's home planet
-    function safeMint(address to, uint256 wandererID_) public {
-        // Make sure token has not been used for claim already
-        require(!claimed[wandererID_], "Token already used for claim");
-        // Make sure sender actually owns the token
-        require(wanderers.ownerOf(wandererID_) == msg.sender, "Sender is not owner of token");
+    // Claim planets according to merkle proof
+    function claim(address to, uint256 quantity, bytes32[] calldata proof) public {
+        // Make sure merkle proof is valid
+        require(_verify(_leaf(msg.sender, quantity), proof), "Bad merkle proof");
+        // Make sure address has not claimed already
+        require(!claimed[msg.sender], "Already claimed");
 
-        claimed[wandererID_] = true;
-        minter[wandererID_] = msg.sender;
+        claimed[msg.sender] = true;
 
-        _safeMint(to, _tokenIdCounter.current());
-        _tokenIdCounter.increment();
+        for (uint256 i = 0; i < quantity; i++) {
+            _safeMint(to, _tokenIdCounter.current());
+            _tokenIdCounter.increment();
+        }
     }
 
-    // Batch mint for multiple Wanderers owned by same address
-    function safeMint(address to, uint256[] memory wandererIDs) public {
-        for (uint256 i = 0; i < wandererIDs.length; i++) {
-            safeMint(to, wandererIDs[i]);
-        }
+    function _leaf(address account, uint256 quantity) internal pure returns (bytes32) {
+        return keccak256(abi.encodePacked(account, quantity));
+    }
+
+    function _verify(bytes32 leaf, bytes32[] memory proof) internal view returns (bool) {
+        return MerkleProof.verify(proof, root, leaf);
     }
 
     // Update state for one planet
