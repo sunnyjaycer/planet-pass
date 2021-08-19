@@ -19,7 +19,10 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
     mapping(uint256 => bool) public claimed;
 
     // Mapping of Planet to who originally minted it
-    mapping(uint256 => address) public homePlanet;
+    mapping(uint256 => address) public minter;
+
+    // Mapping of planet to state
+    mapping(uint256 => uint256) public planetState;
 
     constructor(string memory baseURI_, address wanderers_) ERC721("Wanderers Planet", "WANDERER-PLANET") {
         baseURI = baseURI_;
@@ -42,7 +45,7 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
         require(wanderers.ownerOf(wandererID_) == msg.sender, "Sender is not owner of token");
 
         claimed[wandererID_] = true;
-        homePlanet[wandererID_] = msg.sender;
+        minter[wandererID_] = msg.sender;
 
         _safeMint(to, _tokenIdCounter.current());
         _tokenIdCounter.increment();
@@ -52,6 +55,18 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
     function safeMint(address to, uint256[] memory wandererIDs) public {
         for (uint256 i = 0; i < wandererIDs.length; i++) {
             safeMint(to, wandererIDs[i]);
+        }
+    }
+
+    // Update state for one planet
+    function setPlanetState(uint256 id, uint256 state) public onlyOwner {
+        planetState[id] = state;
+    }
+
+    // Update state for multiple planets
+    function setPlanetState(uint256[] memory ids, uint256 state) public onlyOwner {
+        for (uint256 i = 0; i < ids.length; i++) {
+            setPlanetState(ids[i], state);
         }
     }
 

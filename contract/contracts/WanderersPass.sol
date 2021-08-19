@@ -5,19 +5,27 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "./WanderersPlanet.sol";
 
 contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
 
+    // Mapping of ID to names
     mapping(uint256 => string) public passName;
+
+    // Mapping of ID to an array of stamped places
     mapping(uint256 => uint256[]) public stamps;
 
-    IERC721 public planet;
+    // Mapping of ID to an array of the stamped places' state
+    mapping(uint256 => uint256[]) public stampStates;
+
+    // Planet contract
+    WanderersPlanet public planet;
 
     constructor(address planet_) ERC721("WanderersPass", "WANDERER-PASS") {
-        planet = IERC721(planet_);
+        planet = WanderersPlanet(planet_);
     }
 
     function safeMint(address to, string memory name) public {
@@ -33,6 +41,7 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
         require(ownerOf(id) == msg.sender, "Not owner of pass");
 
         stamps[id].push(planetId);
+        stampStates[id].push(planet.planetState(planetId));
     }
 
     function visitPlanet(uint256 id, uint256[] memory planetIds) public {
@@ -44,6 +53,7 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
             require(planet.ownerOf(planetIds[i]) == msg.sender, "Not owner of planet");
 
             stamps[id].push(planetIds[i]);
+            stampStates[id].push(planet.planetState(planetIds[i]));
         }
     }
 
