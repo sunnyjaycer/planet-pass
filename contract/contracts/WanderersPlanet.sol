@@ -16,13 +16,13 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
     string private baseURI;
     bytes32 immutable root;
 
-    // Mapping of how many planets an address has claimed
+    // Whether an address has claimed already
     mapping(address => bool) public claimed;
 
-    // Mapping of Planet to who originally minted it
+    // Original minter of a planet
     mapping(uint256 => address) public minter;
 
-    // Mapping of planet to state
+    // Current planet state (see internal docs for what they represent)
     mapping(uint256 => uint256) public planetState;
 
     constructor(string memory baseURI_, bytes32 root_)
@@ -78,13 +78,25 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
         return MerkleProof.verify(proof, root, leaf);
     }
 
+    // Owner can mint more
+    function safeMint(address to) public onlyOwner {
+        _safeMint(to, _tokenIdCounter.current());
+        _tokenIdCounter.increment();
+    }
+
+    function safeMint(address to, uint256 quantity) public onlyOwner {
+        for (uint256 i = 0; i < quantity; i++) {
+            safeMint(to);
+        }
+    }
+
     // Update state for one planet
     function setPlanetState(uint256 id, uint256 state) public onlyOwner {
         planetState[id] = state;
     }
 
     // Update state for multiple planets
-    function setPlanetState(uint256[] memory ids, uint256 state)
+    function setPlanetState(uint256[] calldata ids, uint256 state)
         public
         onlyOwner
     {

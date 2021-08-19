@@ -44,7 +44,7 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
         stampStates[id].push(planet.planetState(planetId));
     }
 
-    function visitPlanet(uint256 id, uint256[] memory planetIds) public {
+    function visitPlanet(uint256 id, uint256[] calldata planetIds) public {
         // Make sure pass is owned by sender
         require(ownerOf(id) == msg.sender, "Not owner of pass");
 
