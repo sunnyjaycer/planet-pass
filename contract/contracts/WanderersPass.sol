@@ -11,11 +11,40 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
 
     Counters.Counter private _tokenIdCounter;
 
-    constructor() ERC721("WanderersPass", "WANDERER-PASS") {}
+    mapping(uint256 => string) public passName;
+    mapping(uint256 => uint256[]) public stamps;
 
-    function safeMint(address to) public onlyOwner {
+    IERC721 public planet;
+
+    constructor(address planet_) ERC721("WanderersPass", "WANDERER-PASS") {
+        planet = IERC721(planet_);
+    }
+
+    function safeMint(address to, string memory name) public {
+        passName[_tokenIdCounter.current()] = name;
         _safeMint(to, _tokenIdCounter.current());
         _tokenIdCounter.increment();
+    }
+
+    function visitPlanet(uint256 id, uint256 planetId) public {
+        // Make sure planet is owned by sender
+        require(planet.ownerOf(planetId) == msg.sender, "Not owner of planet");
+        // Make sure pass is owned by sender
+        require(ownerOf(id) == msg.sender, "Not owner of pass");
+
+        stamps[id].push(planetId);
+    }
+
+    function visitPlanet(uint256 id, uint256[] memory planetIds) public {
+        // Make sure pass is owned by sender
+        require(ownerOf(id) == msg.sender, "Not owner of pass");
+
+        for (uint256 i = 0; i < planetIds.length; i++) {
+            // Make sure planet is owned by sender
+            require(planet.ownerOf(planetIds[i]) == msg.sender, "Not owner of planet");
+
+            stamps[id].push(planetIds[i]);
+        }
     }
 
     // The following functions are overrides required by Solidity.
