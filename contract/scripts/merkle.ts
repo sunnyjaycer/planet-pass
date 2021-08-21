@@ -35,6 +35,8 @@ async function main() {
 
     const outputLeaves = MerkleTree.marshalLeaves(leaf);
     console.log(outputLeaves);
+    
+    writeFileSync("root.txt", merkleTree.getHexRoot());
     writeFileSync("leaves.txt", outputLeaves);
 }
 

@@ -7,7 +7,7 @@ import { writeFileSync } from "fs";
 const WANDERER_ADDRESS = "0x8184a482A5038B124d933B779E0Ea6e0fb72F54E";
 
 const DEPLOYED_BLOCK = 13013300;   // make sure we start at block divisible by 10
-const END_BLOCK = 13056640;
+const END_BLOCK = 13070740;
 const SKIP_SIZE = 1000;
 
 
