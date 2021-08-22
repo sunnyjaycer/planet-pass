@@ -28,8 +28,8 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
         planet = WanderersPlanet(planet_);
     }
 
-    function safeMint(address to, string memory name) public {
-        passName[_tokenIdCounter.current()] = name;
+    function safeMint(address to, string memory name_) public {
+        passName[_tokenIdCounter.current()] = name_;
         _safeMint(to, _tokenIdCounter.current());
         _tokenIdCounter.increment();
     }
