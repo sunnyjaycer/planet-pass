@@ -16,8 +16,8 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
     string private baseURI;
     bytes32 immutable root;
 
-    // Whether an address has claimed already
-    mapping(address => bool) public claimed;
+    // How many planets each address has claimed
+    mapping(address => uint256) public claimedQuantity;
 
     // Original minter of a planet
     mapping(uint256 => address) public minter;
@@ -44,6 +44,7 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
     function claim(
         address to,
         uint256 quantity,
+        uint256 mintQuantity,
         bytes32[] calldata proof
     ) public {
         // Make sure merkle proof is valid
@@ -51,12 +52,15 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
             _verify(_leaf(msg.sender, quantity), proof),
             "Bad merkle proof"
         );
-        // Make sure address has not claimed already
-        require(!claimed[msg.sender], "Already claimed");
+        // Make sure claimed quantity cannot go over the address entitlement
+        require(
+            claimedQuantity[msg.sender] + mintQuantity <= quantity,
+            "Claim quantity over entitlement"
+        );
 
-        claimed[msg.sender] = true;
+        claimedQuantity[msg.sender] += mintQuantity;
 
-        for (uint256 i = 0; i < quantity; i++) {
+        for (uint256 i = 0; i < mintQuantity; i++) {
             _safeMint(to, _tokenIdCounter.current());
             _tokenIdCounter.increment();
         }
