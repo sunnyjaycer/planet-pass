@@ -31,12 +31,12 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
         uint256 planetState
     );
 
-    constructor(address planet_) ERC721("WanderersPass", "WANDERER-PASS") {
-        planet = WanderersPlanet(planet_);
+    constructor(address _planet) ERC721("WanderersPass", "WANDERER-PASS") {
+        planet = WanderersPlanet(_planet);
     }
 
-    function safeMint(address to, string memory name_) public {
-        passName[_tokenIdCounter.current()] = name_;
+    function safeMint(address to, string memory _name) public {
+        passName[_tokenIdCounter.current()] = _name;
         _safeMint(to, _tokenIdCounter.current());
         _tokenIdCounter.increment();
     }

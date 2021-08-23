@@ -25,11 +25,11 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
     // Current planet state (see internal docs for what they represent)
     mapping(uint256 => uint256) public planetState;
 
-    constructor(string memory baseURI_, bytes32 root_)
+    constructor(string memory baseURI_, bytes32 _root)
         ERC721("Wanderers Planet", "WANDERER-PLANET")
     {
         baseURI = baseURI_;
-        root = root_;
+        root = _root;
     }
 
     function _baseURI() internal view override returns (string memory) {
