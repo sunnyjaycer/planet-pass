@@ -24,6 +24,13 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
     // Planet contract
     WanderersPlanet public planet;
 
+    event Stamp(
+        address indexed from,
+        uint256 indexed passId,
+        uint256 indexed planetId,
+        uint256 planetState
+    );
+
     constructor(address planet_) ERC721("WanderersPass", "WANDERER-PASS") {
         planet = WanderersPlanet(planet_);
     }
@@ -42,6 +49,8 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
 
         stamps[id].push(planetId);
         stampStates[id].push(planet.planetState(planetId));
+
+        emit Stamp(msg.sender, id, planetId, planet.planetState(planetId));
     }
 
     function visitPlanet(uint256 id, uint256[] calldata planetIds) public {
@@ -54,9 +63,12 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
                 planet.ownerOf(planetIds[i]) == msg.sender,
                 "Not owner of planet"
             );
+            uint256 planetId = planetIds[i];
 
-            stamps[id].push(planetIds[i]);
-            stampStates[id].push(planet.planetState(planetIds[i]));
+            stamps[id].push(planetId);
+            stampStates[id].push(planet.planetState(planetId));
+
+            emit Stamp(msg.sender, id, planetId, planet.planetState(planetId));
         }
     }
 
