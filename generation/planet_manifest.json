@@ -1,0 +1,246 @@
+[
+  {
+    "category": "background",
+    "alwaysOn": true,
+    "subcategories": [
+      {
+        "subcategory": "celestial",
+        "multiple": true,
+        "alwaysOn": true,
+        "files": [
+          {
+            "file": "anger-orb",
+            "probability": 0.5
+          },
+          {
+            "file": "cosmic-clouds",
+            "probability": 0.5
+          },
+          {
+            "file": "lights",
+            "probability": 0.5
+          },
+          {
+            "file": "nova",
+            "probability": 0.5
+          },
+          {
+            "file": "streak-blue",
+            "probability": 0.5
+          },
+          {
+            "file": "streak-pink",
+            "probability": 0.5
+          },
+          {
+            "file": "streak-white",
+            "probability": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "category": "common-planet",
+    "alwaysOn": false,
+    "probability": 0.5,
+    "subcategories": [
+      {
+        "subcategory": "core",
+        "multiple": false,
+        "alwaysOn": true,
+        "probability": 0.5,
+        "files": [
+          {
+            "file": "planet-blue",
+            "probability": 0.5
+          },
+          {
+            "file": "planet-dark",
+            "probability": 0.5
+          },
+          {
+            "file": "planet-green",
+            "probability": 0.5
+          },
+          {
+            "file": "planet-magenta",
+            "probability": 0.5
+          },
+          {
+            "file": "planet-pink",
+            "probability": 0.5
+          },
+          {
+            "file": "planet-white",
+            "probability": 0.5
+          }
+        ]
+      },
+      {
+        "subcategory": "terrain",
+        "multiple": false,
+        "alwaysOn": true,
+        "probability": 0.5,
+        "files": [
+          {
+            "file": "terrain-ice-glacier",
+            "probability": 0.5
+          },
+          {
+            "file": "terrain-ice-polar",
+            "probability": 0.5
+          },
+          {
+            "file": "terrain-ice-shatter",
+            "probability": 0.5
+          },
+          {
+            "file": "terrain-rock-crust",
+            "probability": 0.5
+          },
+          {
+            "file": "terrain-rock-layers",
+            "probability": 0.5
+          },
+          {
+            "file": "terrain-rock-mineral",
+            "probability": 0.5
+          },
+          {
+            "file": "terrain-rock-pumice",
+            "probability": 0.5
+          },
+          {
+            "file": "terrain-tech",
+            "probability": 0.5
+          }
+        ]
+      },
+      {
+        "subcategory": "features",
+        "multiple": false,
+        "alwaysOn": true,
+        "probability": 0.5,
+        "files": [
+          {
+            "file": "feature-crater-impacts-a",
+            "probability": 0.5
+          },
+          {
+            "file": "feature-lava-field-lower",
+            "probability": 0.5
+          },
+          {
+            "file": "feature-lava-field-upper",
+            "probability": 0.5
+          },
+          {
+            "file": "feature-water-ocean-a",
+            "probability": 0.5
+          }
+        ]
+      },
+      {
+        "subcategory": "atmosphere",
+        "multiple": false,
+        "alwaysOn": false,
+        "probability": 0.5,
+        "files": [
+          {
+            "file": "aura",
+            "probability": 0.5
+          },
+          {
+            "file": "rings-a",
+            "probability": 0.5
+          },
+          {
+            "file": "rings-b",
+            "probability": 0.5
+          },
+          {
+            "file": "rings-c",
+            "probability": 0.5
+          },
+          {
+            "file": "rings-d",
+            "probability": 0.5
+          }
+        ]
+      },
+      {
+        "subcategory": "satellites",
+        "multiple": false,
+        "alwaysOn": false,
+        "probability": 0.5,
+        "files": [
+          {
+            "file": "asteroid-01",
+            "probability": 0.5
+          },
+          {
+            "file": "asteroid-belt-01",
+            "probability": 0.5
+          },
+          {
+            "file": "moon-glow",
+            "probability": 0.5
+          },
+          {
+            "file": "moons-color",
+            "probability": 0.5
+          },
+          {
+            "file": "moons-three",
+            "probability": 0.5
+          }
+        ]
+      },
+      {
+        "subcategory": "ships",
+        "multiple": false,
+        "alwaysOn": false,
+        "probability": 0.5,
+        "files": [
+          {
+            "file": "ships-docking",
+            "probability": 0.5
+          },
+          {
+            "file": "ships-flyby",
+            "probability": 0.5
+          },
+          {
+            "file": "ships-flyby-dogfight",
+            "probability": 0.5
+          },
+          {
+            "file": "ships-flyby-trio",
+            "probability": 0.5
+          },
+          {
+            "file": "ships-freighter",
+            "probability": 0.5
+          },
+          {
+            "file": "ships-freighter-battle",
+            "probability": 0.5
+          },
+          {
+            "file": "ships-freighter-destroyed",
+            "probability": 0.5
+          },
+          {
+            "file": "ships-spacestation",
+            "probability": 0.5
+          },
+          {
+            "file": "ships-triforce",
+            "probability": 0.5
+          }
+        ]
+      }
+    ]
+  }
+]
