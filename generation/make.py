@@ -1,20 +1,7 @@
 import json
-from dataclasses import dataclass
 from typing import List, Dict
 
-
-@dataclass
-class Frames:
-    celestial: List
-    planet_type: str
-    # common planet
-    core: List
-    terrain: List
-    features: List
-    atmosphere: List
-    satellites: List
-    ships: List
-    # todo weird things
+folder = "source"
 
 
 class Manifest:
@@ -36,31 +23,62 @@ def worker(start: int, stop: int, manifest: Manifest):
         return
 
 
-def get_frames(manifest: Manifest) -> [Frames, Dict]:
+def get_frames(manifest: Manifest) -> [List, Dict]:
     data = {}
-    get_category(manifest.category("background"))
-    get_category(manifest.category("common-planet"))
+    frames = []
+    background, metadata = get_category(manifest.category("background"))
+    [frames.append(x) for x in background]
+    data.update(metadata)
 
-    return 0, 0
+    planet, metadata = get_category(manifest.category("common-planet"))
+    [frames.append(x) for x in planet]
+    data.update(metadata)
+
+    return frames, data
 
 
-def get_category(category):
+def get_category(category) -> [List, Dict]:
     category_name = category["category"]
     print(category)
+    files = []
+    metadata = {}
     for subcat in category["subcategories"]:
-        get_subcategory(subcat, category_name)
-        print()
+        category_files, category_metadata = get_subcategory(subcat, category_name)
+        [files.append(x) for x in category_files]
+        metadata.update(category_metadata)
+
+    print(files, metadata)
+    return files, metadata
 
 
-def get_subcategory(subcategory, category_name: str):
+def get_subcategory(subcategory, category_name: str) -> [List, Dict]:
     subcategory_name = subcategory["subcategory"]
-    print(subcategory)
+
+    files = []
+    metadata = {}
+
     for file in subcategory["files"]:
-        get_file(file, subcategory_name, category_name)
+        fils = get_file(file, subcategory_name, category_name)
+        files.append(fils)
+
+        # Update metadata
+        metadata.update({subcategory_name: file["file"]})
+
+    return files, metadata
 
 
-def get_file(file, subcategory_name: str, category_name: str):
-    print(file, subcategory_name, category_name)
+def get_file(file, subcategory_name: str, category_name: str) -> List:
+    file_basename = file["file"]
+    start, end = 0, 131
+
+    images = []
+    for i in range(start, end):
+        file_name = (
+            f"{folder}/{category_name}/{subcategory_name}/{file_basename}_{i:05}.png"
+        )
+        images.append(file_name)
+
+    return images
 
 
 if __name__ == "__main__":
