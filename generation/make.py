@@ -1,4 +1,5 @@
 import json
+import random
 from typing import List, Dict
 
 folder = "source"
@@ -34,12 +35,13 @@ def get_frames(manifest: Manifest) -> [List, Dict]:
     [frames.append(x) for x in planet]
     data.update(metadata)
 
+    print(data)
+
     return frames, data
 
 
 def get_category(category) -> [List, Dict]:
     category_name = category["category"]
-    print(category)
     files = []
     metadata = {}
     for subcat in category["subcategories"]:
@@ -47,7 +49,6 @@ def get_category(category) -> [List, Dict]:
         [files.append(x) for x in category_files]
         metadata.update(category_metadata)
 
-    print(files, metadata)
     return files, metadata
 
 
@@ -57,7 +58,27 @@ def get_subcategory(subcategory, category_name: str) -> [List, Dict]:
     files = []
     metadata = {}
 
-    for file in subcategory["files"]:
+    to_fetch = [file for file in subcategory["files"]]
+    multiple = subcategory["multiple"]
+    always_on = subcategory["alwaysOn"]
+
+    if multiple:
+        # If multiple then filter by chance
+        to_fetch = [file for file in to_fetch if chance(file["probability"])]
+    else:
+        # Otherwise, use choices
+        to_fetch = random.choices(
+            population=to_fetch,
+            weights=[file["probability"] for file in to_fetch],
+            k=1
+        )
+
+    if not always_on and not chance(subcategory["probability"]):
+        print("Skipped", subcategory_name)
+        return [], {}
+
+    for file in to_fetch:
+        print(file)
         fils = get_file(file, subcategory_name, category_name)
         files.append(fils)
 
@@ -79,6 +100,10 @@ def get_file(file, subcategory_name: str, category_name: str) -> List:
         images.append(file_name)
 
     return images
+
+
+def chance(prob):
+    return random.random() < prob
 
 
 if __name__ == "__main__":
