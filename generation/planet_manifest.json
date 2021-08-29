@@ -9,11 +9,31 @@
         "alwaysOn": true,
         "files": [
           {
-            "file": "anger-orb",
+            "file": "aura",
             "probability": 0.5
           },
           {
             "file": "cosmic-clouds",
+            "probability": 0.5
+          },
+          {
+            "file": "galaxy-blue",
+            "probability": 0.5
+          },
+          {
+            "file": "galaxy-green",
+            "probability": 0.5
+          },
+          {
+            "file": "galaxy-large-purple",
+            "probability": 0.5
+          },
+          {
+            "file": "galaxy-purple",
+            "probability": 0.5
+          },
+          {
+            "file": "gradient",
             "probability": 0.5
           },
           {
@@ -25,11 +45,43 @@
             "probability": 0.5
           },
           {
+            "file": "speckle",
+            "probability": 0.5
+          },
+          {
+            "file": "stars-blue",
+            "probability": 0.5
+          },
+          {
+            "file": "stars-green",
+            "probability": 0.5
+          },
+          {
+            "file": "stars-pink",
+            "probability": 0.5
+          },
+          {
+            "file": "stars-purple",
+            "probability": 0.5
+          },
+          {
+            "file": "stars-stream",
+            "probability": 0.5
+          },
+          {
+            "file": "stars-white",
+            "probability": 0.5
+          },
+          {
             "file": "streak-blue",
             "probability": 0.5
           },
           {
             "file": "streak-pink",
+            "probability": 0.5
+          },
+          {
+            "file": "streak-purple",
             "probability": 0.5
           },
           {
@@ -41,7 +93,7 @@
     ]
   },
   {
-    "category": "common-planet",
+    "category": "planet",
     "alwaysOn": false,
     "probability": 0.5,
     "subcategories": [

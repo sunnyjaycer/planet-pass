@@ -21,7 +21,12 @@ def main():
 def worker(start: int, stop: int, manifest: Manifest):
     for n in range(start, stop):
         frames, metadata = get_frames(manifest)
+        make_image(frames)
         return
+
+
+def make_image(frames):
+    pass
 
 
 def get_frames(manifest: Manifest) -> [List, Dict]:
@@ -34,8 +39,6 @@ def get_frames(manifest: Manifest) -> [List, Dict]:
     planet, metadata = get_category(manifest.category("common-planet"))
     [frames.append(x) for x in planet]
     data.update(metadata)
-
-    print(data)
 
     return frames, data
 
@@ -74,16 +77,17 @@ def get_subcategory(subcategory, category_name: str) -> [List, Dict]:
         )
 
     if not always_on and not chance(subcategory["probability"]):
-        print("Skipped", subcategory_name)
         return [], {}
 
     for file in to_fetch:
-        print(file)
         fils = get_file(file, subcategory_name, category_name)
         files.append(fils)
 
         # Update metadata
-        metadata.update({subcategory_name: file["file"]})
+        new_li = metadata.get(subcategory_name, [])
+        new_li.append(file["file"])
+
+        metadata[subcategory_name] = new_li
 
     return files, metadata
 
