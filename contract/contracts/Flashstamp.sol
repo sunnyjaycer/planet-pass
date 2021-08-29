@@ -72,6 +72,10 @@ contract Flashstamp is IERC721Receiver {
     // Withdraws the specified Planet to a designated address.
     function withdraw(address to, uint256 tokenId) public {
         require(planetOwners[tokenId] == msg.sender, "Not owner of planet");
+        
+        planetOwners[tokenId] = address(0);
+        planetFees[tokenId] = 0;
+        
         planetContract.safeTransferFrom(address(this), to, tokenId);
     }
 
