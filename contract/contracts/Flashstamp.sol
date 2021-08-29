@@ -5,10 +5,12 @@ import "./WanderersPlanet.sol";
 import "./WanderersPass.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Flashstamp is IERC721Receiver {
     WanderersPlanet public planetContract;
     WanderersPass public passContract;
+    IERC20 public wEthContract = IERC20(0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619);
 
     // Mapping of Planet IDs to owners.
     mapping(uint256 => address) planetOwners;
@@ -16,14 +18,22 @@ contract Flashstamp is IERC721Receiver {
     // Mapping of Planet IDs to their fee.
     mapping(uint256 => uint256) planetFees;
 
-    // Perform a flash-stamp of planetId onto passId.
-    // Note: this requires an approval for passId, otherwise it will revert
-    function flashStamp(uint256 planetId, uint256 passId) public payable {
-        require(planetOwners[planetId] != address(0), "Planet not in contract");
-        require(msg.value >= planetFees[planetId], "Fee too low");
+    // Mapping of owners to fees accured
+    mapping(address => uint256) feesAccured;
 
-        (bool success, ) = planetOwners[planetId].call{value: msg.value}("");
-        require(success, "Could not send fee to planet owner");
+    // Perform a flash-stamp of planetId onto passId.
+    // Note: this requires an approval from Planet Pass for passId, otherwise it will revert.
+    // Note: this requqires ERC-20 spending approval for WETH, otherwise it will revert.
+    function flashStamp(uint256 planetId, uint256 passId) public {
+        require(planetOwners[planetId] != address(0), "Planet not in contract");
+
+        // Send WETH to contract
+        uint256 fee = planetFees[planetId];
+        if (fee != 0) {
+            feesAccured[planetOwners[planetId]] += fee;
+            bool success = wEthContract.transferFrom(msg.sender, address(this), planetFees[planetId]);
+            require(success, "Token transfer failed");
+        }
 
         // Temporarily take Pass from sender
         passContract.safeTransferFrom(msg.sender, address(this), passId);
@@ -33,6 +43,14 @@ contract Flashstamp is IERC721Receiver {
 
         // Return it to the sender
         passContract.safeTransferFrom(address(this), msg.sender, passId);
+    }
+
+    function withdrawFees(address to) public {
+        uint256 transferAmount = feesAccured[msg.sender];
+        feesAccured[msg.sender] = 0;
+
+        bool success = wEthContract.transferFrom(address(this), to, transferAmount);
+        require(success, "Token transfer failed");
     }
 
     // Deposits the specified Planet with a fee for flash-stamping using it
