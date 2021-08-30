@@ -192,6 +192,10 @@
             "probability": 0.5
           },
           {
+            "file": "sand",
+            "probability": 0.5
+          },
+          {
             "file": "shattered",
             "probability": 0.5
           },
@@ -258,22 +262,6 @@
           {
             "file": "feature-water-ocean-a",
             "probability": 0.5
-          },
-          {
-            "file": "rings-a",
-            "probability": 0.5
-          },
-          {
-            "file": "rings-b",
-            "probability": 0.5
-          },
-          {
-            "file": "rings-c",
-            "probability": 0.5
-          },
-          {
-            "file": "rings-d",
-            "probability": 0.5
           }
         ]
       },
@@ -285,6 +273,26 @@
         "files": [
           {
             "file": "aura",
+            "probability": 0.5
+          },
+          {
+            "file": "clouds",
+            "probability": 0.5
+          },
+          {
+            "file": "clouds-ozone",
+            "probability": 0.5
+          },
+          {
+            "file": "clouds-speckled",
+            "probability": 0.5
+          },
+          {
+            "file": "guardian-grid",
+            "probability": 0.5
+          },
+          {
+            "file": "ice-clouds",
             "probability": 0.5
           },
           {
