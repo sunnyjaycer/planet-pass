@@ -10,83 +10,83 @@
         "files": [
           {
             "file": "aura",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "cosmic-clouds",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "galaxy-blue",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "galaxy-green",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "galaxy-large-purple",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "galaxy-purple",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "gradient",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "lights",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "nova",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "speckle",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "stars-blue",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "stars-green",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "stars-pink",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "stars-purple",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "star-stream",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "stars-white",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "streak-blue",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "streak-pink",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "streak-purple",
-            "probability": 0.5
+            "probability": 0.15
           },
           {
             "file": "streak-white",
-            "probability": 0.5
+            "probability": 0.15
           }
         ]
       }
