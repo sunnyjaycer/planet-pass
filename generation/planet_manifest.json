@@ -136,6 +136,74 @@
         "probability": 0.5,
         "files": [
           {
+            "file": "acid",
+            "probability": 0.5
+          },
+                    {
+            "file": "canyons",
+            "probability": 0.5
+          },
+                    {
+            "file": "dots",
+            "probability": 0.5
+          },
+                    {
+            "file": "fire",
+            "probability": 0.5
+          },
+                    {
+            "file": "fungus",
+            "probability": 0.5
+          },
+                    {
+            "file": "gas",
+            "probability": 0.5
+          },
+                    {
+            "file": "grid-fence",
+            "probability": 0.5
+          },
+                    {
+            "file": "hive",
+            "probability": 0.5
+          },
+                    {
+            "file": "light-trails",
+            "probability": 0.5
+          },
+                    {
+            "file": "natural",
+            "probability": 0.5
+          },
+                    {
+            "file": "pixels",
+            "probability": 0.5
+          },
+                    {
+            "file": "polar",
+            "probability": 0.5
+          },
+                    {
+            "file": "radiation",
+            "probability": 0.5
+          },
+                    {
+            "file": "rock",
+            "probability": 0.5
+          },
+                    {
+            "file": "shattered",
+            "probability": 0.5
+          },
+                    {
+            "file": "splatter",
+            "probability": 0.5
+          },
+                    {
+            "file": "tech-wave",
+            "probability": 0.5
+          },
+          {
             "file": "terrain-ice-glacier",
             "probability": 0.5
           },
