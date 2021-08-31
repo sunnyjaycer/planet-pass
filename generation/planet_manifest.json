@@ -4,10 +4,14 @@
     "alwaysOn": true,
     "subcategories": [
       {
-        "subcategory": "celestial",
+        "subcategory": "space",
         "multiple": true,
         "alwaysOn": true,
         "files": [
+          {
+            "file": "anger-orb",
+            "probability": 0.5
+          },
           {
             "file": "aura",
             "probability": 0.15
@@ -42,6 +46,10 @@
           },
           {
             "file": "nova",
+            "probability": 0.15
+          },
+          {
+            "file": "sparkles",
             "probability": 0.15
           },
           {
@@ -98,7 +106,7 @@
     "probability": 0.5,
     "subcategories": [
       {
-        "subcategory": "core",
+        "subcategory": "planets",
         "multiple": false,
         "alwaysOn": true,
         "probability": 0.5,
@@ -117,6 +125,10 @@
           },
           {
             "file": "planet-magenta",
+            "probability": 0.5
+          },
+          {
+            "file": "planet-mosaic",
             "probability": 0.5
           },
           {
@@ -168,6 +180,18 @@
             "probability": 0.5
           },
           {
+            "file": "ice-glacier",
+            "probability": 0.5
+          },
+          {
+            "file": "ice-polar",
+            "probability": 0.5
+          },
+          {
+            "file": "ice-shatter",
+            "probability": 0.5
+          },
+          {
             "file": "light-trails",
             "probability": 0.5
           },
@@ -192,6 +216,22 @@
             "probability": 0.5
           },
           {
+            "file": "rock-crust",
+            "probability": 0.5
+          },
+          {
+            "file": "rock-layers",
+            "probability": 0.5
+          },
+          {
+            "file": "rock-mineral",
+            "probability": 0.5
+          },
+          {
+            "file": "rock-pumice",
+            "probability": 0.5
+          },
+          {
             "file": "sand",
             "probability": 0.5
           },
@@ -204,39 +244,15 @@
             "probability": 0.5
           },
           {
+            "file": "tech",
+            "probability": 0.5
+          },
+          {
             "file": "tech-wave",
             "probability": 0.5
           },
           {
-            "file": "terrain-ice-glacier",
-            "probability": 0.5
-          },
-          {
-            "file": "terrain-ice-polar",
-            "probability": 0.5
-          },
-          {
-            "file": "terrain-ice-shatter",
-            "probability": 0.5
-          },
-          {
-            "file": "terrain-rock-crust",
-            "probability": 0.5
-          },
-          {
-            "file": "terrain-rock-layers",
-            "probability": 0.5
-          },
-          {
-            "file": "terrain-rock-mineral",
-            "probability": 0.5
-          },
-          {
-            "file": "terrain-rock-pumice",
-            "probability": 0.5
-          },
-          {
-            "file": "terrain-tech",
+            "file": "tidal",
             "probability": 0.5
           }
         ]
@@ -247,6 +263,34 @@
         "alwaysOn": true,
         "probability": 0.5,
         "files": [
+          {
+            "file": "ancient-bones",
+            "probability": 0.5
+          },
+          {
+            "file": "ancient-tech",
+            "probability": 0.5
+          },
+          {
+            "file": "cities",
+            "probability": 0.5
+          },
+          {
+            "file": "crystals",
+            "probability": 0.5
+          },
+          {
+            "file": "domes",
+            "probability": 0.5
+          },
+          {
+            "file": "eth-crystals",
+            "probability": 0.5
+          },
+          {
+            "file": "eyes",
+            "probability": 0.5
+          },
           {
             "file": "feature-crater-impacts-a",
             "probability": 0.5
@@ -261,6 +305,46 @@
           },
           {
             "file": "feature-water-ocean-a",
+            "probability": 0.5
+          },
+          {
+            "file": "laser",
+            "probability": 0.5
+          },
+          {
+            "file": "lava-large",
+            "probability": 0.5
+          },
+          {
+            "file": "ocean-2",
+            "probability": 0.5
+          },
+          {
+            "file": "ocean-trench",
+            "probability": 0.5
+          },
+          {
+            "file": "ravine",
+            "probability": 0.5
+          },
+          {
+            "file": "river-01",
+            "probability": 0.5
+          },
+          {
+            "file": "river-02",
+            "probability": 0.5
+          },
+          {
+            "file": "vines",
+            "probability": 0.5
+          },
+          {
+            "file": "weed",
+            "probability": 0.5
+          },
+          {
+            "file": "worm",
             "probability": 0.5
           }
         ]
@@ -292,7 +376,15 @@
             "probability": 0.5
           },
           {
+            "file": "hurricane",
+            "probability": 0.5
+          },
+          {
             "file": "ice-clouds",
+            "probability": 0.5
+          },
+          {
+            "file": "ozone",
             "probability": 0.5
           },
           {
@@ -309,6 +401,10 @@
           },
           {
             "file": "rings-d",
+            "probability": 0.5
+          },
+          {
+            "file": "rings-e",
             "probability": 0.5
           }
         ]
@@ -328,6 +424,14 @@
             "probability": 0.5
           },
           {
+            "file": "comets",
+            "probability": 0.5
+          },
+          {
+            "file": "meteor-shower",
+            "probability": 0.5
+          },
+          {
             "file": "moon-glow",
             "probability": 0.5
           },
@@ -337,6 +441,10 @@
           },
           {
             "file": "moons-three",
+            "probability": 0.5
+          },
+          {
+            "file": "supernova",
             "probability": 0.5
           }
         ]

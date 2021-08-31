@@ -1,11 +1,12 @@
 import json
+import multiprocessing
 import os
 import random
 from typing import List, Dict
 
 from PIL import Image
 
-folder = "PlanetPass-v1"
+folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v1"
 
 
 class Manifest:
@@ -18,7 +19,24 @@ class Manifest:
 
 def main():
     manifest = Manifest(json.load(open("planet_manifest.json")))
-    worker(0, 10, manifest)
+
+    processes = 22
+    n = 220
+    increment = int(n / processes)
+    jobs = []
+    start = 0
+    stop = increment
+
+    for i in range(0, processes):
+        process = multiprocessing.Process(
+            target=worker, args=(start, stop, manifest)
+        )
+        jobs.append(process)
+        start = stop
+        stop += increment
+
+    [j.start() for j in jobs]
+    [j.join() for j in jobs]
 
 
 def worker(start: int, stop: int, manifest: Manifest):
@@ -35,12 +53,11 @@ def worker(start: int, stop: int, manifest: Manifest):
             json.dump(metadata, f)
 
         make_image(frames, base, str(n))
-        return
+        print(n)
 
 
 def make_image(frames, base, prefix: str):
     for (n, b) in enumerate(base):
-        print(n)
         # Open base layer
         frame = Image.open(b)
 
