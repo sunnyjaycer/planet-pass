@@ -10,7 +10,8 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract Flashstamp is IERC721Receiver {
     WanderersPlanet public planetContract;
     WanderersPass public passContract;
-    IERC20 public wEthContract = IERC20(0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619);
+    IERC20 public wEthContract =
+        IERC20(0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619);
 
     // Mapping of Planet IDs to owners.
     mapping(uint256 => address) planetOwners;
@@ -31,7 +32,11 @@ contract Flashstamp is IERC721Receiver {
         uint256 fee = planetFees[planetId];
         if (fee != 0) {
             feesAccured[planetOwners[planetId]] += fee;
-            bool success = wEthContract.transferFrom(msg.sender, address(this), planetFees[planetId]);
+            bool success = wEthContract.transferFrom(
+                msg.sender,
+                address(this),
+                planetFees[planetId]
+            );
             require(success, "Token transfer failed");
         }
 
@@ -49,7 +54,11 @@ contract Flashstamp is IERC721Receiver {
         uint256 transferAmount = feesAccured[msg.sender];
         feesAccured[msg.sender] = 0;
 
-        bool success = wEthContract.transferFrom(address(this), to, transferAmount);
+        bool success = wEthContract.transferFrom(
+            address(this),
+            to,
+            transferAmount
+        );
         require(success, "Token transfer failed");
     }
 
@@ -72,10 +81,10 @@ contract Flashstamp is IERC721Receiver {
     // Withdraws the specified Planet to a designated address.
     function withdraw(address to, uint256 tokenId) public {
         require(planetOwners[tokenId] == msg.sender, "Not owner of planet");
-        
+
         planetOwners[tokenId] = address(0);
         planetFees[tokenId] = 0;
-        
+
         planetContract.safeTransferFrom(address(this), to, tokenId);
     }
 
