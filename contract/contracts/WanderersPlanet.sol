@@ -8,19 +8,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
-contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
-    using Counters for Counters.Counter;
-
-    Counters.Counter private _tokenIdCounter;
-
+contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
     string private baseURI;
     bytes32 immutable root;
-
-    // How many planets each address has claimed
-    mapping(address => uint256) public claimedQuantity;
-
-    // Original minter of a planet
-    mapping(uint256 => address) public minter;
 
     // Current planet state (see internal docs for what they represent)
     mapping(uint256 => uint256) public planetState;
@@ -43,35 +33,24 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
     // Claim planets according to merkle proof
     function claim(
         address to,
-        uint256 quantity,
-        uint256 mintQuantity,
+        uint256 planetId,
         bytes32[] calldata proof
     ) public {
         // Make sure merkle proof is valid
         require(
-            _verify(_leaf(msg.sender, quantity), proof),
+            _verify(_leaf(msg.sender, planetId), proof),
             "Bad merkle proof"
         );
-        // Make sure claimed quantity cannot go over the address entitlement
-        require(
-            claimedQuantity[msg.sender] + mintQuantity <= quantity,
-            "Claim quantity over entitlement"
-        );
 
-        claimedQuantity[msg.sender] += mintQuantity;
-
-        for (uint256 i = 0; i < mintQuantity; i++) {
-            _safeMint(to, _tokenIdCounter.current());
-            _tokenIdCounter.increment();
-        }
+        _safeMint(to, planetId);
     }
 
-    function _leaf(address account, uint256 quantity)
+    function _leaf(address account, uint256 planetId)
         internal
         pure
         returns (bytes32)
     {
-        return keccak256(abi.encodePacked(account, quantity));
+        return keccak256(abi.encodePacked(account, planetId));
     }
 
     function _verify(bytes32 leaf, bytes32[] memory proof)
@@ -83,14 +62,13 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
     }
 
     // Owner can mint more
-    function safeMint(address to) public onlyOwner {
-        _safeMint(to, _tokenIdCounter.current());
-        _tokenIdCounter.increment();
+    function safeMint(address to, uint256 planetId) public onlyOwner {
+        _safeMint(to, planetId);
     }
 
-    function safeMint(address to, uint256 quantity) public onlyOwner {
-        for (uint256 i = 0; i < quantity; i++) {
-            safeMint(to);
+    function safeMint(address to, uint256[] calldata planetId) public onlyOwner {
+        for (uint256 i = 0; i < planetId.length; i++) {
+            safeMint(to, planetId[i]);
         }
     }
 
