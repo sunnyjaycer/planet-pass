@@ -1,8 +1,12 @@
 import json
+import multiprocessing
+import os
 import random
 from typing import List, Dict
 
-folder = "source"
+from PIL import Image
+
+folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v1"
 
 
 class Manifest:
@@ -15,18 +19,54 @@ class Manifest:
 
 def main():
     manifest = Manifest(json.load(open("planet_manifest.json")))
-    worker(0, 10, manifest)
+
+    processes = 22
+    n = 220
+    increment = int(n / processes)
+    jobs = []
+    start = 0
+    stop = increment
+
+    for i in range(0, processes):
+        process = multiprocessing.Process(
+            target=worker, args=(start, stop, manifest)
+        )
+        jobs.append(process)
+        start = stop
+        stop += increment
+
+    [j.start() for j in jobs]
+    [j.join() for j in jobs]
 
 
 def worker(start: int, stop: int, manifest: Manifest):
     for n in range(start, stop):
+        base = get_base()
         frames, metadata = get_frames(manifest)
-        make_image(frames)
-        return
+
+        # Make individual planet folder
+        os.makedirs(f"/mnt/e/planetpass/raw/{str(n)}", exist_ok=True)
+
+        # Write metadata
+        os.makedirs("/mnt/e/planetpass/metadata", exist_ok=True)
+        with open(f"/mnt/e/planetpass/metadata/{str(n)}.json", "w") as f:
+            json.dump(metadata, f)
+
+        make_image(frames, base, str(n))
+        print(n)
 
 
-def make_image(frames):
-    pass
+def make_image(frames, base, prefix: str):
+    for (n, b) in enumerate(base):
+        # Open base layer
+        frame = Image.open(b)
+
+        # Paste images
+        for asset in [x[n] for x in frames]:
+            to_paste = Image.open(asset)
+            frame.paste(to_paste, mask=to_paste)
+
+        frame.save(f"/mnt/e/planetpass/raw/{prefix}/{prefix}_{n:05}.png")
 
 
 def get_frames(manifest: Manifest) -> [List, Dict]:
@@ -36,7 +76,7 @@ def get_frames(manifest: Manifest) -> [List, Dict]:
     [frames.append(x) for x in background]
     data.update(metadata)
 
-    planet, metadata = get_category(manifest.category("common-planet"))
+    planet, metadata = get_category(manifest.category("planet"))
     [frames.append(x) for x in planet]
     data.update(metadata)
 
@@ -71,9 +111,7 @@ def get_subcategory(subcategory, category_name: str) -> [List, Dict]:
     else:
         # Otherwise, use choices
         to_fetch = random.choices(
-            population=to_fetch,
-            weights=[file["probability"] for file in to_fetch],
-            k=1
+            population=to_fetch, weights=[file["probability"] for file in to_fetch], k=1
         )
 
     if not always_on and not chance(subcategory["probability"]):
@@ -95,12 +133,25 @@ def get_subcategory(subcategory, category_name: str) -> [List, Dict]:
 def get_file(file, subcategory_name: str, category_name: str) -> List:
     file_basename = file["file"]
     start, end = 0, 131
+    if not os.path.isfile(
+        f"{folder}/{category_name}/{subcategory_name}/{file_basename}/{file_basename}_{0:05}.png"
+    ):
+        start, end = 1, 132
 
     images = []
     for i in range(start, end):
-        file_name = (
-            f"{folder}/{category_name}/{subcategory_name}/{file_basename}_{i:05}.png"
-        )
+        file_name = f"{folder}/{category_name}/{subcategory_name}/{file_basename}/{file_basename}_{i:05}.png"
+        images.append(file_name)
+
+    return images
+
+
+def get_base() -> List:
+    images = []
+    start, end = 0, 131
+
+    for i in range(start, end):
+        file_name = f"{folder}/stars-base/stars-base_{i:05}.png"
         images.append(file_name)
 
     return images
