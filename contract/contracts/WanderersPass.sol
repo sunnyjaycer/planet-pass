@@ -15,15 +15,19 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
     // Mapping of ID to names
     mapping(uint256 => string) public passName;
 
-    // Mapping of ID to an array of stamped places
-    mapping(uint256 => uint256[]) public stamps;
+    // Struct containing a single stamp.
+    struct PassStamp {
+        uint256 planetId;
+        uint256 state;
+    }
 
-    // Mapping of ID to an array of the stamped places' state
-    mapping(uint256 => uint256[]) public stampStates;
+    // Mapping of ID to an array of stamps
+    mapping(uint256 => PassStamp[]) public stamps;
 
     // Planet contract
     WanderersPlanet public planet;
 
+    // Event emitted when a stamp occurs
     event Stamp(
         address indexed from,
         uint256 indexed passId,
@@ -47,10 +51,16 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
         // Make sure pass is owned by sender
         require(ownerOf(id) == msg.sender, "Not owner of pass");
 
-        stamps[id].push(planetId);
-        stampStates[id].push(planet.planetState(planetId));
+        stamps[id].push(makePassStamp(planetId));
 
         emit Stamp(msg.sender, id, planetId, planet.planetState(planetId));
+    }
+
+    function makePassStamp(uint256 planetId) internal view returns (PassStamp memory) {
+        return PassStamp(
+            planetId,
+            planet.planetState(planetId)
+        );
     }
 
     function visitPlanet(uint256 id, uint256[] calldata planetIds) public {
@@ -65,8 +75,7 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
             );
             uint256 planetId = planetIds[i];
 
-            stamps[id].push(planetId);
-            stampStates[id].push(planet.planetState(planetId));
+            stamps[id].push(makePassStamp(planetId));
 
             emit Stamp(msg.sender, id, planetId, planet.planetState(planetId));
         }
