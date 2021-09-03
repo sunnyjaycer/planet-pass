@@ -3,14 +3,13 @@ pragma solidity ^0.8.2;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
     string private baseURI;
-    bytes32 immutable root;
+    bytes32 immutable public root;
 
     // Current planet state (see internal docs for what they represent)
     mapping(uint256 => uint256) public planetState;

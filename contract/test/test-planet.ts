@@ -19,7 +19,6 @@ export async function makeTestMerkleTree(accounts: Signer[]): Promise<MerkleTree
   // Account 0 owns planets 0, 1, 2, 3, 4
   for (let i = 0; i < 5; i++) {
     leaf.push(hash(i, await accounts[0].getAddress()));
-
   }
 
   // Account 1 owns planet 5, 6, 7, 8, 9
@@ -39,6 +38,14 @@ describe("Planets", function () {
     accounts = await ethers.getSigners();
     merkleTree = await makeTestMerkleTree(accounts);
 
+    // Demonstration that the proof is valid
+    // const root = merkleTree.getHexRoot();
+    // const leaf = hash(0, await accounts[0].getAddress());
+    // const proof = merkleTree.getHexProof(leaf);
+    // console.log(
+    //   merkleTree.verify(proof, leaf, root)
+    // );
+
     const Planets = await ethers.getContractFactory("WanderersPlanet");
     planets = await Planets.connect(accounts[0]).deploy("example.com/", merkleTree.getHexRoot());
     await planets.deployed();
@@ -46,7 +53,8 @@ describe("Planets", function () {
   });
 
   it("should be able to claim one", async function () {
-    const address = await accounts[0].getAddress()
+    const address = await accounts[0].getAddress();
+
     await planets.connect(accounts[0]).claim(
       address,
       0,
