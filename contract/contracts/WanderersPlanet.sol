@@ -38,19 +38,19 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
     ) public {
         // Make sure merkle proof is valid
         require(
-            _verify(_leaf(msg.sender, planetId), proof),
+            _verify(_leaf(planetId, msg.sender), proof),
             "Bad merkle proof"
         );
 
         _safeMint(to, planetId);
     }
 
-    function _leaf(address account, uint256 planetId)
+    function _leaf(uint256 planetId, address account)
         internal
         pure
         returns (bytes32)
     {
-        return keccak256(abi.encodePacked(account, planetId));
+        return keccak256(abi.encodePacked(planetId, account));
     }
 
     function _verify(bytes32 leaf, bytes32[] memory proof)
@@ -66,7 +66,10 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
         _safeMint(to, planetId);
     }
 
-    function safeMint(address to, uint256[] calldata planetId) public onlyOwner {
+    function safeMint(address to, uint256[] calldata planetId)
+        public
+        onlyOwner
+    {
         for (uint256 i = 0; i < planetId.length; i++) {
             safeMint(to, planetId[i]);
         }

@@ -6,11 +6,11 @@ import MerkleTree from "merkletreejs";
 import { keccak256 } from "keccak256";
 
 
-export function hash(account: string, id: number): Buffer {
+export function hash(id: number, account: string): Buffer {
   return Buffer.from(
     ethers.utils.solidityKeccak256(
-      ['address', 'uint256'],
-      [account, id]
+      ['uint256', 'address'],
+      [id, account]
     ).slice(2), 'hex');
 }
 
@@ -18,12 +18,13 @@ export async function makeTestMerkleTree(accounts: Signer[]): Promise<MerkleTree
   const leaf = []
   // Account 0 owns planets 0, 1, 2, 3, 4
   for (let i = 0; i < 5; i++) {
-    leaf.push(hash(await accounts[0].getAddress(), i));
+    leaf.push(hash(i, await accounts[0].getAddress()));
+
   }
 
   // Account 1 owns planet 5, 6, 7, 8, 9
   for (let i = 5; i < 10; i++) {
-    leaf.push(hash(await accounts[1].getAddress(), i));
+    leaf.push(hash(i, await accounts[1].getAddress()));
   }
 
   return new MerkleTree(leaf, keccak256, { sortPairs: true });
@@ -49,7 +50,7 @@ describe("Planets", function () {
     await planets.connect(accounts[0]).claim(
       address,
       0,
-      merkleTree.getHexProof(hash(address, 0))
+      merkleTree.getHexProof(hash(0, address))
     );
   });
 
