@@ -54,23 +54,68 @@ describe("Planets", function () {
   });
 
   it("should be able to claim multiple", async function () {
+    const address = await accounts[0].getAddress();
 
+    for (let i = 0; i < 5; i++) {
+      await planets.connect(accounts[0]).claim(
+        address,
+        i,
+        merkleTree.getHexProof(hash(i, address))
+      );
+    }
   });
 
   it("should not be able to claim someone else's", async function () {
-
+    const address = await accounts[1].getAddress();
+    expect(planets.connect(accounts[1]).claim(
+      address,
+      0,
+      merkleTree.getHexProof(hash(0, address))
+    ))
+      // @ts-ignore
+      .to.be.revertedWith("Bad merkle proof");
   });
 
   it("should not be able to claim the same planet twice", async function () {
+    const address = await accounts[0].getAddress();
 
+    await planets.connect(accounts[0]).claim(
+      address,
+      0,
+      merkleTree.getHexProof(hash(0, address))
+    );
+
+    expect(planets.connect(accounts[0]).claim(
+      address,
+      0,
+      merkleTree.getHexProof(hash(0, address))
+    ))
+      // @ts-ignore
+      .to.be.revertedWith("ERC721: token already minted");
   });
 
   it("should have the right uri", async function () {
+    const address = await accounts[0].getAddress();
 
+    await planets.connect(accounts[0]).claim(
+      address,
+      0,
+      merkleTree.getHexProof(hash(0, address))
+    );
+
+    expect(await planets.tokenURI(0)).to.equal("example.com/0");
   });
 
   it("should be able to change uri", async function () {
+    const address = await accounts[0].getAddress();
 
+    await planets.connect(accounts[0]).claim(
+      address,
+      0,
+      merkleTree.getHexProof(hash(0, address))
+    );
+
+    await planets.connect(accounts[0]).updateBaseURI("emmy.org/");    
+    expect(await planets.tokenURI(0)).to.equal("emmy.org/0");
   });
-
 });
