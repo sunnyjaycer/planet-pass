@@ -8,6 +8,8 @@ from PIL import Image
 
 folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v1"
 
+number_of_anomalies = 12
+
 
 class Manifest:
     def __init__(self, manifest):
@@ -28,15 +30,50 @@ def main():
     stop = increment
 
     for i in range(0, processes):
-        process = multiprocessing.Process(
-            target=worker, args=(start, stop, manifest)
-        )
+        process = multiprocessing.Process(target=worker, args=(start, stop, manifest))
         jobs.append(process)
         start = stop
         stop += increment
 
     [j.start() for j in jobs]
     [j.join() for j in jobs]
+
+    print(f"Generated {n} planets. Now generating anomalies")
+    anomaly(n, manifest)
+
+
+def anomaly(n: int, manifest: Manifest):
+    # Determine who to overwrite
+    anomalies = list(range(0, n))
+    random.shuffle(anomalies)
+
+    for n in range(0, number_of_anomalies):
+        base = get_base()
+        frames, metadata = get_anomaly(manifest, n)
+
+        with open(f"/mnt/e/planetpass/metadata/{str(anomalies[n])}.json", "w") as f:
+            json.dump(metadata, f)
+
+        make_image(frames, base, anomalies[n])
+        print(anomalies[n])
+
+
+def get_anomaly(manifest: Manifest, n: int) -> [List, Dict]:
+    data = {}
+    frames = []
+
+    # Get background as normal
+    background, metadata = get_category(manifest.category("background"))
+    [frames.append(x) for x in background]
+    data.update(metadata)
+
+    # Get the nth item in the list of anomalies
+    nth_anomaly = manifest.category("anomalies")["subcategories"][0]["files"][n]
+    anomaly_files = get_file(nth_anomaly, "anomalies", "anomalies")
+    frames.append(anomaly_files)
+    data["anomaly"] = [nth_anomaly["file"]]
+
+    return frames, data
 
 
 def worker(start: int, stop: int, manifest: Manifest):

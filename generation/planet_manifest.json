@@ -102,11 +102,10 @@
   },
   {
     "category": "planet",
-    "alwaysOn": false,
-    "probability": 0.5,
+    "alwaysOn": true,
     "subcategories": [
       {
-        "subcategory": "planets",
+        "subcategory": "core",
         "multiple": false,
         "alwaysOn": true,
         "probability": 0.5,
@@ -152,7 +151,31 @@
             "probability": 0.5
           },
           {
+            "file": "arches",
+            "probability": 0.5
+          },
+          {
             "file": "canyons",
+            "probability": 0.5
+          },
+          {
+            "file": "crack",
+            "probability": 0.5
+          },
+          {
+            "file": "cracks-1",
+            "probability": 0.5
+          },
+          {
+            "file": "cracks-2",
+            "probability": 0.5
+          },
+          {
+            "file": "craters-1",
+            "probability": 0.5
+          },
+          {
+            "file": "craters-2",
             "probability": 0.5
           },
           {
@@ -164,11 +187,23 @@
             "probability": 0.5
           },
           {
+            "file": "foliage",
+            "probability": 0.5
+          },
+          {
             "file": "fungus",
             "probability": 0.5
           },
           {
-            "file": "gas",
+            "file": "gas-1",
+            "probability": 0.5
+          },
+          {
+            "file": "gas-2",
+            "probability": 0.5
+          },
+          {
+            "file": "gas-3",
             "probability": 0.5
           },
           {
@@ -196,6 +231,10 @@
             "probability": 0.5
           },
           {
+            "file": "metal-wave",
+            "probability": 0.5
+          },
+          {
             "file": "natural",
             "probability": 0.5
           },
@@ -205,6 +244,10 @@
           },
           {
             "file": "polar",
+            "probability": 0.5
+          },
+          {
+            "file": "psychedelic-pipes",
             "probability": 0.5
           },
           {
@@ -236,11 +279,35 @@
             "probability": 0.5
           },
           {
+            "file": "sandscapes",
+            "probability": 0.5
+          },
+          {
+            "file": "sandscapes-2",
+            "probability": 0.5
+          },
+          {
+            "file": "sandscapes-3",
+            "probability": 0.5
+          },
+          {
+            "file": "sandscapes-4",
+            "probability": 0.5
+          },
+          {
             "file": "shattered",
             "probability": 0.5
           },
           {
             "file": "splatter",
+            "probability": 0.5
+          },
+          {
+            "file": "swirls",
+            "probability": 0.5
+          },
+          {
+            "file": "swirls-2",
             "probability": 0.5
           },
           {
@@ -253,6 +320,10 @@
           },
           {
             "file": "tidal",
+            "probability": 0.5
+          },
+          {
+            "file": "trees",
             "probability": 0.5
           }
         ]
@@ -489,6 +560,67 @@
           },
           {
             "file": "ships-triforce",
+            "probability": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "category": "anomalies",
+    "alwaysOn": true,
+    "subcategories": [
+      {
+        "subcategory": "anomalies",
+        "alwaysOn": true,
+        "multiple": false,
+        "files": [
+          {
+            "file": "collapse",
+            "probability": 0.5
+          },
+          {
+            "file": "destroyed",
+            "probability": 0.5
+          },
+          {
+            "file": "donut",
+            "probability": 0.5
+          },
+          {
+            "file": "eden",
+            "probability": 0.5
+          },
+          {
+            "file": "equinox",
+            "probability": 0.5
+          },
+          {
+            "file": "fusion",
+            "probability": 0.5
+          },
+          {
+            "file": "ice",
+            "probability": 0.5
+          },
+          {
+            "file": "marble",
+            "probability": 0.5
+          },
+          {
+            "file": "nova",
+            "probability": 0.5
+          },
+          {
+            "file": "vega",
+            "probability": 0.5
+          },
+          {
+            "file": "wormhole",
+            "probability": 0.5
+          },
+          {
+            "file": "zodiac",
             "probability": 0.5
           }
         ]
