@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
     string private baseURI;
-    bytes32 immutable public root;
+    bytes32 public immutable root;
 
     // Current planet state (see internal docs for what they represent)
     mapping(uint256 => uint256) public planetState;

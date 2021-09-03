@@ -3,7 +3,7 @@ import { ethers } from "hardhat";
 import { Signer } from "ethers";
 import { expect } from "chai";
 import MerkleTree from "merkletreejs";
-import { keccak256 } from "keccak256";
+import keccak256 from 'keccak256';
 
 
 export function hash(id: number, account: string): Buffer {
@@ -38,18 +38,9 @@ describe("Planets", function () {
     accounts = await ethers.getSigners();
     merkleTree = await makeTestMerkleTree(accounts);
 
-    // Demonstration that the proof is valid
-    // const root = merkleTree.getHexRoot();
-    // const leaf = hash(0, await accounts[0].getAddress());
-    // const proof = merkleTree.getHexProof(leaf);
-    // console.log(
-    //   merkleTree.verify(proof, leaf, root)
-    // );
-
     const Planets = await ethers.getContractFactory("WanderersPlanet");
     planets = await Planets.connect(accounts[0]).deploy("example.com/", merkleTree.getHexRoot());
     await planets.deployed();
-
   });
 
   it("should be able to claim one", async function () {
