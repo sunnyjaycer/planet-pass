@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { readFileSync, writeFileSync } from "fs";
-import { keccak256 } from "keccak256";
-import { MerkleTree } from "merkletreejs";
+import keccak256 from "keccak256";
+import MerkleTree from "merkletreejs";
 
 // Taken from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 function shuffle(array: Array<number>) {
