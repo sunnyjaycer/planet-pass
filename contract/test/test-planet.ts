@@ -2,78 +2,75 @@
 import { ethers } from "hardhat";
 import { Signer } from "ethers";
 import { expect } from "chai";
+import MerkleTree from "merkletreejs";
+import { keccak256 } from "keccak256";
 
-describe("Token", function () {
+
+export function hash(account: string, id: number): Buffer {
+  return Buffer.from(
+    ethers.utils.solidityKeccak256(
+      ['address', 'uint256'],
+      [account, id]
+    ).slice(2), 'hex');
+}
+
+export async function makeTestMerkleTree(accounts: Signer[]): Promise<MerkleTree> {
+  const leaf = []
+  // Account 0 owns planets 0, 1, 2, 3, 4
+  for (let i = 0; i < 5; i++) {
+    leaf.push(hash(await accounts[0].getAddress(), i));
+  }
+
+  // Account 1 owns planet 5, 6, 7, 8, 9
+  for (let i = 5; i < 10; i++) {
+    leaf.push(hash(await accounts[1].getAddress(), i));
+  }
+
+  return new MerkleTree(leaf, keccak256, { sortPairs: true });
+}
+
+describe("Planets", function () {
   let accounts: Signer[];
-  let planetPass: any;
-  let dummyErc721: any;
+  let planets: any;
+  let merkleTree: MerkleTree;
 
   beforeEach(async function () {
     accounts = await ethers.getSigners();
+    merkleTree = await makeTestMerkleTree(accounts);
 
-    const DummyErc721 = await ethers.getContractFactory("Dummy");
-    dummyErc721 = await DummyErc721.connect(accounts[0]).deploy();
-    await dummyErc721.deployed();
+    const Planets = await ethers.getContractFactory("WanderersPlanet");
+    planets = await Planets.connect(accounts[0]).deploy("example.com/", merkleTree.getHexRoot());
+    await planets.deployed();
 
-    const PlanetPass = await ethers.getContractFactory("WanderersPlanet");
-    planetPass = await PlanetPass.connect(accounts[0]).deploy("example.com/", dummyErc721.address);
-    await planetPass.deployed();
   });
 
   it("should be able to claim one", async function () {
-    // Make token ID 0
-    await dummyErc721.safeMint(await accounts[0].getAddress());
-    // Claim it
-    await planetPass.connect(accounts[0])['safeMint(address,uint256)'](await accounts[0].getAddress(), 0);
+    const address = await accounts[0].getAddress()
+    await planets.connect(accounts[0]).claim(
+      address,
+      0,
+      merkleTree.getHexProof(hash(address, 0))
+    );
   });
 
   it("should be able to claim multiple", async function () {
-    // Make token ID 0 to 9
-    const claim = Array.from(Array(10).keys());
 
-    for (let i = 0; i < claim.length; i++) {
-      await dummyErc721.safeMint(await accounts[0].getAddress());
-    }
-
-    // Claim it
-    await planetPass.connect(accounts[0])['safeMint(address,uint256[])'](await accounts[0].getAddress(), claim);
   });
 
   it("should not be able to claim someone else's", async function () {
-    await dummyErc721.safeMint(await accounts[0].getAddress());
 
-    expect(planetPass.connect(accounts[1])['safeMint(address,uint256)'](await accounts[1].getAddress(), 0))
-    // @ts-ignore
-    .to.be.revertedWith("Sender is not owner of token")
   });
 
-  it("should not be able to claim twice", async function () {
-    await dummyErc721.safeMint(await accounts[0].getAddress());
-    await planetPass.connect(accounts[0])['safeMint(address,uint256)'](await accounts[0].getAddress(), 0);
-    expect(planetPass.connect(accounts[0])['safeMint(address,uint256)'](await accounts[0].getAddress(), 0))
-    // @ts-ignore
-    .to.be.revertedWith("Token already used for claim");
+  it("should not be able to claim the same planet twice", async function () {
+
   });
 
   it("should have the right uri", async function () {
-    // Make token ID 0
-    await dummyErc721.safeMint(await accounts[0].getAddress());
-    // Claim it
-    await planetPass.connect(accounts[0])['safeMint(address,uint256)'](await accounts[0].getAddress(), 0);
 
-    expect(await planetPass.tokenURI(0)).to.equal("example.com/0");
   });
 
   it("should be able to change uri", async function () {
-    // Make token ID 0
-    await dummyErc721.safeMint(await accounts[0].getAddress());
-    // Claim it
-    await planetPass.connect(accounts[0])['safeMint(address,uint256)'](await accounts[0].getAddress(), 0);
 
-    expect(await planetPass.tokenURI(0)).to.equal("example.com/0");
-
-    await planetPass.connect(accounts[0]).updateBaseURI("emmy.org/");
-    expect(await planetPass.tokenURI(0)).to.equal("emmy.org/0");
   });
 
 });
