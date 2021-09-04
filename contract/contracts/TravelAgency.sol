@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract Flashstamp is IERC721Receiver, Ownable {
+contract TravelAgency is IERC721Receiver, Ownable {
     // Basis point: part per 10,000.
     uint256 public constant BASIS_POINTS_DIVISOR = 10000;
 
