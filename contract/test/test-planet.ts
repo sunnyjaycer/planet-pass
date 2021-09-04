@@ -30,7 +30,7 @@ export async function makeTestMerkleTree(accounts: Signer[]): Promise<MerkleTree
   return new MerkleTree(leaf, keccak256, { sortPairs: true });
 }
 
-describe("Planets", function () {
+describe("WanderersPlanet", function () {
   let accounts: Signer[];
   let planets: any;
   let merkleTree: MerkleTree;
@@ -45,60 +45,87 @@ describe("Planets", function () {
   });
 
   describe("claim", function () {
-    it("should be able to claim one", async function () {
-      const address = await accounts[0].getAddress();
+    context("when claim is disabled", function () {
+      beforeEach(async function () {
+        await planets.disableClaim();
+      })
 
-      await planets.connect(accounts[0]).claim(
-        address,
-        0,
-        merkleTree.getHexProof(hash(0, address))
-      );
-    });
+      it("should not be able to claim", async function () {
+        const address = await accounts[0].getAddress();
 
-    it("should be able to claim multiple", async function () {
-      const address = await accounts[0].getAddress();
+        await expect(planets.connect(accounts[0]).claim(
+          address,
+          0,
+          merkleTree.getHexProof(hash(0, address))
+        ))
+          // @ts-ignore
+          .to.be.revertedWith("Claim disabled");
+      })
+    })
 
-      for (let i = 0; i < 5; i++) {
+    context("when claim is enabled", function () {
+      beforeEach(async function () {
+        await planets.enableClaim();
+      });
+
+      it("should be able to claim one", async function () {
+        const address = await accounts[0].getAddress();
+
         await planets.connect(accounts[0]).claim(
           address,
-          i,
-          merkleTree.getHexProof(hash(i, address))
+          0,
+          merkleTree.getHexProof(hash(0, address))
         );
-      }
-    });
+      });
 
-    it("should not be able to claim someone else's", async function () {
-      const address = await accounts[1].getAddress();
-      await expect(planets.connect(accounts[1]).claim(
-        address,
-        0,
-        merkleTree.getHexProof(hash(0, address))
-      ))
-        // @ts-ignore
-        .to.be.revertedWith("Bad merkle proof");
-    });
+      it("should be able to claim multiple", async function () {
+        const address = await accounts[0].getAddress();
 
-    it("should not be able to claim the same planet twice", async function () {
-      const address = await accounts[0].getAddress();
+        for (let i = 0; i < 5; i++) {
+          await planets.connect(accounts[0]).claim(
+            address,
+            i,
+            merkleTree.getHexProof(hash(i, address))
+          );
+        }
+      });
 
-      await planets.connect(accounts[0]).claim(
-        address,
-        0,
-        merkleTree.getHexProof(hash(0, address))
-      );
+      it("should not be able to claim someone else's", async function () {
+        const address = await accounts[1].getAddress();
+        await expect(planets.connect(accounts[1]).claim(
+          address,
+          0,
+          merkleTree.getHexProof(hash(0, address))
+        ))
+          // @ts-ignore
+          .to.be.revertedWith("Bad merkle proof");
+      });
 
-      await expect(planets.connect(accounts[0]).claim(
-        address,
-        0,
-        merkleTree.getHexProof(hash(0, address))
-      ))
-        // @ts-ignore
-        .to.be.revertedWith("ERC721: token already minted");
-    });
+      it("should not be able to claim the same planet twice", async function () {
+        const address = await accounts[0].getAddress();
+
+        await planets.connect(accounts[0]).claim(
+          address,
+          0,
+          merkleTree.getHexProof(hash(0, address))
+        );
+
+        await expect(planets.connect(accounts[0]).claim(
+          address,
+          0,
+          merkleTree.getHexProof(hash(0, address))
+        ))
+          // @ts-ignore
+          .to.be.revertedWith("ERC721: token already minted");
+      });
+    })
   });
 
-
   describe("uri", function () {
+    beforeEach(async function () {
+      await planets.enableClaim();
+    });
+
     it("should have the right uri", async function () {
       const address = await accounts[0].getAddress();
 
