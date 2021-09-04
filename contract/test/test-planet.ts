@@ -187,4 +187,58 @@ describe("WanderersPlanet", function () {
                 .to.be.revertedWith("Ownable: caller is not the owner");
         });
     });
+
+    describe("setPlanetState", function () {
+        let multiTokens: number[];
+        beforeEach(async function () {
+            const address = await accounts[0].getAddress();
+            multiTokens = [...Array(25).keys()];
+            await planets.connect(accounts[0])['safeMint(address,uint256[])'](address, multiTokens);
+        });
+
+        it("should be able to update planet state", async function () {
+            expect(await planets.planetState(0)).to.equal(0);
+            await planets.connect(accounts[0])['setPlanetState(uint256,uint256)'](0, 1);
+            expect(await planets.planetState(0)).to.equal(1);
+        });
+
+        it("should be able to batch-update planet state", async function () {
+            for (let i = 0; i < 25; i++) {
+                expect(await planets.planetState(i)).to.equal(0);
+            }
+
+            await planets.connect(accounts[0])['setPlanetState(uint256[],uint256)'](multiTokens, 1);
+
+            for (let i = 0; i < 25; i++) {
+                expect(await planets.planetState(i)).to.equal(1);
+            }
+        })
+
+        it("non-owners should not be able to update planet state", async function () {
+            for (let i = 0; i < 25; i++) {
+                expect(await planets.planetState(i)).to.equal(0);
+            }
+
+            await expect(
+                planets.connect(accounts[1])['setPlanetState(uint256[],uint256)'](multiTokens, 1)
+            )
+                // @ts-ignore
+                .to.be.revertedWith("Ownable: caller is not the owner");
+
+            for (let i = 0; i < 25; i++) {
+                expect(await planets.planetState(i)).to.equal(0);
+            }
+        })
+
+        it("non-owners should not be able to batch-update planet state", async function () {
+            expect(await planets.planetState(0)).to.equal(0);
+            await expect(
+                planets.connect(accounts[1])['setPlanetState(uint256,uint256)'](0, 1)
+            )
+                // @ts-ignore
+                .to.be.revertedWith("Ownable: caller is not the owner");
+
+            expect(await planets.planetState(0)).to.equal(0);
+        })
+    })
 });
