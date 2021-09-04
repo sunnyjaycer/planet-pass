@@ -1,0 +1,160 @@
+// @ts-ignore
+import { ethers } from "hardhat";
+import { Signer } from "ethers";
+import { expect } from "chai";
+import MerkleTree from "merkletreejs";
+import { keccak256 } from "ethers/lib/utils";
+
+describe("WanderersPass", function () {
+    let accounts: Signer[];
+    let planets: any;
+    let pass: any;
+
+    beforeEach(async function () {
+        accounts = await ethers.getSigners();
+
+        const zero = "0x0000000000000000000000000000000000000000000000000000000000000000"
+        const Planets = await ethers.getContractFactory("WanderersPlanet");
+        planets = await Planets.connect(accounts[0]).deploy("example.com/", zero);
+        await planets.deployed();
+
+        const Pass = await ethers.getContractFactory("WanderersPass");
+        pass = await Pass.connect(accounts[0]).deploy(planets.address);
+        await pass.deployed();
+    })
+
+    describe("safeMint", function () {
+        context("when pass creation is disabled", function () {
+            beforeEach(async function () {
+                // If not paused, then pause
+                if (!pass.paused()) {
+                    await pass.pause();
+                }
+            })
+
+            it("should not be able to make a new pass", async function () {
+                const address = accounts[0].getAddress();
+                await expect(
+                    pass.connect(accounts[0]).safeMint(address, "Test")
+                )
+                    // @ts-ignore
+                    .to.be.revertedWith("Pausable: paused")
+            });
+        })
+
+        context("when pass creation is enabled", function () {
+            beforeEach(async function () {
+                if (pass.paused()) {
+                    await pass.unpause();
+                }
+            })
+
+            it("should be able to make a new pass", async function () {
+                const address = accounts[0].getAddress();
+                await pass.connect(accounts[0]).safeMint(address, "Test");
+            });
+
+            it("should be able to make a new pass with the same name", async function () {
+                const address = accounts[0].getAddress();
+                await pass.connect(accounts[0]).safeMint(address, "Test");
+                await pass.connect(accounts[0]).safeMint(address, "Test");
+                await pass.connect(accounts[1]).safeMint(accounts[1].getAddress(), "Test");
+            });
+        })
+    });
+
+    describe("visitPlanet", function () {
+        beforeEach(async function () {
+            // Override batch-mint
+            await planets.connect(accounts[0])['safeMint(address,uint256[])'](accounts[0].getAddress(), [0, 1, 2, 3, 4]);
+            await planets.connect(accounts[0])['safeMint(address,uint256[])'](accounts[1].getAddress(), [5, 6, 7, 8, 9]);
+
+            if (pass.paused()) {
+                await pass.unpause();
+            }
+            await pass.connect(accounts[0]).safeMint(accounts[0].getAddress(), "One");
+            await pass.connect(accounts[1]).safeMint(accounts[1].getAddress(), "Two");
+
+        });
+
+        it("should be able to stamp a planet", async function () {
+            await expect(
+                pass.connect(accounts[0])['visitPlanet(uint256,uint256)'](0, 0)
+            )
+                // @ts-ignore
+                .to.emit(pass, 'Stamp')
+                .withArgs(
+                    accounts[0].getAddress,
+                    0,
+                    0,
+                    0
+                );
+
+            expect((await pass.getStamps(0)).length).to.equal(1);
+        });
+
+        it("should not be able to stamp with non-owned planet", async function () {
+            // 5-9 owned by account 1
+            await expect(
+                pass.connect(accounts[0])['visitPlanet(uint256,uint256)'](0, 6)
+            )
+                // @ts-ignore
+                .to.be.revertedWith("Not owner of planet");
+        });
+
+        it("should not be able to stamp a non-owned pass", async function () {
+            await expect(
+                pass.connect(accounts[0])['visitPlanet(uint256,uint256)'](1, 0)
+            )
+                // @ts-ignore
+                .to.be.revertedWith("Not owner of pass");
+        });
+
+        it("should be able to batch-stamp", async function () {
+            await expect(
+                pass.connect(accounts[0])['visitPlanet(uint256,uint256[])'](0, [0, 1, 2])
+            )
+                // @ts-ignore
+                .to.emit(pass, 'Stamp')
+                .withArgs(
+                    accounts[0].getAddress,
+                    0,
+                    0,
+                    0
+                )
+                .to.emit(pass, 'Stamp')
+                .withArgs(
+                    accounts[0].getAddress,
+                    0,
+                    1,
+                    0
+                )
+                .to.emit(pass, 'Stamp')
+                .withArgs(
+                    accounts[0].getAddress,
+                    0,
+                    2,
+                    0
+                );
+
+            expect((await pass.getStamps(0)).length).to.equal(3);
+        })
+
+        it("should not be able to batch-stamp with non-owned planet", async function () {
+            // 9 is not owned
+            await expect(
+                pass.connect(accounts[0])['visitPlanet(uint256,uint256[])'](0, [0, 1, 2, 9])
+            )
+                // @ts-ignore
+                .to.be.revertedWith("Not owner of planet");
+        });
+
+        it("should not be able to batch-stamp a non-owned pass", async function () {
+            await expect(
+                pass.connect(accounts[0])['visitPlanet(uint256,uint256[])'](1, [0, 1, 2, 3])
+            )
+                // @ts-ignore
+                .to.be.revertedWith("Not owner of pass");
+        });
+    })
+})
