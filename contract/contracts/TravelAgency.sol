@@ -6,8 +6,9 @@ import "./WanderersPass.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
-contract TravelAgency is IERC721Receiver, Ownable {
+contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     // Basis point: part per 10,000.
     uint256 public constant BASIS_POINTS_DIVISOR = 10000;
 
@@ -33,6 +34,14 @@ contract TravelAgency is IERC721Receiver, Ownable {
 
     constructor(uint256 _ownerFeeBp) {
         ownerFeeBp = _ownerFeeBp;
+    }
+
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    function unpause() public onlyOwner {
+        _unpause();
     }
 
     // Perform a flash-stamp of planetId onto passId.
