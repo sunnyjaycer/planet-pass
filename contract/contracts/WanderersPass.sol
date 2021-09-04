@@ -5,9 +5,10 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 import "./WanderersPlanet.sol";
 
-contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
+contract WanderersPass is ERC721, ERC721Enumerable, Ownable, Pausable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
@@ -37,15 +38,32 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
 
     constructor(address _planet) ERC721("WanderersPass", "WANDERER-PASS") {
         planet = WanderersPlanet(_planet);
+        pause();
     }
 
-    function safeMint(address to, string memory _name) public {
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    function unpause() public onlyOwner {
+        _unpause();
+    }
+
+    function safeMint(address to, string memory _name) public whenNotPaused {
         passName[_tokenIdCounter.current()] = _name;
         _safeMint(to, _tokenIdCounter.current());
         _tokenIdCounter.increment();
     }
 
-    function visitPlanet(uint256 id, uint256 planetId) public {
+    function makePassStamp(uint256 planetId)
+        internal
+        view
+        returns (PassStamp memory)
+    {
+        return PassStamp(planetId, planet.planetState(planetId));
+    }
+
+    function visitPlanet(uint256 id, uint256 planetId) public whenNotPaused {
         // Make sure planet is owned by sender
         require(planet.ownerOf(planetId) == msg.sender, "Not owner of planet");
         // Make sure pass is owned by sender
@@ -56,14 +74,10 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
         emit Stamp(msg.sender, id, planetId, planet.planetState(planetId));
     }
 
-    function makePassStamp(uint256 planetId) internal view returns (PassStamp memory) {
-        return PassStamp(
-            planetId,
-            planet.planetState(planetId)
-        );
-    }
-
-    function visitPlanet(uint256 id, uint256[] calldata planetIds) public {
+    function visitPlanet(uint256 id, uint256[] calldata planetIds)
+        public
+        whenNotPaused
+    {
         // Make sure pass is owned by sender
         require(ownerOf(id) == msg.sender, "Not owner of pass");
 
