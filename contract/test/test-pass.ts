@@ -90,7 +90,11 @@ describe("WanderersPass", function () {
                     0
                 );
 
-            expect((await pass.getStamps(0)).length).to.equal(1);
+            const stamps = await pass.getStamps(0);
+
+            expect(stamps.length).to.equal(1);
+            expect(stamps[0]["planetId"]).to.equal(0);
+            expect(stamps[0]["state"]).to.equal(0);
         });
 
         it("should not be able to stamp with non-owned planet", async function () {
@@ -111,8 +115,9 @@ describe("WanderersPass", function () {
         });
 
         it("should be able to batch-stamp", async function () {
+            const stampPlanets = [0, 1, 2];
             await expect(
-                pass.connect(accounts[0])['visitPlanet(uint256,uint256[])'](0, [0, 1, 2])
+                pass.connect(accounts[0])['visitPlanet(uint256,uint256[])'](0, stampPlanets)
             )
                 // @ts-ignore
                 .to.emit(pass, 'Stamp')
@@ -137,7 +142,13 @@ describe("WanderersPass", function () {
                     0
                 );
 
-            expect((await pass.getStamps(0)).length).to.equal(3);
+            const stamps = await pass.getStamps(0);
+
+            expect(stamps.length).to.equal(3);
+            for (let i = 0; i < 3; i++) {
+                expect(stamps[i]["planetId"]).to.equal(stampPlanets[i]);
+                expect(stamps[i]["state"]).to.equal(0);
+            }
         })
 
         it("should not be able to batch-stamp with non-owned planet", async function () {
@@ -156,5 +167,51 @@ describe("WanderersPass", function () {
                 // @ts-ignore
                 .to.be.revertedWith("Not owner of pass");
         });
+
+        it("should be able to stamp into the correct passport", async function () {
+            // ID = 2
+            await pass.connect(accounts[0]).safeMint(accounts[0].getAddress(), "Another One");
+
+            await expect(
+                pass.connect(accounts[0])['visitPlanet(uint256,uint256)'](0, 0)
+            )
+                // @ts-ignore
+                .to.emit(pass, 'Stamp')
+                .withArgs(
+                    accounts[0].getAddress,
+                    0,
+                    0,
+                    0
+                );
+
+            const stamps = await pass.getStamps(0);
+
+            expect(stamps.length).to.equal(1);
+            expect(stamps[0]["planetId"]).to.equal(0);
+            expect(stamps[0]["state"]).to.equal(0);
+
+            await expect(
+                pass.connect(accounts[0])['visitPlanet(uint256,uint256)'](2, 1)
+            )
+                // @ts-ignore
+                .to.emit(pass, 'Stamp')
+                .withArgs(
+                    accounts[0].getAddress,
+                    2,
+                    1,
+                    0
+                );
+
+            const stampsTwo = await pass.getStamps(2);
+            expect(stampsTwo.length).to.equal(1);
+            expect(stampsTwo[0]["planetId"]).to.equal(1);
+            expect(stampsTwo[0]["state"]).to.equal(0);
+
+            const stampsOriginal = await pass.getStamps(0);
+            expect(stampsOriginal.length).to.equal(1);
+            expect(stampsOriginal[0]["planetId"]).to.equal(0);
+            expect(stampsOriginal[0]["state"]).to.equal(0);
+
+        })
     })
 })
