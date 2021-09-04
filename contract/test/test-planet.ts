@@ -67,7 +67,7 @@ describe("Planets", function () {
 
   it("should not be able to claim someone else's", async function () {
     const address = await accounts[1].getAddress();
-    expect(planets.connect(accounts[1]).claim(
+    await expect(planets.connect(accounts[1]).claim(
       address,
       0,
       merkleTree.getHexProof(hash(0, address))
@@ -85,7 +85,7 @@ describe("Planets", function () {
       merkleTree.getHexProof(hash(0, address))
     );
 
-    expect(planets.connect(accounts[0]).claim(
+    await expect(planets.connect(accounts[0]).claim(
       address,
       0,
       merkleTree.getHexProof(hash(0, address))
@@ -115,7 +115,14 @@ describe("Planets", function () {
       merkleTree.getHexProof(hash(0, address))
     );
 
-    await planets.connect(accounts[0]).updateBaseURI("emmy.org/");    
+    await planets.connect(accounts[0]).updateBaseURI("emmy.org/");
     expect(await planets.tokenURI(0)).to.equal("emmy.org/0");
+  });
+
+  it("owner should be able to override mint", async function () {
+    const address = await accounts[0].getAddress();
+    await planets.connect(accounts[0])['safeMint(address,uint256)'](address, 0);
+
+    await planets.connect(accounts[0])['safeMint(address,uint256)'](await accounts[1].getAddress(), 1);
   });
 });
