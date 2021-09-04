@@ -213,5 +213,18 @@ describe("WanderersPass", function () {
             expect(stampsOriginal[0]["state"]).to.equal(0);
 
         })
-    })
+    });
+    
+    describe("updatePlanetContract", function () {
+        it("should be able to update planet contract address", async function () {
+            const zero = "0x0000000000000000000000000000000000000000000000000000000000000000"
+            const Planets = await ethers.getContractFactory("WanderersPlanet");
+            const planetsTwo = await Planets.connect(accounts[0]).deploy("updated.com/", zero);
+            await planetsTwo.deployed(); 
+
+            expect(await pass.planetContract()).to.equal(planets.address);
+            await pass.updatePlanetContract(planetsTwo.address);
+            expect(await pass.planetContract()).to.equal(planetsTwo.address);
+        })
+    });
 })
