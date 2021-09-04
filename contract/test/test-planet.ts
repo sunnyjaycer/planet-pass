@@ -5,7 +5,7 @@ import { expect } from "chai";
 import MerkleTree from "merkletreejs";
 import keccak256 from 'keccak256';
 
-
+// Hashing function that uses Solidity's tightly-packing + keccak256
 export function hash(id: number, account: string): Buffer {
   return Buffer.from(
     ethers.utils.solidityKeccak256(
@@ -14,6 +14,7 @@ export function hash(id: number, account: string): Buffer {
     ).slice(2), 'hex');
 }
 
+// Generate a test merkle tree for use in claims
 export async function makeTestMerkleTree(accounts: Signer[]): Promise<MerkleTree> {
   const leaf = []
   // Account 0 owns planets 0, 1, 2, 3, 4
@@ -43,86 +44,120 @@ describe("Planets", function () {
     await planets.deployed();
   });
 
-  it("should be able to claim one", async function () {
-    const address = await accounts[0].getAddress();
+  describe("claim", function () {
+    it("should be able to claim one", async function () {
+      const address = await accounts[0].getAddress();
 
-    await planets.connect(accounts[0]).claim(
-      address,
-      0,
-      merkleTree.getHexProof(hash(0, address))
-    );
-  });
-
-  it("should be able to claim multiple", async function () {
-    const address = await accounts[0].getAddress();
-
-    for (let i = 0; i < 5; i++) {
       await planets.connect(accounts[0]).claim(
         address,
-        i,
-        merkleTree.getHexProof(hash(i, address))
+        0,
+        merkleTree.getHexProof(hash(0, address))
       );
-    }
+    });
+
+    it("should be able to claim multiple", async function () {
+      const address = await accounts[0].getAddress();
+
+      for (let i = 0; i < 5; i++) {
+        await planets.connect(accounts[0]).claim(
+          address,
+          i,
+          merkleTree.getHexProof(hash(i, address))
+        );
+      }
+    });
+
+    it("should not be able to claim someone else's", async function () {
+      const address = await accounts[1].getAddress();
+      await expect(planets.connect(accounts[1]).claim(
+        address,
+        0,
+        merkleTree.getHexProof(hash(0, address))
+      ))
+        // @ts-ignore
+        .to.be.revertedWith("Bad merkle proof");
+    });
+
+    it("should not be able to claim the same planet twice", async function () {
+      const address = await accounts[0].getAddress();
+
+      await planets.connect(accounts[0]).claim(
+        address,
+        0,
+        merkleTree.getHexProof(hash(0, address))
+      );
+
+      await expect(planets.connect(accounts[0]).claim(
+        address,
+        0,
+        merkleTree.getHexProof(hash(0, address))
+      ))
+        // @ts-ignore
+        .to.be.revertedWith("ERC721: token already minted");
+    });
   });
 
-  it("should not be able to claim someone else's", async function () {
-    const address = await accounts[1].getAddress();
-    await expect(planets.connect(accounts[1]).claim(
-      address,
-      0,
-      merkleTree.getHexProof(hash(0, address))
-    ))
-      // @ts-ignore
-      .to.be.revertedWith("Bad merkle proof");
+
+  describe("uri", function () {
+    it("should have the right uri", async function () {
+      const address = await accounts[0].getAddress();
+
+      await planets.connect(accounts[0]).claim(
+        address,
+        0,
+        merkleTree.getHexProof(hash(0, address))
+      );
+
+      expect(await planets.tokenURI(0)).to.equal("example.com/0");
+    });
+
+    it("should be able to change uri", async function () {
+      const address = await accounts[0].getAddress();
+
+      await planets.connect(accounts[0]).claim(
+        address,
+        0,
+        merkleTree.getHexProof(hash(0, address))
+      );
+
+      await planets.connect(accounts[0]).updateBaseURI("emmy.org/");
+      expect(await planets.tokenURI(0)).to.equal("emmy.org/0");
+    });
   });
 
-  it("should not be able to claim the same planet twice", async function () {
-    const address = await accounts[0].getAddress();
+  describe("safeMint", function () {
+    it("owner should be able to override mint", async function () {
+      const address = await accounts[0].getAddress();
+      await planets.connect(accounts[0])['safeMint(address,uint256)'](address, 0);
 
-    await planets.connect(accounts[0]).claim(
-      address,
-      0,
-      merkleTree.getHexProof(hash(0, address))
-    );
+      await planets.connect(accounts[0])['safeMint(address,uint256)'](await accounts[1].getAddress(), 1);
+    });
 
-    await expect(planets.connect(accounts[0]).claim(
-      address,
-      0,
-      merkleTree.getHexProof(hash(0, address))
-    ))
-      // @ts-ignore
-      .to.be.revertedWith("ERC721: token already minted");
-  });
+    it("non-owner should not be able to override mint", async function () {
+      const address = await accounts[1].getAddress();
+      await expect(
+        planets.connect(accounts[1])['safeMint(address,uint256)'](address, 0)
+      )
+        // @ts-ignore
+        .to.be.revertedWith("Ownable: caller is not the owner");
+    });
 
-  it("should have the right uri", async function () {
-    const address = await accounts[0].getAddress();
+    it("owner should be able to override batch-mint", async function () {
+      const address = await accounts[0].getAddress();
+      const tokensToMint = [...Array(25).keys()];
 
-    await planets.connect(accounts[0]).claim(
-      address,
-      0,
-      merkleTree.getHexProof(hash(0, address))
-    );
+      await planets.connect(accounts[0])['safeMint(address,uint256[])'](address, tokensToMint);
+    });
 
-    expect(await planets.tokenURI(0)).to.equal("example.com/0");
-  });
+    it("non-owner should not be able to override batch-mint", async function () {
+      const address = await accounts[1].getAddress();
+      const tokensToMint = [...Array(25).keys()];
 
-  it("should be able to change uri", async function () {
-    const address = await accounts[0].getAddress();
-
-    await planets.connect(accounts[0]).claim(
-      address,
-      0,
-      merkleTree.getHexProof(hash(0, address))
-    );
-
-    await planets.connect(accounts[0]).updateBaseURI("emmy.org/");
-    expect(await planets.tokenURI(0)).to.equal("emmy.org/0");
-  });
-
-  it("owner should be able to override mint", async function () {
-    const address = await accounts[0].getAddress();
-    await planets.connect(accounts[0])['safeMint(address,uint256)'](address, 0);
-
-    await planets.connect(accounts[0])['safeMint(address,uint256)'](await accounts[1].getAddress(), 1);
+      await expect(
+        planets.connect(accounts[1])['safeMint(address,uint256[])'](address, tokensToMint)
+      )
+        // @ts-ignore
+        .to.be.revertedWith("Ownable: caller is not the owner");
+    });
   });
 });
