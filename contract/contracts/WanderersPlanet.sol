@@ -12,7 +12,7 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
     bytes32 public immutable root;
 
     // Claiming enabled or disabled
-    bool public canClaim;
+    bool public claimEnabled;
 
     // Current planet state (see internal docs for what they represent)
     mapping(uint256 => uint256) public planetState;
@@ -22,7 +22,7 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
     {
         baseURI = baseURI_;
         root = _root;
-        canClaim = false;
+        claimEnabled = false;
     }
 
     function _baseURI() internal view override returns (string memory) {
@@ -34,11 +34,11 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
     }
 
     function enableClaim() public onlyOwner {
-        canClaim = true;
+        claimEnabled = true;
     }
 
     function disableClaim() public onlyOwner {
-        canClaim = false;
+        claimEnabled = false;
     }
 
     // Claim planets according to merkle proof
@@ -48,7 +48,7 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
         bytes32[] calldata proof
     ) public {
         // Make sure claim is enabled
-        require(canClaim, "Claim disabled");
+        require(claimEnabled, "Claim disabled");
         // Make sure merkle proof is valid
         require(
             _verify(_leaf(planetId, msg.sender), proof),
