@@ -14,8 +14,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
 
     WanderersPlanet public planetContract;
     WanderersPass public passContract;
-    IERC20 public wEthContract =
-        IERC20(0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619);
+    IERC20 public wrappedEthContract;
 
     // Fee charged by the contract deployer in basis points
     uint256 public ownerFeeBp;
@@ -32,8 +31,16 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     // Mapping of owners to fees accured
     mapping(address => uint256) feesAccrued;
 
-    constructor(uint256 _ownerFeeBp) {
+    constructor(
+        uint256 _ownerFeeBp,
+        WanderersPlanet _planetContract,
+        WanderersPass _passContract,
+        IERC20 _wrappedEthContract
+    ) {
         ownerFeeBp = _ownerFeeBp;
+        planetContract = _planetContract;
+        passContract = _passContract;
+        wrappedEthContract = _wrappedEthContract;
     }
 
     function pause() public onlyOwner {
@@ -42,6 +49,24 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
 
     function unpause() public onlyOwner {
         _unpause();
+    }
+
+    function updatePlanetContract(WanderersPlanet _planetContract)
+        public
+        onlyOwner
+    {
+        planetContract = _planetContract;
+    }
+
+    function updatePassContract(WanderersPass _passContract) public onlyOwner {
+        passContract = _passContract;
+    }
+
+    function updateWrappedEthContract(IERC20 _wrappedEthContract)
+        public
+        onlyOwner
+    {
+        wrappedEthContract = _wrappedEthContract;
     }
 
     // Perform a flash-stamp of planetId onto passId.
@@ -62,7 +87,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
             feesAccrued[planetOwner] += payoutFee;
             ownerFeesAccrued += ownerFee;
 
-            bool success = wEthContract.transferFrom(
+            bool success = wrappedEthContract.transferFrom(
                 msg.sender,
                 address(this),
                 payoutFee
@@ -84,11 +109,11 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         return (fee * ownerFeeBp) / BASIS_POINTS_DIVISOR;
     }
 
-    function withdrawownerFeesAccrued(address to) public onlyOwner {
+    function withdrawOwnerFees(address to) public onlyOwner {
         uint256 transferAmount = ownerFeesAccrued;
         ownerFeesAccrued = 0;
 
-        bool success = wEthContract.transferFrom(
+        bool success = wrappedEthContract.transferFrom(
             address(this),
             to,
             transferAmount
@@ -100,7 +125,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         uint256 transferAmount = feesAccrued[msg.sender];
         feesAccrued[msg.sender] = 0;
 
-        bool success = wEthContract.transferFrom(
+        bool success = wrappedEthContract.transferFrom(
             address(this),
             to,
             transferAmount
