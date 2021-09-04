@@ -23,7 +23,7 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable, Pausable {
     }
 
     // Mapping of ID to an array of stamps
-    mapping(uint256 => PassStamp[]) public stamps;
+    mapping(uint256 => PassStamp[]) private stamps;
 
     // Planet contract
     WanderersPlanet public planet;
@@ -61,6 +61,10 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable, Pausable {
         returns (PassStamp memory)
     {
         return PassStamp(planetId, planet.planetState(planetId));
+    }
+
+    function getStamps(uint256 id) public view returns (PassStamp[] memory) {
+        return stamps[id];
     }
 
     function visitPlanet(uint256 id, uint256 planetId) public whenNotPaused {
