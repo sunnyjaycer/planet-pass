@@ -131,7 +131,7 @@ describe("TravelAgency", function () {
 
         context("when not paused", function () {
             beforeEach(async function () {
-                if (agency.paused()) {
+                if (await agency.paused()) {
                     await agency.unpause();
                 }
             });
@@ -252,15 +252,15 @@ describe("TravelAgency", function () {
             await pass.connect(accounts[0]).setApprovalForAll(agency.address, true);
             await pass.connect(accounts[1]).setApprovalForAll(agency.address, true);
             await pass.connect(accounts[2]).setApprovalForAll(agency.address, true);
-
-            if (agency.paused()) {
-                await agency.unpause();
-            }
         });
 
-        context("with zero owner fees", function () {
+        context("when paused", function () {
             beforeEach(async function () {
-                // Account 1 deposits planet 0
+                if (await agency.paused()) {
+                    await agency.unpause();
+                }
+
+                // Account 0 deposits planet 0
                 const cost = solidityPack(["uint256"], [parseEther("0")]);
                 await planets.connect(accounts[0])['safeTransferFrom(address,address,uint256,bytes)'](
                     await accounts[0].getAddress(),
@@ -268,69 +268,278 @@ describe("TravelAgency", function () {
                     0,
                     cost
                 );
-            });
 
-            context("with zero operator fees", async function () {
-                beforeEach(async function () {
-                    await agency.updateOperatorFeeBp(0);
-                });
-
-                for (const [name, test] of Object.entries(flashStampTests)) {
-                    it(name, test);
+                if (!await agency.paused()) {
+                    await agency.pause();
                 }
             });
 
-            context("with non-zero operator fees", async function () {
-                beforeEach(async function () {
-                    await agency.updateOperatorFeeBp(500);
-                });
-
-                for (const [name, test] of Object.entries(flashStampTests)) {
-                    it(name, test);
-                }
-            });
-
-            afterEach(async function () {
-                // Zero owner fees implies zero operator fees
-                expect(await agency.ownerFeesAccrued(accounts[0].getAddress())).to.equal(0);
-                expect(await agency.operatorFeeAccrued()).to.equal(0);
+            it("should not able to use flashStamp", async function () {
+                await expect(
+                    agency.connect(accounts[2]).flashStamp(0, 2)
+                )
+                    .to.be.revertedWith("Pausable: paused");
             });
         });
 
-        context("with non-zero owner fees", function () {
-            let costWei: BigNumber;
-
+        context("when not paused", function () {
             beforeEach(async function () {
-                // Account 1 deposits planet 0
-                costWei = parseEther("10");
-                const cost = solidityPack(["uint256"], [costWei]);
-                await planets.connect(accounts[0])['safeTransferFrom(address,address,uint256,bytes)'](
-                    await accounts[0].getAddress(),
+                if (await agency.paused()) {
+                    await agency.unpause();
+                }
+            });
+
+            context("with zero owner fees", function () {
+                beforeEach(async function () {
+                    // Account 0 deposits planet 0
+                    const cost = solidityPack(["uint256"], [parseEther("0")]);
+                    await planets.connect(accounts[0])['safeTransferFrom(address,address,uint256,bytes)'](
+                        await accounts[0].getAddress(),
+                        agency.address,
+                        0,
+                        cost
+                    );
+                });
+    
+                context("with zero operator fees", async function () {
+                    beforeEach(async function () {
+                        await agency.updateOperatorFeeBp(0);
+                    });
+    
+                    for (const [name, test] of Object.entries(flashStampTests)) {
+                        it(name, test);
+                    }
+                });
+    
+                context("with non-zero operator fees", async function () {
+                    beforeEach(async function () {
+                        await agency.updateOperatorFeeBp(500);
+                    });
+    
+                    for (const [name, test] of Object.entries(flashStampTests)) {
+                        it(name, test);
+                    }
+                });
+    
+                afterEach(async function () {
+                    // Zero owner fees implies zero operator fees
+                    expect(await agency.ownerFeesAccrued(accounts[0].getAddress())).to.equal(0);
+                    expect(await agency.operatorFeeAccrued()).to.equal(0);
+                });
+            });
+
+            context("with non-zero owner fees", function () {
+                let costWei: BigNumber;
+    
+                beforeEach(async function () {
+                    // Account 0 deposits planet 0
+                    costWei = parseEther("10");
+                    const cost = solidityPack(["uint256"], [costWei]);
+                    await planets.connect(accounts[0])['safeTransferFrom(address,address,uint256,bytes)'](
+                        await accounts[0].getAddress(),
+                        agency.address,
+                        0,
+                        cost
+                    );
+                });
+    
+                context("with zero operator fees", async function () {
+                    beforeEach(async function () {
+                        await agency.updateOperatorFeeBp(0);
+                    });
+    
+                    for (const [name, test] of Object.entries(flashStampTests)) {
+                        it(name, test);
+                    }
+                });
+    
+                context("with non-zero operator fees", async function () {
+                    beforeEach(async function () {
+                        await agency.updateOperatorFeeBp(500);
+                    });
+    
+                    for (const [name, test] of Object.entries(flashStampTests)) {
+                        it(name, test);
+                    }
+                });
+            });
+        });
+    });
+
+    describe("withdrawOwnerFees", function () {
+        let visitCost: BigNumber;
+
+        beforeEach(async function () {
+            // Override batch-mint
+            await planets.connect(accounts[0])['safeMint(address,uint256[])'](accounts[1].getAddress(), [0, 1, 2, 3, 4]);
+
+            // Set up passes
+            await pass.connect(accounts[2]).safeMint(accounts[2].getAddress(), "Two");
+
+            // Send 100 WETH to Address 2
+            await dummyWeth.connect(accounts[0]).transfer(await accounts[2].getAddress(), parseEther("100"));
+
+            // Allow TravelAgency to spend WETH
+            await dummyWeth.connect(accounts[2]).approve(agency.address, parseEther("1000000"));
+
+            // Allow TravelAgency to use Passes
+            await pass.connect(accounts[2]).setApprovalForAll(agency.address, true);
+
+            // Make sure operator fee is 0
+            await agency.updateOperatorFeeBp(0);
+
+            if (await agency.paused()) {
+                await agency.unpause();
+            }
+
+            // Account 1 deposits planet 0
+            visitCost = parseEther("10");
+            const costPacked = solidityPack(["uint256"], [visitCost]);
+            await planets.connect(accounts[1])['safeTransferFrom(address,address,uint256,bytes)'](
+                await accounts[1].getAddress(),
+                agency.address,
+                0,
+                costPacked
+            );
+
+            // Account 1 uses travel agency on planet 0 for pass 0
+            await agency.connect(accounts[2]).flashStamp(0, 0);
+        });
+
+        it("should be able to withdraw fees", async function () {
+            await expect(
+                agency.connect(accounts[1]).withdrawOwnerFees(await accounts[1].getAddress())
+            )
+                .to.emit(dummyWeth, "Transfer")
+                .withArgs(
                     agency.address,
-                    0,
-                    cost
+                    await accounts[1].getAddress(),
+                    visitCost
                 );
-            });
 
-            context("with zero operator fees", async function () {
-                beforeEach(async function () {
-                    await agency.updateOperatorFeeBp(0);
-                });
+            expect(await agency.ownerFeesAccrued(await accounts[1].getAddress())).to.equal(0);
+        });
 
-                for (const [name, test] of Object.entries(flashStampTests)) {
-                    it(name, test);
-                }
-            });
+        it("should be able to withdraw fees after multiple visits", async function () {
+            // Visit again
+            await agency.connect(accounts[2]).flashStamp(0, 0);
 
-            context("with non-zero operator fees", async function () {
-                beforeEach(async function () {
-                    await agency.updateOperatorFeeBp(500);
-                });
+            await expect(
+                agency.connect(accounts[1]).withdrawOwnerFees(await accounts[1].getAddress())
+            )
+                .to.emit(dummyWeth, "Transfer")
+                .withArgs(
+                    agency.address,
+                    await accounts[1].getAddress(),
+                    visitCost.mul(2)
+                );
 
-                for (const [name, test] of Object.entries(flashStampTests)) {
-                    it(name, test);
-                }
-            });
+            expect(await agency.ownerFeesAccrued(await accounts[1].getAddress())).to.equal(0);
+        });
+
+        it("should be able to withdraw fees to someone else", async function () {
+            await expect(
+                agency.connect(accounts[1]).withdrawOwnerFees(await accounts[3].getAddress())
+            )
+                .to.emit(dummyWeth, "Transfer")
+                .withArgs(
+                    agency.address,
+                    await accounts[3].getAddress(),
+                    visitCost
+                );
+
+            expect(await agency.ownerFeesAccrued(await accounts[1].getAddress())).to.equal(0);
+        });
+    });
+
+    describe("withdrawOperatorFees", function () {
+        let operatorCut: BigNumber;
+
+        beforeEach(async function () {
+            // Override batch-mint
+            await planets.connect(accounts[0])['safeMint(address,uint256[])'](accounts[0].getAddress(), [0, 1, 2, 3, 4]);
+
+            // Set up passes
+            await pass.connect(accounts[1]).safeMint(accounts[1].getAddress(), "One");
+
+            // Send 100 WETH to Address 1 and 2
+            await dummyWeth.connect(accounts[0]).transfer(await accounts[1].getAddress(), parseEther("100"));
+
+            // Allow TravelAgency to spend WETH
+            await dummyWeth.connect(accounts[0]).approve(agency.address, parseEther("1000000"));
+            await dummyWeth.connect(accounts[1]).approve(agency.address, parseEther("1000000"));
+
+            // Allow TravelAgency to use Passes
+            await pass.connect(accounts[1]).setApprovalForAll(agency.address, true);
+
+            // Make sure operator fee is 0
+            await agency.updateOperatorFeeBp(500);
+
+            if (await agency.paused()) {
+                await agency.unpause();
+            }
+
+            // Account 0 deposits planet 0
+            const visitCost = parseEther("10");
+            const costPacked = solidityPack(["uint256"], [visitCost]);
+            await planets.connect(accounts[0])['safeTransferFrom(address,address,uint256,bytes)'](
+                await accounts[0].getAddress(),
+                agency.address,
+                0,
+                costPacked
+            );
+
+            // Account 1 uses travel agency on planet 0 for pass 0
+            await agency.connect(accounts[1]).flashStamp(0, 0);
+
+            const feeBp = await agency.operatorFeeBp();
+            const cost = await agency.planetFees(0);
+            operatorCut = cost.mul(feeBp).div(await agency.BASIS_POINTS_DIVISOR());
+        });
+
+        it("should be able to withdraw fees", async function () {
+            await expect(
+                agency.connect(accounts[0]).withdrawOperatorFees(await accounts[0].getAddress())
+            )
+                .to.emit(dummyWeth, "Transfer")
+                .withArgs(
+                    agency.address,
+                    await accounts[0].getAddress(),
+                    operatorCut
+                );
+
+            expect(await agency.operatorFeeAccrued()).to.equal(0);
+        });
+
+        it("should be able to withdraw fees after multiple visits", async function () {
+            // Visit again
+            await agency.connect(accounts[1]).flashStamp(0, 0);
+
+            await expect(
+                agency.connect(accounts[0]).withdrawOperatorFees(await accounts[0].getAddress())
+            )
+                .to.emit(dummyWeth, "Transfer")
+                .withArgs(
+                    agency.address,
+                    await accounts[0].getAddress(),
+                    operatorCut.mul(2)
+                );
+
+            expect(await agency.operatorFeeAccrued()).to.equal(0);
+        });
+
+        it("should be able to withdraw fees to someone else", async function () {
+            await expect(
+                agency.connect(accounts[0]).withdrawOperatorFees(await accounts[1].getAddress())
+            )
+                .to.emit(dummyWeth, "Transfer")
+                .withArgs(
+                    agency.address,
+                    await accounts[1].getAddress(),
+                    operatorCut
+                );
+
+            expect(await agency.operatorFeeAccrued()).to.equal(0);
         });
     });
 })
