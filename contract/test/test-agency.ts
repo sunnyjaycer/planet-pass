@@ -300,27 +300,27 @@ describe("TravelAgency", function () {
                         cost
                     );
                 });
-    
+
                 context("with zero operator fees", async function () {
                     beforeEach(async function () {
                         await agency.updateOperatorFeeBp(0);
                     });
-    
+
                     for (const [name, test] of Object.entries(flashStampTests)) {
                         it(name, test);
                     }
                 });
-    
+
                 context("with non-zero operator fees", async function () {
                     beforeEach(async function () {
                         await agency.updateOperatorFeeBp(500);
                     });
-    
+
                     for (const [name, test] of Object.entries(flashStampTests)) {
                         it(name, test);
                     }
                 });
-    
+
                 afterEach(async function () {
                     // Zero owner fees implies zero operator fees
                     expect(await agency.ownerFeesAccrued(accounts[0].getAddress())).to.equal(0);
@@ -330,7 +330,7 @@ describe("TravelAgency", function () {
 
             context("with non-zero owner fees", function () {
                 let costWei: BigNumber;
-    
+
                 beforeEach(async function () {
                     // Account 0 deposits planet 0
                     costWei = parseEther("10");
@@ -342,26 +342,42 @@ describe("TravelAgency", function () {
                         cost
                     );
                 });
-    
+
                 context("with zero operator fees", async function () {
                     beforeEach(async function () {
                         await agency.updateOperatorFeeBp(0);
                     });
-    
+
                     for (const [name, test] of Object.entries(flashStampTests)) {
                         it(name, test);
                     }
                 });
-    
+
                 context("with non-zero operator fees", async function () {
                     beforeEach(async function () {
                         await agency.updateOperatorFeeBp(500);
                     });
-    
+
                     for (const [name, test] of Object.entries(flashStampTests)) {
                         it(name, test);
                     }
                 });
+
+                it("should not be able to flash-stamp if fee transfer fails", async function () {
+                    // Revoke permission for ETH
+                    await dummyWeth.connect(accounts[2]).approve(agency.address, 0);
+                    await expect(
+                        agency.connect(accounts[2]).flashStamp(0, 0)
+                    )
+                    .to.be.reverted;
+                });
+            });
+
+            it("should not be able to flash-stamp a planet not in contract", async function () {
+                await expect(
+                    agency.connect(accounts[2]).flashStamp(5, 0)
+                )
+                .to.be.revertedWith("Planet not in contract");
             });
         });
     });
@@ -541,5 +557,57 @@ describe("TravelAgency", function () {
 
             expect(await agency.operatorFeeAccrued()).to.equal(0);
         });
+    });
+
+    describe("withdraw", function () {
+        beforeEach(async function () {
+            // Override batch-mint
+            await planets.connect(accounts[0])['safeMint(address,uint256[])'](accounts[0].getAddress(), [0, 1, 2, 3, 4]);
+
+            if (await agency.paused()) {
+                await agency.unpause();
+            }
+
+            // Account 0 deposits planet 0
+            const visitCost = parseEther("10");
+            const costPacked = solidityPack(["uint256"], [visitCost]);
+            await planets.connect(accounts[0])['safeTransferFrom(address,address,uint256,bytes)'](
+                await accounts[0].getAddress(),
+                agency.address,
+                0,
+                costPacked
+            );
+        });
+
+        it("should be able to withdraw", async function () {
+            await expect(
+                agency.connect(accounts[0]).withdraw(await accounts[0].getAddress(), 0)
+            )
+            .to.emit(planets, 'Transfer')
+            .withArgs(
+                agency.address,
+                await accounts[0].getAddress(),
+                0
+            );
+        });
+
+        it("should be able to withdraw to another address", async function () {
+            await expect(
+                agency.connect(accounts[0]).withdraw(await accounts[1].getAddress(), 0)
+            )
+            .to.emit(planets, 'Transfer')
+            .withArgs(
+                agency.address,
+                await accounts[1].getAddress(),
+                0
+            );
+        });
+
+        it("should not be able to withdraw someone else's Planet", async function () {
+            await expect(
+                agency.connect(accounts[1]).withdraw(await accounts[0].getAddress(), 0)
+            )
+            .to.be.revertedWith("Not owner of planet");
+        })
     });
 })
