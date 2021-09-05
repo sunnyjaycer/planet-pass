@@ -33,5 +33,6 @@ export default {
 
   gasReporter: {
     currency: 'USD',
+    excludeContracts: ["DummyWETH.sol"] 
   }
 };

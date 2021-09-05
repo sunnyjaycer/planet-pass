@@ -21,6 +21,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.0",
     "keccak256": "^1.0.3",
-    "merkletreejs": "^0.2.24"
+    "merkletreejs": "^0.2.24",
+    "solidity-bytes-utils": "^0.8.0"
   }
 }
