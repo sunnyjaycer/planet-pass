@@ -41,6 +41,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         planetContract = _planetContract;
         passContract = _passContract;
         wrappedEthContract = _wrappedEthContract;
+        pause();
     }
 
     function pause() public onlyOwner {
