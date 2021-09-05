@@ -118,24 +118,22 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         return (fee * operatorFeeBp) / BASIS_POINTS_DIVISOR;
     }
 
-    function withdrawOwnerFees(address to) public onlyOwner {
+    function withdrawOperatorFees(address to) public onlyOwner {
         uint256 transferAmount = operatorFeeAccrued;
         operatorFeeAccrued = 0;
 
-        bool success = wrappedEthContract.transferFrom(
-            address(this),
+        bool success = wrappedEthContract.transfer(
             to,
             transferAmount
         );
         require(success, "Token transfer failed");
     }
 
-    function withdrawFees(address to) public {
+    function withdrawOwnerFees(address to) public {
         uint256 transferAmount = ownerFeesAccrued[msg.sender];
         ownerFeesAccrued[msg.sender] = 0;
 
-        bool success = wrappedEthContract.transferFrom(
-            address(this),
+        bool success = wrappedEthContract.transfer(
             to,
             transferAmount
         );
