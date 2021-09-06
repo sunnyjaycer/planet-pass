@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { readFileSync, writeFileSync } from "fs";
-import { keccak256 } from "keccak256";
-import { MerkleTree } from "merkletreejs";
+import keccak256 from "keccak256";
+import MerkleTree from "merkletreejs";
 
 // Taken from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 function shuffle(array: Array<number>) {
@@ -22,13 +22,13 @@ function shuffle(array: Array<number>) {
     return array;
 }
 
-function hash(account: string, quantity: number) {
+function hash(id: number, account: string): Buffer {
     return Buffer.from(
-        ethers.utils.solidityKeccak256(
-            ['address', 'uint256'],
-            [account, quantity]
-        ).slice(2), 'hex');
-}
+      ethers.utils.solidityKeccak256(
+        ['uint256', 'address'],
+        [id, account]
+      ).slice(2), 'hex');
+  }
 
 async function main() {
     let airdrop = readFileSync("output.json");
@@ -50,7 +50,7 @@ async function main() {
 
     const leaf = [];
     for (let [tokenId, address] of mapping.entries()) {
-        leaf.push(hash(address, tokenId));
+        leaf.push(hash(tokenId, address));
     }
 
     const merkleTree = new MerkleTree(leaf, keccak256, { sortPairs: true });

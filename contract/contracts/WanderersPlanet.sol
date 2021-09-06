@@ -3,14 +3,16 @@ pragma solidity ^0.8.2;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
     string private baseURI;
-    bytes32 immutable root;
+    bytes32 public immutable root;
+
+    // Claiming enabled or disabled
+    bool public claimEnabled;
 
     // Current planet state (see internal docs for what they represent)
     mapping(uint256 => uint256) public planetState;
@@ -20,14 +22,23 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
     {
         baseURI = baseURI_;
         root = _root;
+        claimEnabled = false;
     }
 
     function _baseURI() internal view override returns (string memory) {
         return baseURI;
     }
 
-    function updateBaseURI(string memory newBaseURI) public onlyOwner {
+    function updateBaseURI(string memory newBaseURI) external onlyOwner {
         baseURI = newBaseURI;
+    }
+
+    function enableClaim() external onlyOwner {
+        claimEnabled = true;
+    }
+
+    function disableClaim() external onlyOwner {
+        claimEnabled = false;
     }
 
     // Claim planets according to merkle proof
@@ -35,22 +46,24 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
         address to,
         uint256 planetId,
         bytes32[] calldata proof
-    ) public {
+    ) external {
+        // Make sure claim is enabled
+        require(claimEnabled, "Claim disabled");
         // Make sure merkle proof is valid
         require(
-            _verify(_leaf(msg.sender, planetId), proof),
+            _verify(_leaf(planetId, msg.sender), proof),
             "Bad merkle proof"
         );
 
         _safeMint(to, planetId);
     }
 
-    function _leaf(address account, uint256 planetId)
+    function _leaf(uint256 planetId, address account)
         internal
         pure
         returns (bytes32)
     {
-        return keccak256(abi.encodePacked(account, planetId));
+        return keccak256(abi.encodePacked(planetId, account));
     }
 
     function _verify(bytes32 leaf, bytes32[] memory proof)
@@ -62,28 +75,31 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
     }
 
     // Owner can mint more
-    function safeMint(address to, uint256 planetId) public onlyOwner {
+    function safeMint(address to, uint256 planetId) external onlyOwner {
         _safeMint(to, planetId);
     }
 
-    function safeMint(address to, uint256[] calldata planetId) public onlyOwner {
+    function safeMint(address to, uint256[] calldata planetId)
+        external
+        onlyOwner
+    {
         for (uint256 i = 0; i < planetId.length; i++) {
-            safeMint(to, planetId[i]);
+            _safeMint(to, planetId[i]);
         }
     }
 
     // Update state for one planet
-    function setPlanetState(uint256 id, uint256 state) public onlyOwner {
+    function setPlanetState(uint256 id, uint256 state) external onlyOwner {
         planetState[id] = state;
     }
 
     // Update state for multiple planets
     function setPlanetState(uint256[] calldata ids, uint256 state)
-        public
+        external
         onlyOwner
     {
         for (uint256 i = 0; i < ids.length; i++) {
-            setPlanetState(ids[i], state);
+            planetState[ids[i]] = state;
         }
     }
 
