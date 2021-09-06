@@ -40,25 +40,25 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable, Pausable {
         ERC721("WanderersPass", "WANDERER-PASS")
     {
         planetContract = _planetContract;
-        pause();
-    }
-
-    function pause() public onlyOwner {
         _pause();
     }
 
-    function unpause() public onlyOwner {
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
         _unpause();
     }
 
     function updatePlanetContract(WanderersPlanet _planetContract)
-        public
+        external
         onlyOwner
     {
         planetContract = _planetContract;
     }
 
-    function safeMint(address to, string memory _name) public whenNotPaused {
+    function safeMint(address to, string memory _name) external whenNotPaused {
         passName[_tokenIdCounter.current()] = _name;
         _safeMint(to, _tokenIdCounter.current());
         _tokenIdCounter.increment();
@@ -72,11 +72,11 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable, Pausable {
         return PassStamp(planetId, planetContract.planetState(planetId));
     }
 
-    function getStamps(uint256 id) public view returns (PassStamp[] memory) {
+    function getStamps(uint256 id) external view returns (PassStamp[] memory) {
         return stamps[id];
     }
 
-    function visitPlanet(uint256 id, uint256 planetId) public whenNotPaused {
+    function visitPlanet(uint256 id, uint256 planetId) external whenNotPaused {
         // Make sure planet is owned by sender
         require(
             planetContract.ownerOf(planetId) == msg.sender,
@@ -96,7 +96,7 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable, Pausable {
     }
 
     function visitPlanet(uint256 id, uint256[] calldata planetIds)
-        public
+        external
         whenNotPaused
     {
         // Make sure pass is owned by sender

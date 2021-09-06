@@ -44,43 +44,43 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         planetContract = _planetContract;
         passContract = _passContract;
         wrappedEthContract = _wrappedEthContract;
-        pause();
-    }
-
-    function pause() public onlyOwner {
         _pause();
     }
 
-    function unpause() public onlyOwner {
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
         _unpause();
     }
 
     function updatePlanetContract(WanderersPlanet _planetContract)
-        public
+        external
         onlyOwner
     {
         planetContract = _planetContract;
     }
 
-    function updatePassContract(WanderersPass _passContract) public onlyOwner {
+    function updatePassContract(WanderersPass _passContract) external onlyOwner {
         passContract = _passContract;
     }
 
     function updateWrappedEthContract(IERC20 _wrappedEthContract)
-        public
+        external
         onlyOwner
     {
         wrappedEthContract = _wrappedEthContract;
     }
 
-    function updateOperatorFeeBp(uint256 _operatorFeeBp) public onlyOwner {
+    function updateOperatorFeeBp(uint256 _operatorFeeBp) external onlyOwner {
         operatorFeeBp = _operatorFeeBp;
     }
 
     // Perform a flash-stamp of planetId onto passId.
     // Note: this requires an approval from Planet Pass for passId, otherwise it will revert.
     // Note: this requqires ERC-20 spending approval for WETH, otherwise it will revert.
-    function flashStamp(uint256 planetId, uint256 passId) public whenNotPaused {
+    function flashStamp(uint256 planetId, uint256 passId) external whenNotPaused {
         require(planetOwners[planetId] != address(0), "Planet not in contract");
 
         uint256 fee = planetFees[planetId];
@@ -118,7 +118,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         return (fee * operatorFeeBp) / BASIS_POINTS_DIVISOR;
     }
 
-    function withdrawOperatorFees(address to) public onlyOwner {
+    function withdrawOperatorFees(address to) external onlyOwner {
         uint256 transferAmount = operatorFeeAccrued;
         operatorFeeAccrued = 0;
 
@@ -129,7 +129,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         require(success, "Token transfer failed");
     }
 
-    function withdrawOwnerFees(address to) public {
+    function withdrawOwnerFees(address to) external {
         uint256 transferAmount = ownerFeesAccrued[msg.sender];
         ownerFeesAccrued[msg.sender] = 0;
 
@@ -141,7 +141,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     }
 
     // Withdraws the specified Planet to a designated address.
-    function withdraw(address to, uint256 tokenId) public {
+    function withdraw(address to, uint256 tokenId) external {
         require(planetOwners[tokenId] == msg.sender, "Not owner of planet");
 
         planetOwners[tokenId] = address(0);
