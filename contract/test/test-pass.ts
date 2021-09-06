@@ -28,7 +28,7 @@ describe("WanderersPass", function () {
         context("when Pass creation is disabled", function () {
             beforeEach(async function () {
                 // If not paused, then pause
-                if (!pass.paused()) {
+                if (!await pass.paused()) {
                     await pass.pause();
                 }
             })
@@ -44,7 +44,7 @@ describe("WanderersPass", function () {
 
         context("when Pass creation is enabled", function () {
             beforeEach(async function () {
-                if (pass.paused()) {
+                if (await pass.paused()) {
                     await pass.unpause();
                 }
             })
@@ -61,6 +61,35 @@ describe("WanderersPass", function () {
                 await pass.connect(accounts[1]).safeMint(accounts[1].getAddress(), "Test");
             });
         })
+    });
+
+    describe("setPassName", function () {
+        beforeEach(async function () {
+            if (await pass.paused()) {
+                await pass.unpause();
+            }
+        })
+
+        it("should be able to change name of pass", async function () {
+            const address = accounts[0].getAddress();
+            await pass.connect(accounts[0]).safeMint(address, "Test");
+            expect(await pass.passName(0)).to.equal("Test");
+
+            await pass.setPassName(0, "Test Two");
+            expect(await pass.passName(0)).to.equal("Test Two");
+        });
+
+        it("non-owner should not be able to change name of pass", async function () {
+            const address = accounts[0].getAddress();
+
+            await pass.connect(accounts[0]).safeMint(address, "Test");
+            expect(await pass.passName(0)).to.equal("Test");
+
+            await expect(
+                pass.connect(accounts[1]).setPassName(0, "Test Two")
+            )
+            .to.be.revertedWith("Not owner of pass");
+        });
     });
 
     describe("visitPlanet", function () {
@@ -206,13 +235,13 @@ describe("WanderersPass", function () {
 
         })
     });
-    
+
     describe("updatePlanetContract", function () {
         it("should be able to update Planet contract address", async function () {
             const zero = "0x0000000000000000000000000000000000000000000000000000000000000000"
             const Planets = await ethers.getContractFactory("WanderersPlanet");
             const planetsTwo = await Planets.connect(accounts[0]).deploy("updated.com/", zero);
-            await planetsTwo.deployed(); 
+            await planetsTwo.deployed();
 
             expect(await pass.planetContract()).to.equal(planets.address);
             await pass.updatePlanetContract(planetsTwo.address);
