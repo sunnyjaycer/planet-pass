@@ -1,9 +1,12 @@
 // @ts-ignore
 import { ethers } from "hardhat";
 import { Signer } from "ethers";
-import { expect } from "chai";
+import { expect, use } from "chai";
 import MerkleTree from "merkletreejs";
 import keccak256 from 'keccak256';
+import { solidity } from "ethereum-waffle";
+
+use(solidity);
 
 // Hashing function that uses Solidity's tightly-packing + keccak256
 export function hash(id: number, account: string): Buffer {
@@ -58,7 +61,7 @@ describe("WanderersPlanet", function () {
                     0,
                     merkleTree.getHexProof(hash(0, address))
                 ))
-                    // @ts-ignore
+
                     .to.be.revertedWith("Claim disabled");
             })
         })
@@ -97,7 +100,7 @@ describe("WanderersPlanet", function () {
                     0,
                     merkleTree.getHexProof(hash(0, address))
                 ))
-                    // @ts-ignore
+
                     .to.be.revertedWith("Bad merkle proof");
             });
 
@@ -115,7 +118,7 @@ describe("WanderersPlanet", function () {
                     0,
                     merkleTree.getHexProof(hash(0, address))
                 ))
-                    // @ts-ignore
+
                     .to.be.revertedWith("ERC721: token already minted");
             });
         })
@@ -165,7 +168,7 @@ describe("WanderersPlanet", function () {
             await expect(
                 planets.connect(accounts[1])['safeMint(address,uint256)'](address, 0)
             )
-                // @ts-ignore
+
                 .to.be.revertedWith("Ownable: caller is not the owner");
         });
 
@@ -183,7 +186,7 @@ describe("WanderersPlanet", function () {
             await expect(
                 planets.connect(accounts[1])['safeMint(address,uint256[])'](address, tokensToMint)
             )
-                // @ts-ignore
+
                 .to.be.revertedWith("Ownable: caller is not the owner");
         });
     });
@@ -222,7 +225,7 @@ describe("WanderersPlanet", function () {
             await expect(
                 planets.connect(accounts[1])['setPlanetState(uint256[],uint256)'](multiTokens, 1)
             )
-                // @ts-ignore
+
                 .to.be.revertedWith("Ownable: caller is not the owner");
 
             for (let i = 0; i < 25; i++) {
@@ -235,7 +238,7 @@ describe("WanderersPlanet", function () {
             await expect(
                 planets.connect(accounts[1])['setPlanetState(uint256,uint256)'](0, 1)
             )
-                // @ts-ignore
+
                 .to.be.revertedWith("Ownable: caller is not the owner");
 
             expect(await planets.planetState(0)).to.equal(0);

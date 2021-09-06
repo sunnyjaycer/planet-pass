@@ -1,9 +1,11 @@
 // @ts-ignore
 import { ethers } from "hardhat";
 import { BigNumber, Signer } from "ethers";
-import { expect } from "chai";
-import MerkleTree from "merkletreejs";
-import { keccak256, parseEther, solidityPack } from "ethers/lib/utils";
+import { expect, use } from "chai";
+import { solidity } from "ethereum-waffle";
+import { parseEther, solidityPack } from "ethers/lib/utils";
+
+use(solidity);
 
 describe("TravelAgency", function () {
     let accounts: Signer[];
@@ -369,7 +371,7 @@ describe("TravelAgency", function () {
                     await expect(
                         agency.connect(accounts[2]).flashStamp(0, 0)
                     )
-                    .to.be.reverted;
+                        .to.be.reverted;
                 });
             });
 
@@ -377,7 +379,7 @@ describe("TravelAgency", function () {
                 await expect(
                     agency.connect(accounts[2]).flashStamp(5, 0)
                 )
-                .to.be.revertedWith("Planet not in contract");
+                    .to.be.revertedWith("Planet not in contract");
             });
         });
     });
@@ -583,31 +585,31 @@ describe("TravelAgency", function () {
             await expect(
                 agency.connect(accounts[0]).withdraw(await accounts[0].getAddress(), 0)
             )
-            .to.emit(planets, 'Transfer')
-            .withArgs(
-                agency.address,
-                await accounts[0].getAddress(),
-                0
-            );
+                .to.emit(planets, 'Transfer')
+                .withArgs(
+                    agency.address,
+                    await accounts[0].getAddress(),
+                    0
+                );
         });
 
         it("should be able to withdraw to another address", async function () {
             await expect(
                 agency.connect(accounts[0]).withdraw(await accounts[1].getAddress(), 0)
             )
-            .to.emit(planets, 'Transfer')
-            .withArgs(
-                agency.address,
-                await accounts[1].getAddress(),
-                0
-            );
+                .to.emit(planets, 'Transfer')
+                .withArgs(
+                    agency.address,
+                    await accounts[1].getAddress(),
+                    0
+                );
         });
 
         it("should not be able to withdraw someone else's Planet", async function () {
             await expect(
                 agency.connect(accounts[1]).withdraw(await accounts[0].getAddress(), 0)
             )
-            .to.be.revertedWith("Not owner of planet");
+                .to.be.revertedWith("Not owner of planet");
         })
     });
 })

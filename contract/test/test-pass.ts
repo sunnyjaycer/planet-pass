@@ -1,9 +1,10 @@
 // @ts-ignore
 import { ethers } from "hardhat";
 import { Signer } from "ethers";
-import { expect } from "chai";
-import MerkleTree from "merkletreejs";
-import { keccak256 } from "ethers/lib/utils";
+import { expect, use } from "chai";
+import { solidity } from "ethereum-waffle";
+
+use(solidity);
 
 describe("WanderersPass", function () {
     let accounts: Signer[];
@@ -37,7 +38,6 @@ describe("WanderersPass", function () {
                 await expect(
                     pass.connect(accounts[0]).safeMint(address, "Test")
                 )
-                    // @ts-ignore
                     .to.be.revertedWith("Pausable: paused")
             });
         })
@@ -81,7 +81,6 @@ describe("WanderersPass", function () {
             await expect(
                 pass.connect(accounts[0])['visitPlanet(uint256,uint256)'](0, 0)
             )
-                // @ts-ignore
                 .to.emit(pass, 'Stamp')
                 .withArgs(
                     accounts[0].getAddress,
@@ -102,7 +101,6 @@ describe("WanderersPass", function () {
             await expect(
                 pass.connect(accounts[0])['visitPlanet(uint256,uint256)'](0, 6)
             )
-                // @ts-ignore
                 .to.be.revertedWith("Not owner of planet");
         });
 
@@ -110,7 +108,6 @@ describe("WanderersPass", function () {
             await expect(
                 pass.connect(accounts[0])['visitPlanet(uint256,uint256)'](1, 0)
             )
-                // @ts-ignore
                 .to.be.revertedWith("Not owner of pass");
         });
 
@@ -119,7 +116,6 @@ describe("WanderersPass", function () {
             await expect(
                 pass.connect(accounts[0])['visitPlanet(uint256,uint256[])'](0, stampPlanets)
             )
-                // @ts-ignore
                 .to.emit(pass, 'Stamp')
                 .withArgs(
                     accounts[0].getAddress,
@@ -156,7 +152,6 @@ describe("WanderersPass", function () {
             await expect(
                 pass.connect(accounts[0])['visitPlanet(uint256,uint256[])'](0, [0, 1, 2, 9])
             )
-                // @ts-ignore
                 .to.be.revertedWith("Not owner of planet");
         });
 
@@ -164,7 +159,6 @@ describe("WanderersPass", function () {
             await expect(
                 pass.connect(accounts[0])['visitPlanet(uint256,uint256[])'](1, [0, 1, 2, 3])
             )
-                // @ts-ignore
                 .to.be.revertedWith("Not owner of pass");
         });
 
@@ -175,7 +169,6 @@ describe("WanderersPass", function () {
             await expect(
                 pass.connect(accounts[0])['visitPlanet(uint256,uint256)'](0, 0)
             )
-                // @ts-ignore
                 .to.emit(pass, 'Stamp')
                 .withArgs(
                     accounts[0].getAddress,
@@ -193,7 +186,6 @@ describe("WanderersPass", function () {
             await expect(
                 pass.connect(accounts[0])['visitPlanet(uint256,uint256)'](2, 1)
             )
-                // @ts-ignore
                 .to.emit(pass, 'Stamp')
                 .withArgs(
                     accounts[0].getAddress,
