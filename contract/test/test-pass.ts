@@ -24,7 +24,7 @@ describe("WanderersPass", function () {
     })
 
     describe("safeMint", function () {
-        context("when pass creation is disabled", function () {
+        context("when Pass creation is disabled", function () {
             beforeEach(async function () {
                 // If not paused, then pause
                 if (!pass.paused()) {
@@ -32,7 +32,7 @@ describe("WanderersPass", function () {
                 }
             })
 
-            it("should not be able to make a new pass", async function () {
+            it("should not be able to make a new Pass", async function () {
                 const address = accounts[0].getAddress();
                 await expect(
                     pass.connect(accounts[0]).safeMint(address, "Test")
@@ -42,19 +42,19 @@ describe("WanderersPass", function () {
             });
         })
 
-        context("when pass creation is enabled", function () {
+        context("when Pass creation is enabled", function () {
             beforeEach(async function () {
                 if (pass.paused()) {
                     await pass.unpause();
                 }
             })
 
-            it("should be able to make a new pass", async function () {
+            it("should be able to make a new Pass", async function () {
                 const address = accounts[0].getAddress();
                 await pass.connect(accounts[0]).safeMint(address, "Test");
             });
 
-            it("should be able to make a new pass with the same name", async function () {
+            it("should be able to make a new Pass with the same name", async function () {
                 const address = accounts[0].getAddress();
                 await pass.connect(accounts[0]).safeMint(address, "Test");
                 await pass.connect(accounts[0]).safeMint(address, "Test");
@@ -106,7 +106,7 @@ describe("WanderersPass", function () {
                 .to.be.revertedWith("Not owner of planet");
         });
 
-        it("should not be able to stamp a non-owned pass", async function () {
+        it("should not be able to stamp a non-owned Pass", async function () {
             await expect(
                 pass.connect(accounts[0])['visitPlanet(uint256,uint256)'](1, 0)
             )
@@ -151,7 +151,7 @@ describe("WanderersPass", function () {
             }
         })
 
-        it("should not be able to batch-stamp with non-owned planet", async function () {
+        it("should not be able to batch-stamp with non-owned Planet", async function () {
             // 9 is not owned
             await expect(
                 pass.connect(accounts[0])['visitPlanet(uint256,uint256[])'](0, [0, 1, 2, 9])
@@ -160,7 +160,7 @@ describe("WanderersPass", function () {
                 .to.be.revertedWith("Not owner of planet");
         });
 
-        it("should not be able to batch-stamp a non-owned pass", async function () {
+        it("should not be able to batch-stamp a non-owned Pass", async function () {
             await expect(
                 pass.connect(accounts[0])['visitPlanet(uint256,uint256[])'](1, [0, 1, 2, 3])
             )
@@ -168,7 +168,7 @@ describe("WanderersPass", function () {
                 .to.be.revertedWith("Not owner of pass");
         });
 
-        it("should be able to stamp into the correct passport", async function () {
+        it("should be able to stamp into the correct Passport", async function () {
             // ID = 2
             await pass.connect(accounts[0]).safeMint(accounts[0].getAddress(), "Another One");
 
@@ -216,7 +216,7 @@ describe("WanderersPass", function () {
     });
     
     describe("updatePlanetContract", function () {
-        it("should be able to update planet contract address", async function () {
+        it("should be able to update Planet contract address", async function () {
             const zero = "0x0000000000000000000000000000000000000000000000000000000000000000"
             const Planets = await ethers.getContractFactory("WanderersPlanet");
             const planetsTwo = await Planets.connect(accounts[0]).deploy("updated.com/", zero);
