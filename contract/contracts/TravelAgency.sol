@@ -34,6 +34,11 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     // Mapping of owners to fees accured
     mapping(address => uint256) public ownerFeesAccrued;
 
+    // Prevent non-stamping Pass deposits into this contract.
+    // This variable is temporarily set to true during a call to flashStamp() and is required
+    // to be true for a Pass deposit in onERC721Received().
+    bool private acceptPass;
+
     constructor(
         uint256 _operatorFeeBp,
         WanderersPlanet _planetContract,
@@ -44,6 +49,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         planetContract = _planetContract;
         passContract = _passContract;
         wrappedEthContract = _wrappedEthContract;
+        acceptPass = false;
         _pause();
     }
 
@@ -62,7 +68,10 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         planetContract = _planetContract;
     }
 
-    function updatePassContract(WanderersPass _passContract) external onlyOwner {
+    function updatePassContract(WanderersPass _passContract)
+        external
+        onlyOwner
+    {
         passContract = _passContract;
     }
 
@@ -80,7 +89,10 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     // Perform a flash-stamp of planetId onto passId.
     // Note: this requires an approval from Planet Pass for passId, otherwise it will revert.
     // Note: this requqires ERC-20 spending approval for WETH, otherwise it will revert.
-    function flashStamp(uint256 planetId, uint256 passId) external whenNotPaused {
+    function flashStamp(uint256 planetId, uint256 passId)
+        external
+        whenNotPaused
+    {
         require(planetOwners[planetId] != address(0), "Planet not in contract");
 
         uint256 fee = planetFees[planetId];
@@ -104,11 +116,17 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
             require(success, "Token transfer failed");
         }
 
+        // Enable pass deposit
+        acceptPass = true;
+
         // Temporarily take Pass from sender
         passContract.safeTransferFrom(msg.sender, address(this), passId);
 
         // Stamp
         passContract.visitPlanet(passId, planetId);
+
+        // Disable pass deposit
+        acceptPass = false;
 
         // Return it to the sender
         passContract.safeTransferFrom(address(this), msg.sender, passId);
@@ -122,10 +140,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         uint256 transferAmount = operatorFeeAccrued;
         operatorFeeAccrued = 0;
 
-        bool success = wrappedEthContract.transfer(
-            to,
-            transferAmount
-        );
+        bool success = wrappedEthContract.transfer(to, transferAmount);
         require(success, "Token transfer failed");
     }
 
@@ -133,10 +148,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         uint256 transferAmount = ownerFeesAccrued[msg.sender];
         ownerFeesAccrued[msg.sender] = 0;
 
-        bool success = wrappedEthContract.transfer(
-            to,
-            transferAmount
-        );
+        bool success = wrappedEthContract.transfer(to, transferAmount);
         require(success, "Token transfer failed");
     }
 
@@ -157,12 +169,16 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         address from,
         uint256 tokenId,
         bytes calldata data
-    ) external whenNotPaused override returns (bytes4) {
+    ) external override whenNotPaused returns (bytes4) {
         if (msg.sender == address(planetContract)) {
             uint256 fee = data.toUint256(0);
             planetOwners[tokenId] = operator;
             planetFees[tokenId] = fee;
-        } else if (msg.sender == address(passContract)) {} else {
+        } else if (msg.sender == address(passContract)) {
+            if (!acceptPass) {
+                revert("Cannot accept Pass");
+            }
+        } else {
             revert("Token not accepted");
         }
 

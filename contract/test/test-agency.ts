@@ -612,4 +612,24 @@ describe("TravelAgency", function () {
                 .to.be.revertedWith("Not owner of planet");
         })
     });
-})
+
+    describe("onERC721Received", function () {
+        beforeEach(async function () {
+            await pass.connect(accounts[0]).safeMint(accounts[0].getAddress(), "I am a pass");
+            if (await agency.paused()) {
+                await agency.unpause();
+            }
+        });
+
+        it("should not be able to deposit a Pass directly", async function () {
+            await expect(
+                pass.connect(accounts[0])['safeTransferFrom(address,address,uint256)'](
+                    await accounts[0].getAddress(),
+                    agency.address,
+                    0
+                )
+            )
+            .to.be.revertedWith("Cannot accept Pass");
+        });
+    });
+});
