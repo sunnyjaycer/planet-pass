@@ -213,7 +213,7 @@ describe("WanderersPlanet", function () {
             for (let i = 0; i < 25; i++) {
                 expect(await planets.planetState(i)).to.equal(1);
             }
-        })
+        });
 
         it("non-owners should not be able to update Planet state", async function () {
             for (let i = 0; i < 25; i++) {
@@ -228,7 +228,7 @@ describe("WanderersPlanet", function () {
             for (let i = 0; i < 25; i++) {
                 expect(await planets.planetState(i)).to.equal(0);
             }
-        })
+        });
 
         it("non-owners should not be able to batch-update Planet state", async function () {
             expect(await planets.planetState(0)).to.equal(0);
@@ -238,6 +238,46 @@ describe("WanderersPlanet", function () {
                 .to.be.revertedWith("Ownable: caller is not the owner");
 
             expect(await planets.planetState(0)).to.equal(0);
-        })
-    })
+        });
+    });
+
+    describe("setPlanetName", function () {
+        const newName = "NEW NAME";
+        let tokensToMint: number[];
+
+        beforeEach(async function () {
+            const address = await accounts[0].getAddress();
+            tokensToMint = [...Array(25).keys()];
+
+            await planets.connect(accounts[0])['safeMint(address,uint256[])'](address, tokensToMint); 
+        });
+
+        it("owner should be able to rename Planet", async function () {
+            await planets.connect(accounts[0])['setPlanetName(uint256,string)'](0, newName);
+            expect(await planets.planetNames(0)).to.equal(newName);
+        });
+
+        it("owner should be able to batch-rename Planet", async function () {
+            const names = Array(25).fill(newName);
+            await planets.connect(accounts[0])['setPlanetName(uint256[],string[])'](tokensToMint, names);
+            for (let i = 0; i++; i < 25) {
+                expect(await planets.planetNames(i)).to.equal(newName);
+            }
+        });
+
+        it("non-owner should not be able to batch-rename Planet", async function () {
+            const names = Array(25).fill(newName);
+            await expect(
+                planets.connect(accounts[1])['setPlanetName(uint256[],string[])'](tokensToMint, names)
+            )
+            .to.be.revertedWith("Not owner of Planet");
+        });
+
+        it("non-owner should not be able to rename Planet", async function () {
+            await expect(
+                planets.connect(accounts[1])['setPlanetName(uint256,string)'](0, newName)
+            )
+            .to.be.revertedWith("Not owner of Planet");
+        });
+    });
 });
