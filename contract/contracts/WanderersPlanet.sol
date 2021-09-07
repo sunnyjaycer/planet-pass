@@ -63,10 +63,7 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         // Make sure claim is enabled
         require(claimEnabled, "Claim disabled");
         // Make sure merkle proof is valid
-        require(
-            _verify(_leaf(id, msg.sender), proof),
-            "Bad merkle proof"
-        );
+        require(_verify(_leaf(id, msg.sender), proof), "Bad merkle proof");
 
         _safeMint(to, id);
     }
@@ -87,15 +84,31 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         return MerkleProof.verify(proof, root, leaf);
     }
 
+    function setPlanetName(uint256 id, string memory name)
+        external
+        whenNotPaused
+    {
+        require(ownerOf(id) == msg.sender, "Not owner of Planet");
+        planetNames[id] = name;
+    }
+
+    function setPlanetName(uint256[] calldata id, string[] memory name)
+        external
+        whenNotPaused
+    {
+        require(id.length == name.length, "Array length mismatch");
+        for (uint256 i = 0; i < id.length; i++) {
+            require(ownerOf(id[i]) == msg.sender, "Not owner of Planet");
+            planetNames[id[i]] = name[i];
+        }
+    }
+
     // Owner can mint more
     function safeMint(address to, uint256 id) external onlyOwner {
         _safeMint(to, id);
     }
 
-    function safeMint(address to, uint256[] calldata id)
-        external
-        onlyOwner
-    {
+    function safeMint(address to, uint256[] calldata id) external onlyOwner {
         for (uint256 i = 0; i < id.length; i++) {
             _safeMint(to, id[i]);
         }
