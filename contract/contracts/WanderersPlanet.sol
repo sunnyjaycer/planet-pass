@@ -42,7 +42,7 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         return baseURI;
     }
 
-    function updateBaseURI(string memory newBaseURI) external onlyOwner {
+    function updateBaseURI(string calldata newBaseURI) external onlyOwner {
         baseURI = newBaseURI;
     }
 
@@ -84,7 +84,7 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         return MerkleProof.verify(proof, root, leaf);
     }
 
-    function setPlanetName(uint256 id, string memory name)
+    function setPlanetName(uint256 id, string calldata name)
         external
         whenNotPaused
     {
@@ -92,7 +92,7 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         planetNames[id] = name;
     }
 
-    function setPlanetName(uint256[] calldata id, string[] memory name)
+    function setPlanetName(uint256[] calldata id, string[] calldata name)
         external
         whenNotPaused
     {
