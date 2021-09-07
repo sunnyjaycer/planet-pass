@@ -6,8 +6,9 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
-contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
+contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
     string private baseURI;
     bytes32 public immutable root;
 
@@ -17,12 +18,24 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
     // Current planet state (see internal docs for what they represent)
     mapping(uint256 => uint256) public planetState;
 
+    // Current planet names
+    mapping(uint256 => string) public planetNames;
+
     constructor(string memory baseURI_, bytes32 _root)
         ERC721("Wanderers Planet", "WANDERER-PLANET")
     {
         baseURI = baseURI_;
         root = _root;
         claimEnabled = false;
+        _pause();
+    }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
     }
 
     function _baseURI() internal view override returns (string memory) {
@@ -46,7 +59,7 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
         address to,
         uint256 planetId,
         bytes32[] calldata proof
-    ) external {
+    ) external whenNotPaused {
         // Make sure claim is enabled
         require(claimEnabled, "Claim disabled");
         // Make sure merkle proof is valid
