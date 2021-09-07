@@ -45,6 +45,9 @@ describe("WanderersPlanet", function () {
         const Planets = await ethers.getContractFactory("WanderersPlanet");
         planets = await Planets.connect(accounts[0]).deploy("example.com/", merkleTree.getHexRoot());
         await planets.deployed();
+
+        // We know Pausable works (it's from OpenZeppelin), so we just unpause.
+        await planets.unpause();
     });
 
     describe("claim", function () {
@@ -61,7 +64,6 @@ describe("WanderersPlanet", function () {
                     0,
                     merkleTree.getHexProof(hash(0, address))
                 ))
-
                     .to.be.revertedWith("Claim disabled");
             })
         })
@@ -100,7 +102,6 @@ describe("WanderersPlanet", function () {
                     0,
                     merkleTree.getHexProof(hash(0, address))
                 ))
-
                     .to.be.revertedWith("Bad merkle proof");
             });
 
@@ -118,7 +119,6 @@ describe("WanderersPlanet", function () {
                     0,
                     merkleTree.getHexProof(hash(0, address))
                 ))
-
                     .to.be.revertedWith("ERC721: token already minted");
             });
         })
@@ -168,7 +168,6 @@ describe("WanderersPlanet", function () {
             await expect(
                 planets.connect(accounts[1])['safeMint(address,uint256)'](address, 0)
             )
-
                 .to.be.revertedWith("Ownable: caller is not the owner");
         });
 
@@ -186,7 +185,6 @@ describe("WanderersPlanet", function () {
             await expect(
                 planets.connect(accounts[1])['safeMint(address,uint256[])'](address, tokensToMint)
             )
-
                 .to.be.revertedWith("Ownable: caller is not the owner");
         });
     });
@@ -225,7 +223,6 @@ describe("WanderersPlanet", function () {
             await expect(
                 planets.connect(accounts[1])['setPlanetState(uint256[],uint256)'](multiTokens, 1)
             )
-
                 .to.be.revertedWith("Ownable: caller is not the owner");
 
             for (let i = 0; i < 25; i++) {
@@ -238,7 +235,6 @@ describe("WanderersPlanet", function () {
             await expect(
                 planets.connect(accounts[1])['setPlanetState(uint256,uint256)'](0, 1)
             )
-
                 .to.be.revertedWith("Ownable: caller is not the owner");
 
             expect(await planets.planetState(0)).to.equal(0);
