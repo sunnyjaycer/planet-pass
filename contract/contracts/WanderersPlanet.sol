@@ -57,26 +57,26 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
     // Claim planets according to merkle proof
     function claim(
         address to,
-        uint256 planetId,
+        uint256 id,
         bytes32[] calldata proof
     ) external whenNotPaused {
         // Make sure claim is enabled
         require(claimEnabled, "Claim disabled");
         // Make sure merkle proof is valid
         require(
-            _verify(_leaf(planetId, msg.sender), proof),
+            _verify(_leaf(id, msg.sender), proof),
             "Bad merkle proof"
         );
 
-        _safeMint(to, planetId);
+        _safeMint(to, id);
     }
 
-    function _leaf(uint256 planetId, address account)
+    function _leaf(uint256 id, address account)
         internal
         pure
         returns (bytes32)
     {
-        return keccak256(abi.encodePacked(planetId, account));
+        return keccak256(abi.encodePacked(id, account));
     }
 
     function _verify(bytes32 leaf, bytes32[] memory proof)
@@ -88,16 +88,16 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
     }
 
     // Owner can mint more
-    function safeMint(address to, uint256 planetId) external onlyOwner {
-        _safeMint(to, planetId);
+    function safeMint(address to, uint256 id) external onlyOwner {
+        _safeMint(to, id);
     }
 
-    function safeMint(address to, uint256[] calldata planetId)
+    function safeMint(address to, uint256[] calldata id)
         external
         onlyOwner
     {
-        for (uint256 i = 0; i < planetId.length; i++) {
-            _safeMint(to, planetId[i]);
+        for (uint256 i = 0; i < id.length; i++) {
+            _safeMint(to, id[i]);
         }
     }
 
@@ -107,12 +107,12 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
     }
 
     // Update state for multiple planets
-    function setPlanetState(uint256[] calldata ids, uint256 state)
+    function setPlanetState(uint256[] calldata id, uint256 state)
         external
         onlyOwner
     {
-        for (uint256 i = 0; i < ids.length; i++) {
-            planetState[ids[i]] = state;
+        for (uint256 i = 0; i < id.length; i++) {
+            planetState[id[i]] = state;
         }
     }
 
