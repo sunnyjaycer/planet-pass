@@ -15,8 +15,6 @@ const cards = new Array(40).fill(0).map((e, i) => ({
   id: `card${i}`
 }))
 
-console.log(cards)
-
 const Home: NextPage = () => {
   return (
     <Layout title={'Home'}>
