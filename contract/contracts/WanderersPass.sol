@@ -5,9 +5,10 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 import "./WanderersPlanet.sol";
 
-contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
+contract WanderersPass is ERC721, ERC721Enumerable, Ownable, Pausable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
@@ -22,10 +23,10 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
     }
 
     // Mapping of ID to an array of stamps
-    mapping(uint256 => PassStamp[]) public stamps;
+    mapping(uint256 => PassStamp[]) private stamps;
 
     // Planet contract
-    WanderersPlanet public planet;
+    WanderersPlanet public planetContract;
 
     // Event emitted when a stamp occurs
     event Stamp(
@@ -35,49 +36,93 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable {
         uint256 planetState
     );
 
-    constructor(address _planet) ERC721("WanderersPass", "WANDERER-PASS") {
-        planet = WanderersPlanet(_planet);
+    constructor(WanderersPlanet _planetContract)
+        ERC721("WanderersPass", "WANDERER-PASS")
+    {
+        planetContract = _planetContract;
+        _pause();
     }
 
-    function safeMint(address to, string memory _name) public {
-        passName[_tokenIdCounter.current()] = _name;
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
+
+    function updatePlanetContract(WanderersPlanet _planetContract)
+        external
+        onlyOwner
+    {
+        planetContract = _planetContract;
+    }
+
+    function setPassName(uint256 id, string calldata _passName) external whenNotPaused {
+        require(msg.sender == ownerOf(id), "Not owner of pass");
+        passName[id] = _passName;
+    }
+
+    function safeMint(address to, string calldata _passName) external whenNotPaused {
+        passName[_tokenIdCounter.current()] = _passName;
         _safeMint(to, _tokenIdCounter.current());
         _tokenIdCounter.increment();
     }
 
-    function visitPlanet(uint256 id, uint256 planetId) public {
+    function makePassStamp(uint256 planetId)
+        internal
+        view
+        returns (PassStamp memory)
+    {
+        return PassStamp(planetId, planetContract.planetState(planetId));
+    }
+
+    function getStamps(uint256 id) external view returns (PassStamp[] memory) {
+        return stamps[id];
+    }
+
+    function visitPlanet(uint256 id, uint256 planetId) external whenNotPaused {
         // Make sure planet is owned by sender
-        require(planet.ownerOf(planetId) == msg.sender, "Not owner of planet");
+        require(
+            planetContract.ownerOf(planetId) == msg.sender,
+            "Not owner of planet"
+        );
         // Make sure pass is owned by sender
         require(ownerOf(id) == msg.sender, "Not owner of pass");
 
         stamps[id].push(makePassStamp(planetId));
 
-        emit Stamp(msg.sender, id, planetId, planet.planetState(planetId));
-    }
-
-    function makePassStamp(uint256 planetId) internal view returns (PassStamp memory) {
-        return PassStamp(
+        emit Stamp(
+            msg.sender,
+            id,
             planetId,
-            planet.planetState(planetId)
+            planetContract.planetState(planetId)
         );
     }
 
-    function visitPlanet(uint256 id, uint256[] calldata planetIds) public {
+    function visitPlanet(uint256 id, uint256[] calldata planetIds)
+        external
+        whenNotPaused
+    {
         // Make sure pass is owned by sender
         require(ownerOf(id) == msg.sender, "Not owner of pass");
 
         for (uint256 i = 0; i < planetIds.length; i++) {
             // Make sure planet is owned by sender
             require(
-                planet.ownerOf(planetIds[i]) == msg.sender,
+                planetContract.ownerOf(planetIds[i]) == msg.sender,
                 "Not owner of planet"
             );
             uint256 planetId = planetIds[i];
 
             stamps[id].push(makePassStamp(planetId));
 
-            emit Stamp(msg.sender, id, planetId, planet.planetState(planetId));
+            emit Stamp(
+                msg.sender,
+                id,
+                planetId,
+                planetContract.planetState(planetId)
+            );
         }
     }
 
