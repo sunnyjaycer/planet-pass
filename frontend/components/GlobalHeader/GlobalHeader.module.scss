@@ -1,0 +1,33 @@
+.globalHeader {
+  padding: 3rem;
+  max-width: $s-maxWidth;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerLogo {
+  text-transform: uppercase;
+  font-size: 3.6rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  font-family: $f-mono;
+}
+
+.globalNav {
+  font-size: 1.8rem;
+  line-height: 1.1;
+  font-weight: 300;
+  li {
+    display: inline-block;
+  }
+  li + li {
+    &:before {
+      display: inline-block;
+      padding: 0 2rem;
+      content: '/';
+    }
+  }
+}

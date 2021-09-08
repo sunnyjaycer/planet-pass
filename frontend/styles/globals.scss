@@ -1,0 +1,16 @@
+html {
+  font-size: 62.5%; // rems are now 10px
+}
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: $f-sans;
+  background-color: $c-grey;
+  color: $c-green;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}

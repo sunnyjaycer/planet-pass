@@ -1,0 +1,13 @@
+.cardGrid {
+  padding: 3rem;
+  max-width: $s-maxWidth;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 3rem;
+  row-gap: 3rem;
+
+  @include break-md {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  }
+}

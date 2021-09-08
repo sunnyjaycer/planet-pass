@@ -1,0 +1,56 @@
+.header {
+  padding: 1rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  text-align: center;
+  font-size: 1.6rem;
+  line-height: 1.8;
+  @include break-md {
+    font-size: 2rem;
+    line-height: 1;
+  }
+}
+
+.headerLink {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.logo {
+  order: 1;
+}
+.wanderers {
+  order: 2;
+  margin-top: -0.5rem;
+}
+.planetpass {
+  order: 3;
+  font-family: $f-mono;
+}
+
+@include break-md {
+  .headerLink {
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  .logo {
+    order: 2;
+  }
+  .wanderers {
+    order: 1;
+    margin-top: 0;
+  }
+  .planetpass {
+    order: 3;
+    font-family: $f-mono;
+  }
+}
+
+.logo {
+  margin: 0 2rem;
+  display: block;
+}

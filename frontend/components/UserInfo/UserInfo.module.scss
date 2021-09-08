@@ -1,0 +1,57 @@
+.userInfo {
+  padding: 0 3rem;
+  max-width: $s-maxWidth;
+  margin: 0 auto;
+
+  // @include break-md {
+  //   max-width: 75%;
+  //   margin: 0 auto;
+  // }
+}
+
+.userInfoInner {
+  padding: 2rem;
+  border: 1px solid $c-green;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.userCard {
+  display: flex;
+  align-items: center;
+}
+.userImage {
+  border-radius: 100%;
+  border: 1px solid $c-green;
+  overflow: hidden;
+}
+.name {
+  padding: 0 1.5rem;
+  font-family: $f-mono;
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+}
+.passportName {
+  font-size: 1.8rem;
+  padding-right: 2.5rem;
+}
+.statCard {
+  padding: 0 2.5rem;
+}
+.stat {
+  font-size: 2.4rem;
+  font-weight: 700;
+  font-family: $f-mono;
+}
+.statLabel {
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+}

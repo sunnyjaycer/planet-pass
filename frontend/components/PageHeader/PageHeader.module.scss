@@ -1,0 +1,26 @@
+.pageHeader {
+  text-align: center;
+  padding: 4rem 3rem 2rem;
+  margin: 0 0 1rem;
+  @include break-md {
+    max-width: 75%;
+    margin: 0 auto 1rem;
+  }
+  @include break-lg {
+    max-width: 52%;
+  }
+}
+
+.pageHeader__title {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 4.2rem;
+  margin-top: 1.5rem;
+  letter-spacing: 0.02em;
+}
+.pageHeader__desc {
+  font-size: 2.8rem;
+  line-height: 1.2;
+  font-weight: 300;
+  margin: 2rem 0;
+}
