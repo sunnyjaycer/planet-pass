@@ -5,6 +5,7 @@ import UserInfo from '../components/UserInfo'
 import fpoImage2 from '../assets/fpo-img-2.png'
 import StampCard from '../components/StampCard'
 import CardGrid from '../components/CardGrid'
+import ConnectButton from '../components/ConnectButton'
 
 // placeholder data
 const cards = new Array(40).fill(0).map((e, i) => ({
@@ -22,6 +23,7 @@ const Home: NextPage = () => {
         title="Planet Pass"
         description="Text about how these are planets you have visited"
       />
+      <ConnectButton/>
       <UserInfo
         userName="username"
         userImageUrl={fpoImage2}
