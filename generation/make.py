@@ -6,7 +6,7 @@ from typing import List, Dict
 
 from PIL import Image
 
-folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v1"
+folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v2"
 
 number_of_anomalies = 12
 

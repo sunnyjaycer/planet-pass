@@ -9,10 +9,6 @@
         "alwaysOn": true,
         "files": [
           {
-            "file": "anger-orb",
-            "probability": 0.5
-          },
-          {
             "file": "aura",
             "probability": 0.15
           },
@@ -207,6 +203,10 @@
             "probability": 0.5
           },
           {
+            "file": "gas-4",
+            "probability": 0.5
+          },
+          {
             "file": "grid-fence",
             "probability": 0.5
           },
@@ -279,7 +279,7 @@
             "probability": 0.5
           },
           {
-            "file": "sandscapes",
+            "file": "sandscapes-1",
             "probability": 0.5
           },
           {
@@ -303,7 +303,7 @@
             "probability": 0.5
           },
           {
-            "file": "swirls",
+            "file": "swirls-1",
             "probability": 0.5
           },
           {
@@ -347,6 +347,14 @@
             "probability": 0.5
           },
           {
+            "file": "crashed-freighter",
+            "probability": 0.5
+          },
+          {
+            "file": "crater-impacts-a",
+            "probability": 0.5
+          },
+          {
             "file": "crystals",
             "probability": 0.5
           },
@@ -363,19 +371,7 @@
             "probability": 0.5
           },
           {
-            "file": "feature-crater-impacts-a",
-            "probability": 0.5
-          },
-          {
-            "file": "feature-lava-field-lower",
-            "probability": 0.5
-          },
-          {
-            "file": "feature-lava-field-upper",
-            "probability": 0.5
-          },
-          {
-            "file": "feature-water-ocean-a",
+            "file": "forest",
             "probability": 0.5
           },
           {
@@ -383,11 +379,31 @@
             "probability": 0.5
           },
           {
+            "file": "lava-field-lower",
+            "probability": 0.5
+          },
+          {
+            "file": "lava-field-upper",
+            "probability": 0.5
+          },
+          {
             "file": "lava-large",
             "probability": 0.5
           },
           {
-            "file": "ocean-2",
+            "file": "mountains-dark",
+            "probability": 0.5
+          },
+          {
+            "file": "mountains-green",
+            "probability": 0.5
+          },
+          {
+            "file": "ocean-edges",
+            "probability": 0.5
+          },
+          {
+            "file": "ocean-large",
             "probability": 0.5
           },
           {
@@ -399,11 +415,19 @@
             "probability": 0.5
           },
           {
-            "file": "river-01",
+            "file": "river-middle",
             "probability": 0.5
           },
           {
-            "file": "river-02",
+            "file": "river-spread",
+            "probability": 0.5
+          },
+          {
+            "file": "shrooms",
+            "probability": 0.5
+          },
+          {
+            "file": "solar-panels",
             "probability": 0.5
           },
           {
@@ -412,6 +436,10 @@
           },
           {
             "file": "weed",
+            "probability": 0.5
+          },
+          {
+            "file": "windmills",
             "probability": 0.5
           },
           {
@@ -487,11 +515,19 @@
         "probability": 0.5,
         "files": [
           {
-            "file": "asteroid-01",
+            "file": "asteroid-belt-01",
             "probability": 0.5
           },
           {
-            "file": "asteroid-belt-01",
+            "file": "asteroid-belt-02",
+            "probability": 0.5
+          },
+          {
+            "file": "asteroid-belt-03",
+            "probability": 0.5
+          },
+          {
+            "file": "asteroid-cluster-1",
             "probability": 0.5
           },
           {
@@ -527,39 +563,47 @@
         "probability": 0.5,
         "files": [
           {
-            "file": "ships-docking",
+            "file": "alien-outpost",
             "probability": 0.5
           },
           {
-            "file": "ships-flyby",
+            "file": "docking",
             "probability": 0.5
           },
           {
-            "file": "ships-flyby-dogfight",
+            "file": "flyby",
             "probability": 0.5
           },
           {
-            "file": "ships-flyby-trio",
+            "file": "flyby-dogfight",
             "probability": 0.5
           },
           {
-            "file": "ships-freighter",
+            "file": "flyby-trio",
             "probability": 0.5
           },
           {
-            "file": "ships-freighter-battle",
+            "file": "freighter",
             "probability": 0.5
           },
           {
-            "file": "ships-freighter-destroyed",
+            "file": "freighter-battle",
             "probability": 0.5
           },
           {
-            "file": "ships-spacestation",
+            "file": "freighter-destroyed",
             "probability": 0.5
           },
           {
-            "file": "ships-triforce",
+            "file": "pyramid",
+            "probability": 0.5
+          },
+          {
+            "file": "spacestation",
+            "probability": 0.5
+          },
+          {
+            "file": "triforce",
             "probability": 0.5
           }
         ]
