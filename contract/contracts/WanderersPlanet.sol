@@ -6,8 +6,9 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
-contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
+contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
     string private baseURI;
     bytes32 public immutable root;
 
@@ -17,19 +18,31 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
     // Current planet state (see internal docs for what they represent)
     mapping(uint256 => uint256) public planetState;
 
+    // Current planet names
+    mapping(uint256 => string) public planetNames;
+
     constructor(string memory baseURI_, bytes32 _root)
         ERC721("Wanderers Planet", "WANDERER-PLANET")
     {
         baseURI = baseURI_;
         root = _root;
         claimEnabled = false;
+        _pause();
+    }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
     }
 
     function _baseURI() internal view override returns (string memory) {
         return baseURI;
     }
 
-    function updateBaseURI(string memory newBaseURI) external onlyOwner {
+    function updateBaseURI(string calldata newBaseURI) external onlyOwner {
         baseURI = newBaseURI;
     }
 
@@ -44,26 +57,23 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
     // Claim planets according to merkle proof
     function claim(
         address to,
-        uint256 planetId,
+        uint256 id,
         bytes32[] calldata proof
-    ) external {
+    ) external whenNotPaused {
         // Make sure claim is enabled
         require(claimEnabled, "Claim disabled");
         // Make sure merkle proof is valid
-        require(
-            _verify(_leaf(planetId, msg.sender), proof),
-            "Bad merkle proof"
-        );
+        require(_verify(_leaf(id, msg.sender), proof), "Bad merkle proof");
 
-        _safeMint(to, planetId);
+        _safeMint(to, id);
     }
 
-    function _leaf(uint256 planetId, address account)
+    function _leaf(uint256 id, address account)
         internal
         pure
         returns (bytes32)
     {
-        return keccak256(abi.encodePacked(planetId, account));
+        return keccak256(abi.encodePacked(id, account));
     }
 
     function _verify(bytes32 leaf, bytes32[] memory proof)
@@ -74,17 +84,33 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
         return MerkleProof.verify(proof, root, leaf);
     }
 
-    // Owner can mint more
-    function safeMint(address to, uint256 planetId) external onlyOwner {
-        _safeMint(to, planetId);
+    function setPlanetName(uint256 id, string calldata name)
+        external
+        whenNotPaused
+    {
+        require(ownerOf(id) == msg.sender, "Not owner of Planet");
+        planetNames[id] = name;
     }
 
-    function safeMint(address to, uint256[] calldata planetId)
+    function setPlanetName(uint256[] calldata id, string[] calldata name)
         external
-        onlyOwner
+        whenNotPaused
     {
-        for (uint256 i = 0; i < planetId.length; i++) {
-            _safeMint(to, planetId[i]);
+        require(id.length == name.length, "Array length mismatch");
+        for (uint256 i = 0; i < id.length; i++) {
+            require(ownerOf(id[i]) == msg.sender, "Not owner of Planet");
+            planetNames[id[i]] = name[i];
+        }
+    }
+
+    // Owner can mint more
+    function safeMint(address to, uint256 id) external onlyOwner {
+        _safeMint(to, id);
+    }
+
+    function safeMint(address to, uint256[] calldata id) external onlyOwner {
+        for (uint256 i = 0; i < id.length; i++) {
+            _safeMint(to, id[i]);
         }
     }
 
@@ -94,12 +120,12 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable {
     }
 
     // Update state for multiple planets
-    function setPlanetState(uint256[] calldata ids, uint256 state)
+    function setPlanetState(uint256[] calldata id, uint256 state)
         external
         onlyOwner
     {
-        for (uint256 i = 0; i < ids.length; i++) {
-            planetState[ids[i]] = state;
+        for (uint256 i = 0; i < id.length; i++) {
+            planetState[id[i]] = state;
         }
     }
 

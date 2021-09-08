@@ -58,12 +58,12 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable, Pausable {
         planetContract = _planetContract;
     }
 
-    function setPassName(uint256 id, string memory _passName) external whenNotPaused {
+    function setPassName(uint256 id, string calldata _passName) external whenNotPaused {
         require(msg.sender == ownerOf(id), "Not owner of pass");
         passName[id] = _passName;
     }
 
-    function safeMint(address to, string memory _passName) external whenNotPaused {
+    function safeMint(address to, string calldata _passName) external whenNotPaused {
         passName[_tokenIdCounter.current()] = _passName;
         _safeMint(to, _tokenIdCounter.current());
         _tokenIdCounter.increment();
