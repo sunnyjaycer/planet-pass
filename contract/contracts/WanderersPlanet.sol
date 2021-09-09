@@ -7,8 +7,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
+    using Strings for uint256;
+
     string private baseURI;
     bytes32 public immutable root;
 
@@ -141,6 +144,22 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         }
 
         return tokens;
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override
+        returns (string memory)
+    {
+        return
+            string(
+                abi.encodePacked(
+                    super.tokenURI(tokenId),
+                    "/",
+                    planetState[tokenId].toString()
+                )
+            );
     }
 
     // The following functions are overrides required by Solidity.

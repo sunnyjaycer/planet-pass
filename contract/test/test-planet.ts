@@ -134,14 +134,27 @@ describe("WanderersPlanet", function () {
 
             await planets.connect(accounts[0]).claim(
                 address,
-                0,
-                merkleTree.getHexProof(hash(0, address))
+                1,
+                merkleTree.getHexProof(hash(1, address))
             );
 
-            expect(await planets.tokenURI(0)).to.equal("example.com/0");
+            expect(await planets.tokenURI(1)).to.equal("example.com/1/0");
         });
 
         it("should be able to change uri", async function () {
+            const address = await accounts[0].getAddress();
+
+            await planets.connect(accounts[0]).claim(
+                address,
+                1,
+                merkleTree.getHexProof(hash(1, address))
+            );
+
+            await planets.connect(accounts[0]).updateBaseURI("emmy.org/");
+            expect(await planets.tokenURI(1)).to.equal("emmy.org/1/0");
+        });
+
+        it("should work with different states", async function () {
             const address = await accounts[0].getAddress();
 
             await planets.connect(accounts[0]).claim(
@@ -150,8 +163,24 @@ describe("WanderersPlanet", function () {
                 merkleTree.getHexProof(hash(0, address))
             );
 
+            await planets.connect(accounts[0])['setPlanetState(uint256,uint256)'](0, 1);
+
+            expect(await planets.tokenURI(0)).to.equal("example.com/0/1");
+        });
+
+        it("should work with different states after baseURI change", async function () {
+            const address = await accounts[0].getAddress();
+
+            await planets.connect(accounts[0]).claim(
+                address,
+                0,
+                merkleTree.getHexProof(hash(0, address))
+            );
+
+            await planets.connect(accounts[0])['setPlanetState(uint256,uint256)'](0, 1);
+
             await planets.connect(accounts[0]).updateBaseURI("emmy.org/");
-            expect(await planets.tokenURI(0)).to.equal("emmy.org/0");
+            expect(await planets.tokenURI(0)).to.equal("emmy.org/0/1");
         });
     });
 
