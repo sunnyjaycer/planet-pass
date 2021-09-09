@@ -129,6 +129,20 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         }
     }
 
+    function tokensOfOwner(address owner)
+        external
+        view
+        returns (uint256[] memory)
+    {
+        uint256[] memory tokens = new uint256[](balanceOf(owner));
+
+        for (uint256 i = 0; i < tokens.length; i++) {
+            tokens[i] = tokenOfOwnerByIndex(owner, i);
+        }
+
+        return tokens;
+    }
+
     // The following functions are overrides required by Solidity.
 
     function _beforeTokenTransfer(

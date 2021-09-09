@@ -249,7 +249,7 @@ describe("WanderersPlanet", function () {
             const address = await accounts[0].getAddress();
             tokensToMint = [...Array(25).keys()];
 
-            await planets.connect(accounts[0])['safeMint(address,uint256[])'](address, tokensToMint); 
+            await planets.connect(accounts[0])['safeMint(address,uint256[])'](address, tokensToMint);
         });
 
         it("owner should be able to rename Planet", async function () {
@@ -270,14 +270,32 @@ describe("WanderersPlanet", function () {
             await expect(
                 planets.connect(accounts[1])['setPlanetName(uint256[],string[])'](tokensToMint, names)
             )
-            .to.be.revertedWith("Not owner of Planet");
+                .to.be.revertedWith("Not owner of Planet");
         });
 
         it("non-owner should not be able to rename Planet", async function () {
             await expect(
                 planets.connect(accounts[1])['setPlanetName(uint256,string)'](0, newName)
             )
-            .to.be.revertedWith("Not owner of Planet");
+                .to.be.revertedWith("Not owner of Planet");
+        });
+    });
+
+    describe("tokensOfOwner", function () {
+        beforeEach(async function () {
+            if (await planets.paused()) {
+                await planets.unpause();
+            }
+        });
+
+        it("should be able to enumerate all Planets of an owner", async function () {
+            const address = await accounts[0].getAddress();
+            const tokensToMint = [...Array(30).keys()];
+
+            await planets.connect(accounts[0])['safeMint(address,uint256[])'](address, tokensToMint);
+
+            const numberOfPlanets = await planets.tokensOfOwner(address);
+            expect(numberOfPlanets.length).to.equal(30);
         });
     });
 });

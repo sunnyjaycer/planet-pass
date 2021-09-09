@@ -248,4 +248,22 @@ describe("WanderersPass", function () {
             expect(await pass.planetContract()).to.equal(planetsTwo.address);
         })
     });
+
+    describe("tokensOfOwner", function () {
+        beforeEach(async function () {
+            if (await pass.paused()) {
+                await pass.unpause();
+            }
+        });
+
+        it("should be able to enumerate all Passes of an owner", async function () {
+            const address = await accounts[0].getAddress();
+            await pass.connect(accounts[0]).safeMint(address, "Test");
+            await pass.connect(accounts[0]).safeMint(address, "Test");
+            await pass.connect(accounts[0]).safeMint(address, "Test");
+
+            const numberOfPasses = await pass.tokensOfOwner(address);
+            expect(numberOfPasses.length).to.equal(3);
+        });
+    });
 })
