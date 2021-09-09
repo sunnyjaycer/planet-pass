@@ -152,13 +152,17 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         override
         returns (string memory)
     {
+        return tokenURIWithState(tokenId, planetState[tokenId]);
+    }
+
+    function tokenURIWithState(uint256 tokenId, uint256 state)
+        public
+        view
+        returns (string memory)
+    {
         return
             string(
-                abi.encodePacked(
-                    super.tokenURI(tokenId),
-                    "/",
-                    planetState[tokenId].toString()
-                )
+                abi.encodePacked(super.tokenURI(tokenId), "/", state.toString())
             );
     }
 
