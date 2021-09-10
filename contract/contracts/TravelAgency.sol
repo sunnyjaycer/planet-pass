@@ -12,31 +12,36 @@ import "solidity-bytes-utils/contracts/BytesLib.sol";
 contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     using BytesLib for bytes;
 
-    // Basis point: part per 10,000.
+    /// Basis point: part per 10,000.
     uint256 public constant BASIS_POINTS_DIVISOR = 10000;
 
+    /// Location of Planet contract.
     WanderersPlanet public planetContract;
+
+    /// Location of Pass contract.
     WanderersPass public passContract;
+
+    /// Location of WETH contract.
     IERC20 public wrappedEthContract;
 
-    // Fee charged by the contract deployer in basis points
+    /// Fee charged by the contract deployer in basis points
     uint256 public operatorFeeBp;
 
-    // Fee accured by contract owner
+    /// Fee accured by contract owner
     uint256 public operatorFeeAccrued;
 
-    // Mapping of Planet IDs to owners.
+    /// Mapping of Planet IDs to owners.
     mapping(uint256 => address) public planetOwners;
 
-    // Mapping of Planet IDs to their fee.
+    /// Mapping of Planet IDs to their fee.
     mapping(uint256 => uint256) public planetFees;
 
-    // Mapping of owners to fees accured
+    /// Mapping of owners to fees accured
     mapping(address => uint256) public ownerFeesAccrued;
 
-    // Prevent non-stamping Pass deposits into this contract.
-    // This variable is temporarily set to true during a call to flashStamp() and is required
-    // to be true for a Pass deposit in onERC721Received().
+    /// Prevent non-stamping Pass deposits into this contract.
+    /// This variable is temporarily set to true during a call to flashStamp() and is required
+    /// to be true for a Pass deposit in onERC721Received().
     bool private acceptPass;
 
     constructor(
@@ -53,14 +58,18 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         _pause();
     }
 
+    /// Pauses the contract.
     function pause() external onlyOwner {
         _pause();
     }
 
+    /// Unpauses the contract.
     function unpause() external onlyOwner {
         _unpause();
     }
 
+    /// Updates the location of the Planet contract.
+    /// @param _planetContract the new location of the Planet contract
     function updatePlanetContract(WanderersPlanet _planetContract)
         external
         onlyOwner
@@ -68,6 +77,8 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         planetContract = _planetContract;
     }
 
+    /// Updates the location of the Pass contract.
+    /// @param _passContract the new location of the Pass contract
     function updatePassContract(WanderersPass _passContract)
         external
         onlyOwner
@@ -75,6 +86,8 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         passContract = _passContract;
     }
 
+    /// Updates the location of the WETH contract.
+    /// @param _wrappedEthContract the new location of the WETH contract
     function updateWrappedEthContract(IERC20 _wrappedEthContract)
         external
         onlyOwner
@@ -82,13 +95,17 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         wrappedEthContract = _wrappedEthContract;
     }
 
+    /// Updates the fee charged by the contract deployer.
+    /// @param _operatorFeeBp the new fee charged, in basis points
     function updateOperatorFeeBp(uint256 _operatorFeeBp) external onlyOwner {
         operatorFeeBp = _operatorFeeBp;
     }
 
-    // Perform a flash-stamp of planetId onto passId.
-    // Note: this requires an approval from Planet Pass for passId, otherwise it will revert.
-    // Note: this requqires ERC-20 spending approval for WETH, otherwise it will revert.
+    /// Perform a flash-stamp of planetId onto passId.
+    /// Note: this requires an approval from Planet Pass for passId, otherwise it will revert.
+    /// Note: this requqires ERC-20 spending approval for WETH, otherwise it will revert.
+    /// @param planetId token ID of the planet to visit.
+    /// @param passId token ID of the pass that will used for stamping.
     function flashStamp(uint256 planetId, uint256 passId)
         external
         whenNotPaused
@@ -132,10 +149,14 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         passContract.safeTransferFrom(address(this), msg.sender, passId);
     }
 
+    /// @dev calculates the fee designated for the operator (owner of contract).
+    /// @param fee the fee charged by the planet owner
     function calculateOperatorFee(uint256 fee) internal view returns (uint256) {
         return (fee * operatorFeeBp) / BASIS_POINTS_DIVISOR;
     }
 
+    /// Withdraws the accured operator fees to a designated address.
+    /// @param to the address to send fees to
     function withdrawOperatorFees(address to) external onlyOwner {
         uint256 transferAmount = operatorFeeAccrued;
         operatorFeeAccrued = 0;
@@ -144,6 +165,8 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         require(success, "Token transfer failed");
     }
 
+    /// Withdraws Planets owner's accured fees to a designated address.
+    /// @param to the address to send fees to
     function withdrawOwnerFees(address to) external {
         uint256 transferAmount = ownerFeesAccrued[msg.sender];
         ownerFeesAccrued[msg.sender] = 0;
@@ -152,7 +175,9 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         require(success, "Token transfer failed");
     }
 
-    // Withdraws the specified Planet to a designated address.
+    /// Withdraws a Planet token to a designated address.
+    /// @param to the address to send the Planet to
+    /// @param tokenId the token ID of the Planet
     function withdraw(address to, uint256 tokenId) external {
         require(planetOwners[tokenId] == msg.sender, "Not owner of planet");
 
