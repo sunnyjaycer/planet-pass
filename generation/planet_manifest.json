@@ -17,6 +17,10 @@
             "probability": 0.15
           },
           {
+            "file": "fabric",
+            "probability": 0.15
+          },
+          {
             "file": "galaxy-blue",
             "probability": 0.15
           },
@@ -42,6 +46,14 @@
           },
           {
             "file": "nova",
+            "probability": 0.15
+          },
+          {
+            "file": "rivers",
+            "probability": 0.15
+          },
+          {
+            "file": "smudge",
             "probability": 0.15
           },
           {
@@ -81,6 +93,10 @@
             "probability": 0.15
           },
           {
+            "file": "streak-green",
+            "probability": 0.15
+          },
+          {
             "file": "streak-pink",
             "probability": 0.15
           },
@@ -107,31 +123,75 @@
         "probability": 0.5,
         "files": [
           {
-            "file": "planet-blue",
+            "file": "core-blob",
             "probability": 0.5
           },
           {
-            "file": "planet-dark",
+            "file": "core-blue",
             "probability": 0.5
           },
           {
-            "file": "planet-green",
+            "file": "core-blur",
             "probability": 0.5
           },
           {
-            "file": "planet-magenta",
+            "file": "core-dark",
             "probability": 0.5
           },
           {
-            "file": "planet-mosaic",
+            "file": "core-distort",
             "probability": 0.5
           },
           {
-            "file": "planet-pink",
+            "file": "core-dots",
             "probability": 0.5
           },
           {
-            "file": "planet-white",
+            "file": "core-green",
+            "probability": 0.5
+          },
+          {
+            "file": "core-layered",
+            "probability": 0.5
+          },
+          {
+            "file": "core-magenta",
+            "probability": 0.5
+          },
+          {
+            "file": "core-melt",
+            "probability": 0.5
+          },
+          {
+            "file": "core-mosaic",
+            "probability": 0.5
+          },
+          {
+            "file": "core-pink",
+            "probability": 0.5
+          },
+          {
+            "file": "core-polkadots",
+            "probability": 0.5
+          },
+          {
+            "file": "core-ripple",
+            "probability": 0.5
+          },
+          {
+            "file": "core-swirl",
+            "probability": 0.5
+          },
+          {
+            "file": "core-vortex",
+            "probability": 0.5
+          },
+          {
+            "file": "core-water",
+            "probability": 0.5
+          },
+          {
+            "file": "core-white",
             "probability": 0.5
           }
         ]
@@ -339,6 +399,10 @@
             "probability": 0.5
           },
           {
+            "file": "ancient-core",
+            "probability": 0.5
+          },
+          {
             "file": "ancient-tech",
             "probability": 0.5
           },
@@ -351,7 +415,19 @@
             "probability": 0.5
           },
           {
+            "file": "crater-alien",
+            "probability": 0.5
+          },
+          {
+            "file": "crater-gas",
+            "probability": 0.5
+          },
+          {
             "file": "crater-impacts-a",
+            "probability": 0.5
+          },
+          {
+            "file": "craters",
             "probability": 0.5
           },
           {
@@ -360,6 +436,10 @@
           },
           {
             "file": "domes",
+            "probability": 0.5
+          },
+          {
+            "file": "dunes",
             "probability": 0.5
           },
           {
@@ -372,6 +452,18 @@
           },
           {
             "file": "forest",
+            "probability": 0.5
+          },
+          {
+            "file": "grass",
+            "probability": 0.5
+          },
+          {
+            "file": "impact",
+            "probability": 0.5
+          },
+          {
+            "file": "labyrinth",
             "probability": 0.5
           },
           {
@@ -388,6 +480,10 @@
           },
           {
             "file": "lava-large",
+            "probability": 0.5
+          },
+          {
+            "file": "monolith",
             "probability": 0.5
           },
           {
@@ -423,11 +519,19 @@
             "probability": 0.5
           },
           {
+            "file": "scales",
+            "probability": 0.5
+          },
+          {
             "file": "shrooms",
             "probability": 0.5
           },
           {
             "file": "solar-panels",
+            "probability": 0.5
+          },
+          {
+            "file": "spores",
             "probability": 0.5
           },
           {
@@ -505,6 +609,14 @@
           {
             "file": "rings-e",
             "probability": 0.5
+          },
+          {
+            "file": "rings-f",
+            "probability": 0.5
+          },
+          {
+            "file": "rings-g",
+            "probability": 0.5
           }
         ]
       },
@@ -544,6 +656,10 @@
           },
           {
             "file": "moons-color",
+            "probability": 0.5
+          },
+          {
+            "file": "moons-five",
             "probability": 0.5
           },
           {
@@ -595,7 +711,15 @@
             "probability": 0.5
           },
           {
-            "file": "pyramid",
+            "file": "pyramid-active",
+            "probability": 0.5
+          },
+          {
+            "file": "pyramid-rogue",
+            "probability": 0.5
+          },
+          {
+            "file": "pyramid-rogue-2",
             "probability": 0.5
           },
           {
@@ -640,6 +764,14 @@
             "probability": 0.5
           },
           {
+            "file": "eth-world",
+            "probability": 0.5
+          },
+          {
+            "file": "fishbowl",
+            "probability": 0.5
+          },
+          {
             "file": "fusion",
             "probability": 0.5
           },
@@ -653,6 +785,18 @@
           },
           {
             "file": "nova",
+            "probability": 0.5
+          },
+          {
+            "file": "pizza-pie",
+            "probability": 0.5
+          },
+          {
+            "file": "pizza-slice",
+            "probability": 0.5
+          },
+          {
+            "file": "punk",
             "probability": 0.5
           },
           {

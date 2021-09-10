@@ -6,9 +6,9 @@ from typing import List, Dict
 
 from PIL import Image
 
-folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v2"
+folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v3"
 
-number_of_anomalies = 12
+number_of_anomalies = 17
 
 
 class Manifest:
@@ -22,9 +22,9 @@ class Manifest:
 def main():
     manifest = Manifest(json.load(open("planet_manifest.json")))
 
-    processes = 22
-    n = 220
-    increment = int(n / processes)
+    processes = 20
+    n = 400
+    increment, remainder = divmod(n, processes)
     jobs = []
     start = 0
     stop = increment
@@ -34,6 +34,13 @@ def main():
         jobs.append(process)
         start = stop
         stop += increment
+
+    # Remainder
+    if not start == start + remainder:
+        process = multiprocessing.Process(
+            target=worker, args=(start, start + remainder, manifest)
+        )
+        jobs.append(process)
 
     [j.start() for j in jobs]
     [j.join() for j in jobs]
