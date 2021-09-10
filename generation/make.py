@@ -2,7 +2,9 @@ import json
 import multiprocessing
 import os
 import random
-from typing import List, Dict
+from pathlib import Path
+from shutil import copy
+from typing import List, Dict, Optional
 
 from PIL import Image
 
@@ -23,7 +25,7 @@ def main():
     manifest = Manifest(json.load(open("planet_manifest.json")))
 
     processes = 20
-    n = 400
+    n = 100
     increment, remainder = divmod(n, processes)
     jobs = []
     start = 0
@@ -56,10 +58,21 @@ def anomaly(n: int, manifest: Manifest):
 
     for n in range(0, number_of_anomalies):
         base = get_base()
-        frames, metadata = get_anomaly(manifest, n)
+        frames, audio, metadata = get_anomaly(manifest, n)
 
         with open(f"/mnt/e/planetpass/metadata/{str(anomalies[n])}.json", "w") as f:
             json.dump(metadata, f)
+
+        # First remove audio files
+        fis = os.listdir(f"/mnt/e/planetpass/raw/{str(anomalies[n])}/")
+        for item in fis:
+            if item.endswith(".wav"):
+                os.remove(os.path.join(f"/mnt/e/planetpass/raw/{str(anomalies[n])}/", item))
+
+        # Copy audio
+        for a in audio:
+            a_name = Path(a).name
+            copy(a, f"mnt/e/planetpass/raw/{str(anomalies[n])}/a_name")
 
         make_image(frames, base, anomalies[n])
         print(anomalies[n])
@@ -67,26 +80,32 @@ def anomaly(n: int, manifest: Manifest):
 
 def get_anomaly(manifest: Manifest, n: int) -> [List, Dict]:
     data = {}
+    audio = []
     frames = []
 
     # Get background as normal
-    background, metadata = get_category(manifest.category("background"))
+    background, aud, metadata = get_category(manifest.category("background"))
     [frames.append(x) for x in background]
+    [audio.append(x) for x in aud]
     data.update(metadata)
 
     # Get the nth item in the list of anomalies
     nth_anomaly = manifest.category("anomalies")["subcategories"][0]["files"][n]
     anomaly_files = get_file(nth_anomaly, "anomalies", "anomalies")
+    aud = get_audio(nth_anomaly, "anomalies", "anomalies")
+    if aud:
+        audio.append(aud)
+
     frames.append(anomaly_files)
     data["anomaly"] = [nth_anomaly["file"]]
 
-    return frames, data
+    return frames, audio, data
 
 
 def worker(start: int, stop: int, manifest: Manifest):
     for n in range(start, stop):
         base = get_base()
-        frames, metadata = get_frames(manifest)
+        frames, audio, metadata = get_frames(manifest)
 
         # Make individual planet folder
         os.makedirs(f"/mnt/e/planetpass/raw/{str(n)}", exist_ok=True)
@@ -95,6 +114,11 @@ def worker(start: int, stop: int, manifest: Manifest):
         os.makedirs("/mnt/e/planetpass/metadata", exist_ok=True)
         with open(f"/mnt/e/planetpass/metadata/{str(n)}.json", "w") as f:
             json.dump(metadata, f)
+
+        # Copy audio
+        for a in audio:
+            a_name = Path(a).name
+            copy(a, f"/mnt/e/planetpass/raw/{str(n)}/{a_name}")
 
         make_image(frames, base, str(n))
         print(n)
@@ -113,36 +137,47 @@ def make_image(frames, base, prefix: str):
         frame.save(f"/mnt/e/planetpass/raw/{prefix}/{prefix}_{n:05}.png")
 
 
-def get_frames(manifest: Manifest) -> [List, Dict]:
+def get_frames(manifest: Manifest) -> [List, List, Dict]:
     data = {}
+    audio = []
     frames = []
-    background, metadata = get_category(manifest.category("background"))
+
+    background, aud, metadata = get_category(manifest.category("background"))
     [frames.append(x) for x in background]
+    [audio.append(x) for x in aud]
     data.update(metadata)
 
-    planet, metadata = get_category(manifest.category("planet"))
+    planet, aud, metadata = get_category(manifest.category("planet"))
     [frames.append(x) for x in planet]
+    [audio.append(x) for x in aud]
     data.update(metadata)
 
-    return frames, data
+    return frames, audio, data
 
 
-def get_category(category) -> [List, Dict]:
+def get_category(category) -> [List, List, Dict]:
     category_name = category["category"]
     files = []
+    audio = []
     metadata = {}
+
     for subcat in category["subcategories"]:
-        category_files, category_metadata = get_subcategory(subcat, category_name)
+        category_files, category_audio, category_metadata = get_subcategory(
+            subcat, category_name
+        )
+
         [files.append(x) for x in category_files]
+        [audio.append(x) for x in category_audio]
         metadata.update(category_metadata)
 
-    return files, metadata
+    return files, audio, metadata
 
 
-def get_subcategory(subcategory, category_name: str) -> [List, Dict]:
+def get_subcategory(subcategory, category_name: str) -> [List, List, Dict]:
     subcategory_name = subcategory["subcategory"]
 
     files = []
+    audio = []
     metadata = {}
 
     to_fetch = [file for file in subcategory["files"]]
@@ -159,11 +194,15 @@ def get_subcategory(subcategory, category_name: str) -> [List, Dict]:
         )
 
     if not always_on and not chance(subcategory["probability"]):
-        return [], {}
+        return [], [], {}
 
     for file in to_fetch:
         fils = get_file(file, subcategory_name, category_name)
         files.append(fils)
+
+        aud = get_audio(file, subcategory_name, category_name)
+        if aud:
+            audio.append(aud)
 
         # Update metadata
         new_li = metadata.get(subcategory_name, [])
@@ -171,7 +210,7 @@ def get_subcategory(subcategory, category_name: str) -> [List, Dict]:
 
         metadata[subcategory_name] = new_li
 
-    return files, metadata
+    return files, audio, metadata
 
 
 def get_file(file, subcategory_name: str, category_name: str) -> List:
@@ -188,6 +227,16 @@ def get_file(file, subcategory_name: str, category_name: str) -> List:
         images.append(file_name)
 
     return images
+
+
+def get_audio(file, subcategory_name: str, category_name: str) -> Optional[str]:
+    file_basename = file["file"]
+    file_name = f"{folder}/{category_name}/{subcategory_name}/{file_basename}/{file_basename}.wav"
+
+    if not os.path.isfile(file_name):
+        return None
+    else:
+        return file_name
 
 
 def get_base() -> List:
