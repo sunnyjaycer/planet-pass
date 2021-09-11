@@ -74,7 +74,7 @@ def anomaly(n: int, manifest: Manifest):
         # Copy audio
         for a in audio:
             a_name = Path(a).name
-            copy(a, f"mnt/e/planetpass/raw/{str(anomalies[n])}/a_name")
+            copy(a, f"/mnt/e/planetpass/raw/{str(anomalies[n])}/{a_name}")
 
         make_image(frames, base, anomalies[n])
         print(anomalies[n])
