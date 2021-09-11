@@ -107,6 +107,18 @@
           {
             "file": "streak-white",
             "probability": 0.15
+          },
+          {
+            "file": "sun-blue",
+            "probability": 0.15
+          },
+          {
+            "file": "sun-green",
+            "probability": 0.15
+          },
+          {
+            "file": "sun-pink",
+            "probability": 0.15
           }
         ]
       }
@@ -215,23 +227,11 @@
             "probability": 0.5
           },
           {
-            "file": "crack",
+            "file": "cracks-a",
             "probability": 0.5
           },
           {
-            "file": "cracks-1",
-            "probability": 0.5
-          },
-          {
-            "file": "cracks-2",
-            "probability": 0.5
-          },
-          {
-            "file": "craters-1",
-            "probability": 0.5
-          },
-          {
-            "file": "craters-2",
+            "file": "cracks-b",
             "probability": 0.5
           },
           {
@@ -251,19 +251,19 @@
             "probability": 0.5
           },
           {
-            "file": "gas-1",
+            "file": "gas-a",
             "probability": 0.5
           },
           {
-            "file": "gas-2",
+            "file": "gas-b",
             "probability": 0.5
           },
           {
-            "file": "gas-3",
+            "file": "gas-c",
             "probability": 0.5
           },
           {
-            "file": "gas-4",
+            "file": "gas-d",
             "probability": 0.5
           },
           {
@@ -335,27 +335,35 @@
             "probability": 0.5
           },
           {
+            "file": "rough-a",
+            "probability": 0.5
+          },
+          {
+            "file": "rough-b",
+            "probability": 0.5
+          },
+          {
+            "file": "rough-c",
+            "probability": 0.5
+          },
+          {
             "file": "sand",
             "probability": 0.5
           },
           {
-            "file": "sandscapes-1",
+            "file": "sandscapes-a",
             "probability": 0.5
           },
           {
-            "file": "sandscapes-2",
+            "file": "sandscapes-b",
             "probability": 0.5
           },
           {
-            "file": "sandscapes-3",
+            "file": "sandscapes-d",
             "probability": 0.5
           },
           {
-            "file": "sandscapes-4",
-            "probability": 0.5
-          },
-          {
-            "file": "shattered",
+            "file": "sandscapes-e",
             "probability": 0.5
           },
           {
@@ -363,11 +371,11 @@
             "probability": 0.5
           },
           {
-            "file": "swirls-1",
+            "file": "swirls-a",
             "probability": 0.5
           },
           {
-            "file": "swirls-2",
+            "file": "swirls-b",
             "probability": 0.5
           },
           {
@@ -436,6 +444,10 @@
           },
           {
             "file": "domes",
+            "probability": 0.5
+          },
+          {
+            "file": "drill",
             "probability": 0.5
           },
           {
@@ -520,6 +532,10 @@
           },
           {
             "file": "scales",
+            "probability": 0.5
+          },
+          {
+            "file": "shattered",
             "probability": 0.5
           },
           {
@@ -639,6 +655,14 @@
             "probability": 0.5
           },
           {
+            "file": "asteroid-belt-04",
+            "probability": 0.5
+          },
+          {
+            "file": "asteroid-belt-05",
+            "probability": 0.5
+          },
+          {
             "file": "asteroid-cluster-1",
             "probability": 0.5
           },
@@ -716,10 +740,6 @@
           },
           {
             "file": "pyramid-rogue",
-            "probability": 0.5
-          },
-          {
-            "file": "pyramid-rogue-2",
             "probability": 0.5
           },
           {

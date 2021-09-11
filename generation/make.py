@@ -8,7 +8,7 @@ from typing import List, Dict, Optional
 
 from PIL import Image
 
-folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v3"
+folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v4"
 
 number_of_anomalies = 17
 
@@ -25,7 +25,7 @@ def main():
     manifest = Manifest(json.load(open("planet_manifest.json")))
 
     processes = 20
-    n = 100
+    n = 400
     increment, remainder = divmod(n, processes)
     jobs = []
     start = 0
@@ -67,7 +67,9 @@ def anomaly(n: int, manifest: Manifest):
         fis = os.listdir(f"/mnt/e/planetpass/raw/{str(anomalies[n])}/")
         for item in fis:
             if item.endswith(".wav"):
-                os.remove(os.path.join(f"/mnt/e/planetpass/raw/{str(anomalies[n])}/", item))
+                os.remove(
+                    os.path.join(f"/mnt/e/planetpass/raw/{str(anomalies[n])}/", item)
+                )
 
         # Copy audio
         for a in audio:
@@ -92,7 +94,7 @@ def get_anomaly(manifest: Manifest, n: int) -> [List, Dict]:
     # Get the nth item in the list of anomalies
     nth_anomaly = manifest.category("anomalies")["subcategories"][0]["files"][n]
     anomaly_files = get_file(nth_anomaly, "anomalies", "anomalies")
-    aud = get_audio(nth_anomaly, "anomalies", "anomalies")
+    aud = get_audio(nth_anomaly)
     if aud:
         audio.append(aud)
 
@@ -200,7 +202,7 @@ def get_subcategory(subcategory, category_name: str) -> [List, List, Dict]:
         fils = get_file(file, subcategory_name, category_name)
         files.append(fils)
 
-        aud = get_audio(file, subcategory_name, category_name)
+        aud = get_audio(file)
         if aud:
             audio.append(aud)
 
@@ -229,9 +231,9 @@ def get_file(file, subcategory_name: str, category_name: str) -> List:
     return images
 
 
-def get_audio(file, subcategory_name: str, category_name: str) -> Optional[str]:
+def get_audio(file) -> Optional[str]:
     file_basename = file["file"]
-    file_name = f"{folder}/{category_name}/{subcategory_name}/{file_basename}/{file_basename}.wav"
+    file_name = f"{folder}/music/{file_basename}.wav"
 
     if not os.path.isfile(file_name):
         return None
