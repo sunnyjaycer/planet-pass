@@ -129,6 +129,13 @@ describe("WanderersPlanet", function () {
             await planets.enableClaim();
         });
 
+        it("should revert for a non-existent token", async function () {
+            await expect(
+                planets.tokenURI(0)
+            )
+            .to.be.revertedWith("ERC721Metadata: URI query for nonexistent token");
+        });
+
         it("should have the right uri", async function () {
             const address = await accounts[0].getAddress();
 
@@ -138,7 +145,7 @@ describe("WanderersPlanet", function () {
                 merkleTree.getHexProof(hash(1, address))
             );
 
-            expect(await planets.tokenURI(1)).to.equal("example.com/1/0");
+            expect(await planets.tokenURI(1)).to.equal("example.com/0/1");
         });
 
         it("should be able to change uri", async function () {
@@ -151,7 +158,7 @@ describe("WanderersPlanet", function () {
             );
 
             await planets.connect(accounts[0]).updateBaseURI("emmy.org/");
-            expect(await planets.tokenURI(1)).to.equal("emmy.org/1/0");
+            expect(await planets.tokenURI(1)).to.equal("emmy.org/0/1");
         });
 
         it("should work with different states", async function () {
@@ -165,7 +172,7 @@ describe("WanderersPlanet", function () {
 
             await planets.connect(accounts[0])['setPlanetState(uint256,uint256)'](0, 1);
 
-            expect(await planets.tokenURI(0)).to.equal("example.com/0/1");
+            expect(await planets.tokenURI(0)).to.equal("example.com/1/0");
         });
 
         it("should work with different states after baseURI change", async function () {
@@ -180,7 +187,7 @@ describe("WanderersPlanet", function () {
             await planets.connect(accounts[0])['setPlanetState(uint256,uint256)'](0, 1);
 
             await planets.connect(accounts[0]).updateBaseURI("emmy.org/");
-            expect(await planets.tokenURI(0)).to.equal("emmy.org/0/1");
+            expect(await planets.tokenURI(0)).to.equal("emmy.org/1/0");
         });
     });
 

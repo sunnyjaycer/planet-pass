@@ -186,6 +186,8 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         return tokens;
     }
 
+    /// @dev override for token URI
+    /// @return the token URI of a given token, at its current state
     function tokenURI(uint256 tokenId)
         public
         view
@@ -195,15 +197,29 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         return tokenURIWithState(tokenId, planetState[tokenId]);
     }
 
+    /// @dev token URI with state override
+    /// @return the token URI of a given token, with a given state
     function tokenURIWithState(uint256 tokenId, uint256 state)
         public
         view
         returns (string memory)
     {
+        require(
+            _exists(tokenId),
+            "ERC721Metadata: URI query for nonexistent token"
+        );
+
         return
-            string(
-                abi.encodePacked(super.tokenURI(tokenId), "/", state.toString())
-            );
+            bytes(_baseURI()).length > 0
+                ? string(
+                    abi.encodePacked(
+                        _baseURI(),
+                        state.toString(),
+                        "/",
+                        tokenId.toString()
+                    )
+                )
+                : "";
     }
 
     // The following functions are overrides required by Solidity.
