@@ -7,18 +7,24 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
+    using Strings for uint256;
+
+    /// Base URI for metadata
     string private baseURI;
+
+    /// Root of merkle tree used for airdrop
     bytes32 public immutable root;
 
-    // Claiming enabled or disabled
+    /// Claiming enabled or disabled
     bool public claimEnabled;
 
-    // Current planet state (see internal docs for what they represent)
+    /// Mapping of Planets to states (see internal docs for what they represent)
     mapping(uint256 => uint256) public planetState;
 
-    // Current planet names
+    /// Mapping of Planets to names
     mapping(uint256 => string) public planetNames;
 
     constructor(string memory baseURI_, bytes32 _root)
@@ -30,31 +36,42 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         _pause();
     }
 
+    /// Pauses the contract.
     function pause() external onlyOwner {
         _pause();
     }
 
+    /// Unpauses the contract.
     function unpause() external onlyOwner {
         _unpause();
     }
 
+    /// @dev override for base URI
+    /// @return the variable `baseURI`
     function _baseURI() internal view override returns (string memory) {
         return baseURI;
     }
 
+    /// Updates the base URI.
+    /// @param newBaseURI the new base URI to be used
     function updateBaseURI(string calldata newBaseURI) external onlyOwner {
         baseURI = newBaseURI;
     }
 
+    /// Enables the airdrop claim functionality.
     function enableClaim() external onlyOwner {
         claimEnabled = true;
     }
 
+    /// Disables the airdrop claim functionality.
     function disableClaim() external onlyOwner {
         claimEnabled = false;
     }
 
-    // Claim planets according to merkle proof
+    /// Claim a Planet according to merkle proof.
+    /// @param to the address to send the Planet to
+    /// @param id the token ID of the Planet being claimed
+    /// @param proof the merkle tree proof that the sender is entitled to the Planet
     function claim(
         address to,
         uint256 id,
@@ -68,6 +85,10 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         _safeMint(to, id);
     }
 
+    /// @dev reconstructs the leaf hash of a claim
+    /// @param id the token ID of the leaf
+    /// @param account the account of the leaf
+    /// @return hash of the leaf
     function _leaf(uint256 id, address account)
         internal
         pure
@@ -76,6 +97,10 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         return keccak256(abi.encodePacked(id, account));
     }
 
+    /// @dev verifies if the leaf can be proven to be part of the merkle tree defined by `root`.
+    /// @param leaf the leaf to prove
+    /// @param proof the proof that the leaf is part of the tree
+    /// @return whether the leaf is part of the tree
     function _verify(bytes32 leaf, bytes32[] memory proof)
         internal
         view
@@ -84,6 +109,9 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         return MerkleProof.verify(proof, root, leaf);
     }
 
+    /// Set then name of a Planet.
+    /// @param id the token ID of the Planet
+    /// @param name the new name of the Planet
     function setPlanetName(uint256 id, string calldata name)
         external
         whenNotPaused
@@ -92,6 +120,9 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         planetNames[id] = name;
     }
 
+    /// Set then name of Planets.
+    /// @param id an array token IDs of Planets
+    /// @param name an array of new names for the Planets
     function setPlanetName(uint256[] calldata id, string[] calldata name)
         external
         whenNotPaused
@@ -103,23 +134,32 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         }
     }
 
-    // Owner can mint more
+    /// Mint a Planet. Tokens 0-8887 inclusive are reserved for the airdrop.
+    /// @param to the address to send the Planet to
+    /// @param id the token ID of the Planet to mint
     function safeMint(address to, uint256 id) external onlyOwner {
         _safeMint(to, id);
     }
 
+    /// Mint Planets. Tokens 0-8887 inclusive are reserved for the airdrop.
+    /// @param to the address to send the Planet to
+    /// @param id an array of token IDs of Planets to mint
     function safeMint(address to, uint256[] calldata id) external onlyOwner {
         for (uint256 i = 0; i < id.length; i++) {
             _safeMint(to, id[i]);
         }
     }
 
-    // Update state for one planet
+    /// Update the state of a Planet.
+    /// @param id the token ID of the Planet
+    /// @param state the state to update to
     function setPlanetState(uint256 id, uint256 state) external onlyOwner {
         planetState[id] = state;
     }
 
-    // Update state for multiple planets
+    /// Update the states of Planets.
+    /// @param id the token ID of the Planet
+    /// @param state the state to update to
     function setPlanetState(uint256[] calldata id, uint256 state)
         external
         onlyOwner
@@ -127,6 +167,59 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         for (uint256 i = 0; i < id.length; i++) {
             planetState[id[i]] = state;
         }
+    }
+
+    /// Return the tokens owned by a owner
+    /// @param owner the owner address
+    /// @return an array of all tokens owned by the address
+    function tokensOfOwner(address owner)
+        external
+        view
+        returns (uint256[] memory)
+    {
+        uint256[] memory tokens = new uint256[](balanceOf(owner));
+
+        for (uint256 i = 0; i < tokens.length; i++) {
+            tokens[i] = tokenOfOwnerByIndex(owner, i);
+        }
+
+        return tokens;
+    }
+
+    /// @dev override for token URI
+    /// @return the token URI of a given token, at its current state
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override
+        returns (string memory)
+    {
+        return tokenURIWithState(tokenId, planetState[tokenId]);
+    }
+
+    /// @dev token URI with state override
+    /// @return the token URI of a given token, with a given state
+    function tokenURIWithState(uint256 tokenId, uint256 state)
+        public
+        view
+        returns (string memory)
+    {
+        require(
+            _exists(tokenId),
+            "ERC721Metadata: URI query for nonexistent token"
+        );
+
+        return
+            bytes(_baseURI()).length > 0
+                ? string(
+                    abi.encodePacked(
+                        _baseURI(),
+                        state.toString(),
+                        "/",
+                        tokenId.toString()
+                    )
+                )
+                : "";
     }
 
     // The following functions are overrides required by Solidity.

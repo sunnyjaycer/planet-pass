@@ -129,16 +129,23 @@ describe("WanderersPlanet", function () {
             await planets.enableClaim();
         });
 
+        it("should revert for a non-existent token", async function () {
+            await expect(
+                planets.tokenURI(0)
+            )
+            .to.be.revertedWith("ERC721Metadata: URI query for nonexistent token");
+        });
+
         it("should have the right uri", async function () {
             const address = await accounts[0].getAddress();
 
             await planets.connect(accounts[0]).claim(
                 address,
-                0,
-                merkleTree.getHexProof(hash(0, address))
+                1,
+                merkleTree.getHexProof(hash(1, address))
             );
 
-            expect(await planets.tokenURI(0)).to.equal("example.com/0");
+            expect(await planets.tokenURI(1)).to.equal("example.com/0/1");
         });
 
         it("should be able to change uri", async function () {
@@ -146,12 +153,41 @@ describe("WanderersPlanet", function () {
 
             await planets.connect(accounts[0]).claim(
                 address,
+                1,
+                merkleTree.getHexProof(hash(1, address))
+            );
+
+            await planets.connect(accounts[0]).updateBaseURI("emmy.org/");
+            expect(await planets.tokenURI(1)).to.equal("emmy.org/0/1");
+        });
+
+        it("should work with different states", async function () {
+            const address = await accounts[0].getAddress();
+
+            await planets.connect(accounts[0]).claim(
+                address,
                 0,
                 merkleTree.getHexProof(hash(0, address))
             );
 
+            await planets.connect(accounts[0])['setPlanetState(uint256,uint256)'](0, 1);
+
+            expect(await planets.tokenURI(0)).to.equal("example.com/1/0");
+        });
+
+        it("should work with different states after baseURI change", async function () {
+            const address = await accounts[0].getAddress();
+
+            await planets.connect(accounts[0]).claim(
+                address,
+                0,
+                merkleTree.getHexProof(hash(0, address))
+            );
+
+            await planets.connect(accounts[0])['setPlanetState(uint256,uint256)'](0, 1);
+
             await planets.connect(accounts[0]).updateBaseURI("emmy.org/");
-            expect(await planets.tokenURI(0)).to.equal("emmy.org/0");
+            expect(await planets.tokenURI(0)).to.equal("emmy.org/1/0");
         });
     });
 
@@ -249,7 +285,7 @@ describe("WanderersPlanet", function () {
             const address = await accounts[0].getAddress();
             tokensToMint = [...Array(25).keys()];
 
-            await planets.connect(accounts[0])['safeMint(address,uint256[])'](address, tokensToMint); 
+            await planets.connect(accounts[0])['safeMint(address,uint256[])'](address, tokensToMint);
         });
 
         it("owner should be able to rename Planet", async function () {
@@ -270,14 +306,32 @@ describe("WanderersPlanet", function () {
             await expect(
                 planets.connect(accounts[1])['setPlanetName(uint256[],string[])'](tokensToMint, names)
             )
-            .to.be.revertedWith("Not owner of Planet");
+                .to.be.revertedWith("Not owner of Planet");
         });
 
         it("non-owner should not be able to rename Planet", async function () {
             await expect(
                 planets.connect(accounts[1])['setPlanetName(uint256,string)'](0, newName)
             )
-            .to.be.revertedWith("Not owner of Planet");
+                .to.be.revertedWith("Not owner of Planet");
+        });
+    });
+
+    describe("tokensOfOwner", function () {
+        beforeEach(async function () {
+            if (await planets.paused()) {
+                await planets.unpause();
+            }
+        });
+
+        it("should be able to enumerate all Planets of an owner", async function () {
+            const address = await accounts[0].getAddress();
+            const tokensToMint = [...Array(30).keys()];
+
+            await planets.connect(accounts[0])['safeMint(address,uint256[])'](address, tokensToMint);
+
+            const numberOfPlanets = await planets.tokensOfOwner(address);
+            expect(numberOfPlanets.length).to.equal(30);
         });
     });
 });
