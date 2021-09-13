@@ -20,10 +20,18 @@ const Home: NextPage = () => {
   return (
     <Layout title={'Home'}>
       <PageHeader
-        title="Galactic Gateway"
-        description="Text about how these are all planets available to visit and currated lists."
+        title="Planet Pass"
+        description="Text about how these are planets you have visited"
       />
-
+      {/* Example Connect button */}
+      {/* <ConnectButton/> */}
+      <UserInfo
+        userName="username"
+        userImageUrl={fpoImage2}
+        passportName="Passport Name"
+        stampCount={360}
+        visitors={100}
+      />
       <CardGrid>
         {cards.map((card) => (
           <StampCard

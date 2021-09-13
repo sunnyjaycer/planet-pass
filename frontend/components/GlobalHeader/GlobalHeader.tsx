@@ -7,7 +7,7 @@ const navLinks = [
     name: 'Galactic Gateway'
   },
   {
-    url: '/',
+    url: '/planet-pass',
     name: 'Planet Pass'
   },
   {
