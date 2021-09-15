@@ -9,11 +9,11 @@ const navLinks = [
   {
     url: '/planet-pass',
     name: 'Planet Pass'
-  },
-  {
-    url: '/',
-    name: 'Space Store'
   }
+  // {
+  //   url: '/',
+  //   name: 'Space Store'
+  // }
 ]
 
 const GlobalHeader = () => {

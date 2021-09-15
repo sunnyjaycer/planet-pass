@@ -1,10 +1,8 @@
 import { FunctionComponent } from 'react'
-import style from './StampCard.module.scss'
-import fpoImg from '../../assets/fpo-img.png'
+import style from './Card.module.scss'
 import Image from 'next/image'
-import Link from 'next/link'
 
-type StampProps = {
+type CardProps = {
   name: string
   visits: number
   price: number
@@ -12,7 +10,7 @@ type StampProps = {
   imgSrc: string | StaticImageData
 }
 
-const StampCard: FunctionComponent<StampProps> = ({
+const Card: FunctionComponent<CardProps> = ({
   name,
   visits,
   price,
@@ -20,7 +18,7 @@ const StampCard: FunctionComponent<StampProps> = ({
   priceUnit = 'WETH'
 }) => {
   return (
-    <div className={style.stampCard}>
+    <div className={style.card}>
       <div className={style.cardImage}>
         <Image src={imgSrc} alt="planet" layout="fill" />
       </div>
@@ -37,4 +35,4 @@ const StampCard: FunctionComponent<StampProps> = ({
   )
 }
 
-export default StampCard
+export default Card

@@ -1,0 +1,37 @@
+.utilBlock {
+  padding: 3rem;
+  max-width: $s-maxWidth;
+  margin: 0 auto 3rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 2rem;
+  row-gap: 2rem;
+
+  @include break-md {
+    column-gap: 3rem;
+    row-gap: 3rem;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.cardImgPad {
+  margin-bottom: 3px;
+}
+.utilCard {
+  @include header3;
+  border-radius: 5px;
+  text-align: center;
+  padding: 4rem 3rem;
+  border: 1px solid $c-green;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s, box-shadow 0.3s;
+  &:hover {
+    background: rgba($c-green, 0.05);
+    box-shadow: 0 0 8px $c-green;
+  }
+  @include break-lg {
+    padding: 6rem 3rem;
+  }
+}

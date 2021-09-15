@@ -3,7 +3,7 @@ import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import UserInfo from '../components/UserInfo'
 import fpoImage2 from '../assets/fpo-img-2.png'
-import StampCard from '../components/StampCard'
+import Card from '../components/Card'
 import CardGrid from '../components/CardGrid'
 import ConnectButton from '../components/ConnectButton'
 
@@ -34,7 +34,7 @@ const Home: NextPage = () => {
       />
       <CardGrid>
         {cards.map((card) => (
-          <StampCard
+          <Card
             name={card.name}
             visits={card.visits}
             price={card.price}
