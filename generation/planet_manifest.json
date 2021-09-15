@@ -765,71 +765,88 @@
         "files": [
           {
             "file": "collapse",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           },
           {
             "file": "destroyed",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           },
           {
             "file": "donut",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           },
           {
             "file": "eden",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           },
           {
             "file": "equinox",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           },
           {
             "file": "eth-world",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           },
           {
             "file": "fishbowl",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           },
           {
             "file": "fusion",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           },
           {
             "file": "ice",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           },
           {
             "file": "marble",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           },
           {
             "file": "nova",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           },
           {
             "file": "pizza-pie",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           },
           {
             "file": "pizza-slice",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           },
           {
             "file": "punk",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           },
           {
             "file": "vega",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           },
           {
             "file": "wormhole",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           },
           {
             "file": "zodiac",
-            "probability": 0.5
+            "probability": 0.5,
+            "reserved": false
           }
         ]
       }

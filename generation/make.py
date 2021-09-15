@@ -10,27 +10,31 @@ from PIL import Image
 
 folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v4"
 
-number_of_anomalies = 17
+# Number of anomalies that will be randomly distributed.
+anomalies_count = 17
 
-
+# Container for manifest file
 class Manifest:
     def __init__(self, manifest):
         self.manifest = manifest
 
+    # Fetches a category from the manifest
     def category(self, category: str):
         return [x for x in self.manifest if x["category"] == category][0]
 
 
+# Main function
 def main():
     manifest = Manifest(json.load(open("planet_manifest.json")))
 
     processes = 20
-    n = 400
+    n = 20
     increment, remainder = divmod(n, processes)
     jobs = []
     start = 0
     stop = increment
 
+    # Generate worker threads
     for i in range(0, processes):
         process = multiprocessing.Process(target=worker, args=(start, stop, manifest))
         jobs.append(process)
@@ -48,39 +52,55 @@ def main():
     [j.join() for j in jobs]
 
     print(f"Generated {n} planets. Now generating anomalies")
+
+    # Generate anomalies
     anomaly(n, manifest)
 
 
+# Main function for generating `n` anomalies
 def anomaly(n: int, manifest: Manifest):
     # Determine who to overwrite
     anomalies = list(range(0, n))
     random.shuffle(anomalies)
 
-    for n in range(0, number_of_anomalies):
-        base = get_base()
-        frames, audio, metadata = get_anomaly(manifest, n)
+    reserved = 0
 
-        with open(f"/mnt/e/planetpass/metadata/{str(anomalies[n])}.json", "w") as f:
+    for n, anomaly in enumerate(
+        manifest.category("anomalies")["subcategories"][0]["files"]
+    ):
+        # If reserved, then offset from 8888 (since 0-8887 inclusive are reserved for airdrops)
+        id = anomalies[n]
+        if anomaly["reserved"]:
+            id = 8888 + reserved
+            reserved += 1
+
+        # Make directory
+        os.makedirs(f"/mnt/e/planetpass/raw/{str(id)}", exist_ok=True)
+
+        base = get_base()
+        frames, audio, metadata = get_anomaly(manifest, anomaly)
+
+        # Write metadata
+        with open(f"/mnt/e/planetpass/metadata/{str(id)}.json", "w") as f:
             json.dump(metadata, f)
 
         # First remove audio files
-        fis = os.listdir(f"/mnt/e/planetpass/raw/{str(anomalies[n])}/")
+        fis = os.listdir(f"/mnt/e/planetpass/raw/{str(id)}/")
         for item in fis:
             if item.endswith(".wav"):
-                os.remove(
-                    os.path.join(f"/mnt/e/planetpass/raw/{str(anomalies[n])}/", item)
-                )
+                os.remove(os.path.join(f"/mnt/e/planetpass/raw/{str(id)}/", item))
 
         # Copy audio
         for a in audio:
             a_name = Path(a).name
-            copy(a, f"/mnt/e/planetpass/raw/{str(anomalies[n])}/{a_name}")
+            copy(a, f"/mnt/e/planetpass/raw/{str(id)}/{a_name}")
 
-        make_image(frames, base, anomalies[n])
-        print(anomalies[n])
+        make_image(frames, base, id)
+        print(id)
 
 
-def get_anomaly(manifest: Manifest, n: int) -> Tuple[List, Dict]:
+# Get the files for a single anomaly
+def get_anomaly(manifest: Manifest, anomaly) -> Tuple[List, Dict]:
     data = {}
     audio = []
     frames = []
@@ -91,19 +111,30 @@ def get_anomaly(manifest: Manifest, n: int) -> Tuple[List, Dict]:
     [audio.append(x) for x in aud]
     data.update(metadata)
 
-    # Get the nth item in the list of anomalies
-    nth_anomaly = manifest.category("anomalies")["subcategories"][0]["files"][n]
-    anomaly_files = get_file(nth_anomaly, "anomalies", "anomalies")
-    aud = get_audio(nth_anomaly)
+    # Grab anomaly
+    anomaly_files = get_file(anomaly, "anomalies", "anomalies")
+    aud = get_anomaly_audio(anomaly)
     if aud:
         audio.append(aud)
 
     frames.append(anomaly_files)
-    data["anomaly"] = [nth_anomaly["file"]]
+    data["anomaly"] = [anomaly["file"]]
 
     return frames, audio, data
 
 
+# Get the audio files for a single anomaly
+def get_anomaly_audio(file) -> Optional[str]:
+    file_basename = file["file"]
+    file_name = f"{folder}/music/anomalies/{file_basename}.wav"
+
+    if not os.path.isfile(file_name):
+        return None
+    else:
+        return file_name
+
+
+# Worker function that generates a range of images
 def worker(start: int, stop: int, manifest: Manifest):
     for n in range(start, stop):
         base = get_base()
@@ -126,6 +157,7 @@ def worker(start: int, stop: int, manifest: Manifest):
         print(n)
 
 
+# Paste images into a folder
 def make_image(frames, base, prefix: str):
     for (n, b) in enumerate(base):
         # Open base layer
@@ -139,6 +171,7 @@ def make_image(frames, base, prefix: str):
         frame.save(f"/mnt/e/planetpass/raw/{prefix}/{prefix}_{n:05}.png")
 
 
+# Grab all frames for a video
 def get_frames(manifest: Manifest) -> Tuple[List, List, Dict]:
     data = {}
     audio = []
@@ -157,6 +190,7 @@ def get_frames(manifest: Manifest) -> Tuple[List, List, Dict]:
     return frames, audio, data
 
 
+# Grab all files in a category
 def get_category(category) -> Tuple[List, List, Dict]:
     category_name = category["category"]
     files = []
@@ -175,6 +209,7 @@ def get_category(category) -> Tuple[List, List, Dict]:
     return files, audio, metadata
 
 
+# Grab all files in a subcategory
 def get_subcategory(subcategory, category_name: str) -> Tuple[List, List, Dict]:
     subcategory_name = subcategory["subcategory"]
 
@@ -215,6 +250,7 @@ def get_subcategory(subcategory, category_name: str) -> Tuple[List, List, Dict]:
     return files, audio, metadata
 
 
+# Grab all filenames of a file
 def get_file(file, subcategory_name: str, category_name: str) -> List:
     file_basename = file["file"]
     start, end = 0, 131
@@ -231,6 +267,7 @@ def get_file(file, subcategory_name: str, category_name: str) -> List:
     return images
 
 
+# Grab the audio portion of a file. Returns None of it cannot be found.
 def get_audio(file) -> Optional[str]:
     file_basename = file["file"]
     file_name = f"{folder}/music/{file_basename}.wav"
@@ -241,6 +278,7 @@ def get_audio(file) -> Optional[str]:
         return file_name
 
 
+# Grabs the filenames of the base files
 def get_base() -> List:
     images = []
     start, end = 0, 131
@@ -252,6 +290,7 @@ def get_base() -> List:
     return images
 
 
+# Calculates whether a probability happened
 def chance(prob):
     return random.random() < prob
 
