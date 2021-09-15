@@ -4,7 +4,7 @@ import os
 import random
 from pathlib import Path
 from shutil import copy
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 
 from PIL import Image
 
@@ -80,7 +80,7 @@ def anomaly(n: int, manifest: Manifest):
         print(anomalies[n])
 
 
-def get_anomaly(manifest: Manifest, n: int) -> [List, Dict]:
+def get_anomaly(manifest: Manifest, n: int) -> Tuple[List, Dict]:
     data = {}
     audio = []
     frames = []
@@ -139,7 +139,7 @@ def make_image(frames, base, prefix: str):
         frame.save(f"/mnt/e/planetpass/raw/{prefix}/{prefix}_{n:05}.png")
 
 
-def get_frames(manifest: Manifest) -> [List, List, Dict]:
+def get_frames(manifest: Manifest) -> Tuple[List, List, Dict]:
     data = {}
     audio = []
     frames = []
@@ -157,7 +157,7 @@ def get_frames(manifest: Manifest) -> [List, List, Dict]:
     return frames, audio, data
 
 
-def get_category(category) -> [List, List, Dict]:
+def get_category(category) -> Tuple[List, List, Dict]:
     category_name = category["category"]
     files = []
     audio = []
@@ -175,7 +175,7 @@ def get_category(category) -> [List, List, Dict]:
     return files, audio, metadata
 
 
-def get_subcategory(subcategory, category_name: str) -> [List, List, Dict]:
+def get_subcategory(subcategory, category_name: str) -> Tuple[List, List, Dict]:
     subcategory_name = subcategory["subcategory"]
 
     files = []

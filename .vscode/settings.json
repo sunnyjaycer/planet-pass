@@ -1,3 +1,4 @@
 {
-    "solidity.packageDefaultDependenciesDirectory": "contract/node_modules"
+    "solidity.packageDefaultDependenciesDirectory": "contract/node_modules",
+    "python.formatting.provider": "black"
 }
