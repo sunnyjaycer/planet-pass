@@ -18,20 +18,11 @@ const cards = new Array(40).fill(0).map((e, i) => ({
 
 const Home: NextPage = () => {
   return (
-    <Layout title={'Planet Pass'}>
-      <PageHeader
-        title="Planet Pass"
-        description="Text about how these are planets you have visited"
-      />
+    <Layout title={'All Planets'}>
+      <PageHeader title="All Planets" />
       {/* Example Connect button */}
       {/* <ConnectButton/> */}
-      <UserInfo
-        userName="username"
-        userImageUrl={fpoImage2}
-        passportName="Passport Name"
-        stampCount={360}
-        visitors={100}
-      />
+
       <CardGrid>
         {cards.map((card) => (
           <Card

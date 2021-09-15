@@ -1,0 +1,125 @@
+.overlay {
+  position: fixed;
+  inset: 0px;
+  background-color: rgba($c-grey, 0.9);
+}
+
+.modal {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalContent {
+  background: $c-grey;
+  border: 1px solid $c-green;
+  border-radius: 8px;
+  position: relative;
+  padding: 5rem 2rem 2rem;
+  width: 80%;
+  max-width: 1120px;
+  @include break-md {
+    padding: 4rem;
+  }
+  @include break-xl {
+    padding: 6rem;
+  }
+}
+
+.closeButton {
+  background: transparent;
+  border: 0;
+  position: absolute;
+
+  transition: all 0.3s;
+  padding: 0;
+  margin: 0;
+  transform: scale(0.7);
+  &:hover {
+    cursor: pointer;
+  }
+  top: -5px;
+  right: -5px;
+  @include break-md {
+    top: 0;
+    right: 0;
+  }
+  @include break-xl {
+    transform: scale(0.9);
+    top: 8px;
+    right: 8px;
+  }
+}
+.planetInfo {
+  @include break-md {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+}
+.videoContainer {
+  width: 100%;
+  height: 0;
+  position: relative;
+  padding-bottom: 100%;
+  margin-bottom: 1rem;
+}
+.video {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+.planetText {
+  padding-right: 3rem;
+}
+.planetName {
+  @include header2;
+  @include break-lg {
+    margin-bottom: 4rem;
+  }
+}
+.planetAttributes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+.attribute {
+  padding: 2rem 0 0 2rem;
+  position: relative;
+  &::before {
+    content: '';
+    display: block;
+    border-left: 1px solid $c-green;
+    border-top: 1px solid $c-green;
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+.attributeName {
+  text-transform: uppercase;
+  font-weight: 300;
+  font-size: 1.4rem;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+.attributeValue {
+  font-weight: 400;
+  font-size: 1.6rem;
+  @include break-lg {
+    font-size: 2.4rem;
+  }
+}
+
+.planetSub {
+  padding: 2rem 0 0;
+}
+.planetPrice {
+  @include smallCaps;
+}

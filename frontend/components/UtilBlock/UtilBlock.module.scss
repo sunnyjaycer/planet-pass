@@ -4,12 +4,10 @@
   margin: 0 auto 3rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  column-gap: 2rem;
-  row-gap: 2rem;
+  gap: 2rem;
 
   @include break-md {
-    column-gap: 3rem;
-    row-gap: 3rem;
+    gap: 3rem;
     grid-template-columns: 1fr 1fr;
   }
 }
@@ -28,8 +26,7 @@
   justify-content: center;
   transition: background 0.3s, box-shadow 0.3s;
   &:hover {
-    background: rgba($c-green, 0.05);
-    box-shadow: 0 0 8px $c-green;
+    @include hoverGlow;
   }
   @include break-lg {
     padding: 6rem 3rem;

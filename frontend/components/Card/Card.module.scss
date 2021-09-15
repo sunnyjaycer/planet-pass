@@ -1,7 +1,17 @@
 .card {
   max-width: 500px;
 }
-
+.buttonCard {
+  display: block;
+  text-align: left;
+  background: transparent;
+  outline: 0;
+  border: 0;
+  color: $c-green;
+  &:hover {
+    cursor: pointer;
+  }
+}
 .cardImage {
   width: 100%;
   height: 0;
@@ -17,11 +27,7 @@
   }
 }
 .cardSubDetails {
-  text-transform: uppercase;
-  font-size: 1rem;
-  letter-spacing: 0.05em;
-  line-height: 1.5;
-
+  @include smallCaps;
   @include break-md {
     display: flex;
     justify-content: space-between;

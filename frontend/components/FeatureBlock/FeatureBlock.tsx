@@ -1,7 +1,6 @@
 import { FunctionComponent } from 'react'
 import style from './FeatureBlock.module.scss'
 import Image from 'next/image'
-import Link from 'next/link'
 
 type FeatureBlockProps = {
   kicker?: string

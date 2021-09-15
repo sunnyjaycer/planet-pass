@@ -1,3 +1,5 @@
+// Breakpoints
+
 @mixin break-sm {
   @media (min-width: $bp-sm) {
     @content;
@@ -20,6 +22,7 @@
 }
 
 // Type Styles
+
 @mixin header2 {
   font-size: 2.4rem;
   font-weight: 900;
@@ -74,4 +77,17 @@
   @include break-xl {
     font-size: 3.4rem;
   }
+}
+
+@mixin smallCaps {
+  text-transform: uppercase;
+  font-size: 1rem;
+  letter-spacing: 0.075em;
+  line-height: 1.5;
+}
+
+// Utils
+@mixin hoverGlow {
+  background: rgba($c-green, 0.05);
+  box-shadow: 0 0 8px $c-green;
 }

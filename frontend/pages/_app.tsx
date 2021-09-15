@@ -15,6 +15,11 @@ import type { AppProps } from 'next/app'
 import { Web3ReactProvider } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
 
+import Modal from 'react-modal'
+
+// Sets modal to document root
+Modal.setAppElement('#root')
+
 function MyApp({ Component, pageProps }: AppProps) {
   // Get the ethersjs library
   const getLibrary = (provider: any) => {
@@ -24,9 +29,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   }
 
   return (
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <Component {...pageProps} />
-    </Web3ReactProvider>
+    <div id="root">
+      <Web3ReactProvider getLibrary={getLibrary}>
+        <Component {...pageProps} />
+      </Web3ReactProvider>
+    </div>
   )
 }
 export default MyApp

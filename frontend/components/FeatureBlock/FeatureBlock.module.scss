@@ -4,8 +4,7 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr;
-  column-gap: 6rem;
-  row-gap: 6rem;
+  gap: 6rem;
 
   @include break-md {
     grid-template-columns: 1fr 1fr;
