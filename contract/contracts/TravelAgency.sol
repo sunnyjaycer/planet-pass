@@ -155,6 +155,14 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         return (fee * operatorFeeBp) / BASIS_POINTS_DIVISOR;
     }
 
+    /// Updates the fee charged by the Planet owner.
+    /// @param id the token ID of the planet
+    /// @param _fee the new fee charged by the planet owner
+    function updateOwnerFee(uint256 id, uint256 _fee) external whenNotPaused {
+        require(msg.sender == planetOwners[id], "Not owner of planet");
+        planetFees[id] = _fee;
+    }
+
     /// Withdraws the accured operator fees to a designated address.
     /// @param to the address to send fees to
     function withdrawOperatorFees(address to) external onlyOwner {

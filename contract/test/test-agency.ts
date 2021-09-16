@@ -90,6 +90,43 @@ describe("TravelAgency", function () {
         });
     });
 
+    describe("updateOwnerFee", async function () {
+        let oldCost: string;
+        let newCost: string;
+
+        beforeEach(async function () {
+            // Override batch-mint
+            await planets.connect(accounts[0])['safeMint(address,uint256[])'](accounts[0].getAddress(), [0, 1, 2, 3, 4]);
+
+            if (await agency.paused()) {
+                await agency.unpause();
+            }
+
+            const address = await accounts[0].getAddress();
+            oldCost = solidityPack(["uint256"], [parseEther("10")]);
+            newCost = solidityPack(["uint256"], [parseEther("20")]);
+
+            await planets.connect(accounts[0])['safeTransferFrom(address,address,uint256,bytes)'](
+                address,
+                agency.address,
+                0,
+                oldCost
+            );
+        });
+
+        it("planet owner should be able to update fee", async function () {
+            expect(await agency.planetFees(0)).to.equal(oldCost);
+            await agency.updateOwnerFee(0, newCost);
+            expect(await agency.planetFees(0)).to.equal(newCost);
+        });
+
+        it("non-owner should not be able to update fee", async function () {
+            expect(await agency.planetFees(0)).to.equal(oldCost);
+            await expect(agency.connect(accounts[1]).updateOwnerFee(0, newCost))
+                .to.be.revertedWith("Not owner of planet");
+        });
+    })
+
     describe("updateOperatorFeeBp", function () {
         it("should be able to update fee percent", async function () {
             const oldFee = await agency.operatorFeeBp();
@@ -104,7 +141,6 @@ describe("TravelAgency", function () {
             // Override batch-mint
             await planets.connect(accounts[0])['safeMint(address,uint256[])'](accounts[0].getAddress(), [0, 1, 2, 3, 4]);
             await planets.connect(accounts[0])['safeMint(address,uint256[])'](accounts[1].getAddress(), [5, 6, 7, 8, 9]);
-
         });
 
         context("when paused", function () {
@@ -629,7 +665,7 @@ describe("TravelAgency", function () {
                     0
                 )
             )
-            .to.be.revertedWith("Cannot accept Pass");
+                .to.be.revertedWith("Cannot accept Pass");
         });
     });
 });
