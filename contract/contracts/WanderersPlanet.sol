@@ -113,19 +113,6 @@ contract WanderersPlanet is
         return MerkleProof.verify(proof, root, leaf);
     }
 
-    /// Set then name of Planets.
-    /// @param id an array token IDs of Planets
-    /// @param name an array of new names for the Planets
-    function setName(uint256[] calldata id, string[] calldata name)
-        external
-        whenNotPaused
-    {
-        require(id.length == name.length, "Array length mismatch");
-        for (uint256 i = 0; i < id.length; i++) {
-            setName(id[i], name[i]);
-        }
-    }
-
     /// Mint a Planet. Tokens 0-8887 inclusive are reserved for the airdrop.
     /// @param to the address to send the Planet to
     /// @param id the token ID of the Planet to mint

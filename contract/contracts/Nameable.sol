@@ -22,6 +22,19 @@ abstract contract Nameable is ERC721, Ownable, Pausable {
         nameOfToken[id] = _name;
     }
 
+    /// Set then names of tokens.
+    /// @param id an array token IDs
+    /// @param _name an array of new names
+    function setName(uint256[] calldata id, string[] calldata _name)
+        public
+        whenNotPaused
+    {
+        require(id.length == _name.length, "Array length mismatch");
+        for (uint256 i = 0; i < id.length; i++) {
+            setName(id[i], _name[i]);
+        }
+    }
+
     /// Set the name of a token.
     /// @param id the token ID
     /// @param _name the new name of the token

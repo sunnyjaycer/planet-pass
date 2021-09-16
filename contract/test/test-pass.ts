@@ -75,7 +75,7 @@ describe("WanderersPass", function () {
             await pass.connect(accounts[0]).safeMint(address, "Test");
             expect(await pass.nameOfToken(0)).to.equal("Test");
 
-            await pass.setName(0, "Test Two");
+            await pass['setName(uint256,string)'](0, "Test Two");
             expect(await pass.nameOfToken(0)).to.equal("Test Two");
         });
 
@@ -86,7 +86,7 @@ describe("WanderersPass", function () {
             expect(await pass.nameOfToken(0)).to.equal("Test");
 
             await expect(
-                pass.connect(accounts[1]).setName(0, "Test Two")
+                pass.connect(accounts[1])['setName(uint256,string)'](0, "Test Two")
             )
                 .to.be.revertedWith("Not owner of token");
         });
