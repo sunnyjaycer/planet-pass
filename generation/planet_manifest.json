@@ -367,6 +367,10 @@
             "probability": 0.5
           },
           {
+            "file": "scales",
+            "probability": 0.5
+          },
+          {
             "file": "splatter",
             "probability": 0.5
           },
@@ -415,7 +419,19 @@
             "probability": 0.5
           },
           {
+            "file": "chains",
+            "probability": 0.5
+          },
+          {
             "file": "cities",
+            "probability": 0.5
+          },
+          {
+            "file": "city",
+            "probability": 0.5
+          },
+          {
+            "file": "contaminant",
             "probability": 0.5
           },
           {
@@ -424,6 +440,10 @@
           },
           {
             "file": "crater-alien",
+            "probability": 0.5
+          },
+          {
+            "file": "crater-erupt",
             "probability": 0.5
           },
           {
@@ -455,6 +475,10 @@
             "probability": 0.5
           },
           {
+            "file": "ent",
+            "probability": 0.5
+          },
+          {
             "file": "eth-crystals",
             "probability": 0.5
           },
@@ -463,7 +487,15 @@
             "probability": 0.5
           },
           {
-            "file": "forest",
+            "file": "forest-dark",
+            "probability": 0.5
+          },
+          {
+            "file": "forest-enchanted",
+            "probability": 0.5
+          },
+          {
+            "file": "forest-full",
             "probability": 0.5
           },
           {
@@ -495,10 +527,6 @@
             "probability": 0.5
           },
           {
-            "file": "monolith",
-            "probability": 0.5
-          },
-          {
             "file": "mountains-dark",
             "probability": 0.5
           },
@@ -519,6 +547,10 @@
             "probability": 0.5
           },
           {
+            "file": "pyramids",
+            "probability": 0.5
+          },
+          {
             "file": "ravine",
             "probability": 0.5
           },
@@ -528,10 +560,6 @@
           },
           {
             "file": "river-spread",
-            "probability": 0.5
-          },
-          {
-            "file": "scales",
             "probability": 0.5
           },
           {
@@ -551,7 +579,19 @@
             "probability": 0.5
           },
           {
+            "file": "terrarium",
+            "probability": 0.5
+          },
+          {
+            "file": "tracks",
+            "probability": 0.5
+          },
+          {
             "file": "vines",
+            "probability": 0.5
+          },
+          {
+            "file": "volcano",
             "probability": 0.5
           },
           {
@@ -743,6 +783,10 @@
             "probability": 0.5
           },
           {
+            "file": "sky-city",
+            "probability": 0.5
+          },
+          {
             "file": "spacestation",
             "probability": 0.5
           },
@@ -764,12 +808,32 @@
         "multiple": false,
         "files": [
           {
+            "file": "atom",
+            "probability": 0.5,
+            "reserved": false
+          },
+          {
+            "file": "boba-tea",
+            "probability": 0.5,
+            "reserved": false
+          },
+          {
+            "file": "burger",
+            "probability": 0.5,
+            "reserved": false
+          },
+          {
             "file": "collapse",
             "probability": 0.5,
             "reserved": false
           },
           {
             "file": "destroyed",
+            "probability": 0.5,
+            "reserved": false
+          },
+          {
+            "file": "disco",
             "probability": 0.5,
             "reserved": false
           },
@@ -789,7 +853,12 @@
             "reserved": false
           },
           {
-            "file": "eth-world",
+            "file": "eth",
+            "probability": 0.5,
+            "reserved": false
+          },
+          {
+            "file": "eye",
             "probability": 0.5,
             "reserved": false
           },
@@ -799,12 +868,17 @@
             "reserved": false
           },
           {
+            "file": "flat-earth",
+            "probability": 0.5,
+            "reserved": false
+          },
+          {
             "file": "fusion",
             "probability": 0.5,
             "reserved": false
           },
           {
-            "file": "ice",
+            "file": "jpeg",
             "probability": 0.5,
             "reserved": false
           },
@@ -824,17 +898,17 @@
             "reserved": false
           },
           {
-            "file": "pizza-slice",
-            "probability": 0.5,
-            "reserved": false
-          },
-          {
-            "file": "punk",
+            "file": "rose",
             "probability": 0.5,
             "reserved": false
           },
           {
             "file": "vega",
+            "probability": 0.5,
+            "reserved": false
+          },
+          {
+            "file": "wetworld",
             "probability": 0.5,
             "reserved": false
           },

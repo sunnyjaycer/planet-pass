@@ -11,7 +11,7 @@ from PIL import Image
 folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v4"
 
 # Number of anomalies that will be randomly distributed.
-anomalies_count = 17
+anomalies_count = 23
 
 # Container for manifest file
 class Manifest:
@@ -28,7 +28,7 @@ def main():
     manifest = Manifest(json.load(open("planet_manifest.json")))
 
     processes = 20
-    n = 20
+    n = 600
     increment, remainder = divmod(n, processes)
     jobs = []
     start = 0
