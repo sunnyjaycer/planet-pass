@@ -63,7 +63,7 @@ describe("WanderersPass", function () {
         })
     });
 
-    describe("setPassName", function () {
+    describe("setName", function () {
         beforeEach(async function () {
             if (await pass.paused()) {
                 await pass.unpause();
@@ -73,22 +73,22 @@ describe("WanderersPass", function () {
         it("should be able to change name of pass", async function () {
             const address = accounts[0].getAddress();
             await pass.connect(accounts[0]).safeMint(address, "Test");
-            expect(await pass.passName(0)).to.equal("Test");
+            expect(await pass.nameOfToken(0)).to.equal("Test");
 
-            await pass.setPassName(0, "Test Two");
-            expect(await pass.passName(0)).to.equal("Test Two");
+            await pass.setName(0, "Test Two");
+            expect(await pass.nameOfToken(0)).to.equal("Test Two");
         });
 
         it("non-owner should not be able to change name of pass", async function () {
             const address = accounts[0].getAddress();
 
             await pass.connect(accounts[0]).safeMint(address, "Test");
-            expect(await pass.passName(0)).to.equal("Test");
+            expect(await pass.nameOfToken(0)).to.equal("Test");
 
             await expect(
-                pass.connect(accounts[1]).setPassName(0, "Test Two")
+                pass.connect(accounts[1]).setName(0, "Test Two")
             )
-            .to.be.revertedWith("Not owner of pass");
+                .to.be.revertedWith("Not owner of token");
         });
     });
 

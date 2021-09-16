@@ -8,8 +8,15 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "./Nameable.sol";
 
-contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
+contract WanderersPlanet is
+    ERC721,
+    ERC721Enumerable,
+    Ownable,
+    Pausable,
+    Nameable
+{
     using Strings for uint256;
 
     /// Base URI for metadata
@@ -23,9 +30,6 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
 
     /// Mapping of Planets to states (see internal docs for what they represent)
     mapping(uint256 => uint256) public planetState;
-
-    /// Mapping of Planets to names
-    mapping(uint256 => string) public planetNames;
 
     constructor(string memory baseURI_, bytes32 _root)
         ERC721("Wanderers Planet", "WANDERER-PLANET")
@@ -109,28 +113,16 @@ contract WanderersPlanet is ERC721, ERC721Enumerable, Ownable, Pausable {
         return MerkleProof.verify(proof, root, leaf);
     }
 
-    /// Set then name of a Planet.
-    /// @param id the token ID of the Planet
-    /// @param name the new name of the Planet
-    function setPlanetName(uint256 id, string calldata name)
-        external
-        whenNotPaused
-    {
-        require(ownerOf(id) == msg.sender, "Not owner of Planet");
-        planetNames[id] = name;
-    }
-
     /// Set then name of Planets.
     /// @param id an array token IDs of Planets
     /// @param name an array of new names for the Planets
-    function setPlanetName(uint256[] calldata id, string[] calldata name)
+    function setName(uint256[] calldata id, string[] calldata name)
         external
         whenNotPaused
     {
         require(id.length == name.length, "Array length mismatch");
         for (uint256 i = 0; i < id.length; i++) {
-            require(ownerOf(id[i]) == msg.sender, "Not owner of Planet");
-            planetNames[id[i]] = name[i];
+            setName(id[i], name[i]);
         }
     }
 

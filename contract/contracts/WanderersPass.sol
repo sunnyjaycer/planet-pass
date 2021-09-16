@@ -7,15 +7,19 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "./WanderersPlanet.sol";
+import "./Nameable.sol";
 
-contract WanderersPass is ERC721, ERC721Enumerable, Ownable, Pausable {
+contract WanderersPass is
+    ERC721,
+    ERC721Enumerable,
+    Ownable,
+    Pausable,
+    Nameable
+{
     using Counters for Counters.Counter;
 
     /// A strictly monotonically increasing counter of token IDs.
     Counters.Counter private _tokenIdCounter;
-
-    /// Mapping of Passes to names.
-    mapping(uint256 => string) public passName;
 
     /// The contents of a single stamp.
     struct PassStamp {
@@ -69,17 +73,6 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable, Pausable {
         planetContract = _planetContract;
     }
 
-    /// Set the name of a Pass.
-    /// @param id the token ID of the Pass
-    /// @param _passName the new name of the Pass
-    function setPassName(uint256 id, string calldata _passName)
-        external
-        whenNotPaused
-    {
-        require(msg.sender == ownerOf(id), "Not owner of pass");
-        passName[id] = _passName;
-    }
-
     /// Mint a new Pass.
     /// @param to the address to send the Pass to
     /// @param _passName the name for the Pass
@@ -87,7 +80,7 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable, Pausable {
         external
         whenNotPaused
     {
-        passName[_tokenIdCounter.current()] = _passName;
+        _setName(_tokenIdCounter.current(), _passName);
         _safeMint(to, _tokenIdCounter.current());
         _tokenIdCounter.increment();
     }
@@ -105,7 +98,7 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable, Pausable {
 
     /// Gets all stamps of a Pass
     /// @param id the token ID of the Pass
-    /// @return an array of all stamps 
+    /// @return an array of all stamps
     function getStamps(uint256 id) external view returns (PassStamp[] memory) {
         return stamps[id];
     }
@@ -131,7 +124,6 @@ contract WanderersPass is ERC721, ERC721Enumerable, Ownable, Pausable {
             planetContract.planetState(planetId)
         );
     }
-
 
     /// Visit multiple Planets
     /// @param id the token ID of the Pass

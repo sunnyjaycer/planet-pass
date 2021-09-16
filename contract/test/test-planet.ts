@@ -133,7 +133,7 @@ describe("WanderersPlanet", function () {
             await expect(
                 planets.tokenURI(0)
             )
-            .to.be.revertedWith("ERC721Metadata: URI query for nonexistent token");
+                .to.be.revertedWith("ERC721Metadata: URI query for nonexistent token");
         });
 
         it("should have the right uri", async function () {
@@ -277,7 +277,7 @@ describe("WanderersPlanet", function () {
         });
     });
 
-    describe("setPlanetName", function () {
+    describe("setName", function () {
         const newName = "NEW NAME";
         let tokensToMint: number[];
 
@@ -289,31 +289,49 @@ describe("WanderersPlanet", function () {
         });
 
         it("owner should be able to rename Planet", async function () {
-            await planets.connect(accounts[0])['setPlanetName(uint256,string)'](0, newName);
-            expect(await planets.planetNames(0)).to.equal(newName);
+            await planets.connect(accounts[0])['setName(uint256,string)'](0, newName);
+            expect(await planets.nameOfToken(0)).to.equal(newName);
         });
 
         it("owner should be able to batch-rename Planet", async function () {
             const names = Array(25).fill(newName);
-            await planets.connect(accounts[0])['setPlanetName(uint256[],string[])'](tokensToMint, names);
-            for (let i = 0; i++; i < 25) {
-                expect(await planets.planetNames(i)).to.equal(newName);
+            await planets.connect(accounts[0])['setName(uint256[],string[])'](tokensToMint, names);
+            for (let i = 0; i < 25; i++) {
+                expect(await planets.nameOfToken(i)).to.equal(newName);
             }
         });
 
         it("non-owner should not be able to batch-rename Planet", async function () {
             const names = Array(25).fill(newName);
             await expect(
-                planets.connect(accounts[1])['setPlanetName(uint256[],string[])'](tokensToMint, names)
+                planets.connect(accounts[1])['setName(uint256[],string[])'](tokensToMint, names)
             )
-                .to.be.revertedWith("Not owner of Planet");
+                .to.be.revertedWith("Not owner of token");
         });
 
         it("non-owner should not be able to rename Planet", async function () {
             await expect(
-                planets.connect(accounts[1])['setPlanetName(uint256,string)'](0, newName)
+                planets.connect(accounts[1])['setName(uint256,string)'](0, newName)
             )
-                .to.be.revertedWith("Not owner of Planet");
+                .to.be.revertedWith("Not owner of token");
+        });
+
+        it("should not be able to rename after a force rename", async function () {
+            await planets['safeTransferFrom(address,address,uint256)'](await accounts[0].getAddress(), await accounts[1].getAddress(), 0);
+            await planets.connect(accounts[0]).forceRenameAndLock(0, newName);
+            expect(await planets.nameOfToken(0)).to.equal(newName);
+
+            await expect(planets.connect(accounts[1])['setName(uint256,string)'](0, "Blah"))
+                .to.be.revertedWith("Token renaming locked");
+        });
+
+        it("should be able to rename if unlocked", async function () {
+            await planets['safeTransferFrom(address,address,uint256)'](await accounts[0].getAddress(), await accounts[1].getAddress(), 0);
+            await planets.connect(accounts[0]).forceRenameAndLock(0, newName);
+            expect(await planets.nameOfToken(0)).to.equal(newName);
+            await planets.connect(accounts[0]).unlockRename(0);
+
+            await planets.connect(accounts[1])['setName(uint256,string)'](0, "Blah");
         });
     });
 
