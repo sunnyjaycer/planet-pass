@@ -7,6 +7,7 @@ from shutil import copy
 from typing import List, Dict, Optional, Tuple
 
 from PIL import Image
+import numpy as np
 
 folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v4"
 
@@ -27,25 +28,22 @@ class Manifest:
 def main():
     manifest = Manifest(json.load(open("planet_manifest.json")))
 
+    # How many processes to use
     processes = 20
-    n = 600
-    increment, remainder = divmod(n, processes)
+
+    # How many planets to make
+    n = 200
+
+    # List of planets to make (by ID). You can override this.
+    items_to_make = list(range(0, n))
+    chunks = [x.tolist() for x in np.array_split(items_to_make, processes)]
+
+    # List of processes
     jobs = []
-    start = 0
-    stop = increment
 
     # Generate worker threads
-    for i in range(0, processes):
-        process = multiprocessing.Process(target=worker, args=(start, stop, manifest))
-        jobs.append(process)
-        start = stop
-        stop += increment
-
-    # Remainder
-    if not start == start + remainder:
-        process = multiprocessing.Process(
-            target=worker, args=(start, start + remainder, manifest)
-        )
+    for i in chunks:
+        process = multiprocessing.Process(target=worker, args=(i, manifest))
         jobs.append(process)
 
     [j.start() for j in jobs]
@@ -135,8 +133,8 @@ def get_anomaly_audio(file) -> Optional[str]:
 
 
 # Worker function that generates a range of images
-def worker(start: int, stop: int, manifest: Manifest):
-    for n in range(start, stop):
+def worker(items, manifest: Manifest):
+    for n in items:
         base = get_base()
         frames, audio, metadata = get_frames(manifest)
 
