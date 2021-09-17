@@ -35,6 +35,7 @@ const DetailsModal: FunctionComponent<DetailsModal> = ({
       onRequestClose={handleClose}
       className={style.modal}
       overlayClassName={style.overlay}
+      shouldCloseOnOverlayClick={true}
     >
       <div className={style.modalContent}>
         <button

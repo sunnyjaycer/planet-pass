@@ -8,12 +8,23 @@ import CardGrid from '../components/CardGrid'
 import ConnectButton from '../components/ConnectButton'
 
 // placeholder data
+const sampleProperties = {
+  space: ['aura', 'star-stream'],
+  core: ['core-white'],
+  terrain: ['fire'],
+  features: ['domes'],
+  atmosphere: ['rings-c'],
+  satellites: ['meteor-shower'],
+  ships: ['flyby-trio']
+}
+
 const cards = new Array(40).fill(0).map((e, i) => ({
   name: 'Planet Name',
   visits: 100,
   price: 0.5,
   imgSrc: fpoImage2,
-  id: `card${i}`
+  id: `card${i}`,
+  properties: sampleProperties
 }))
 
 const Home: NextPage = () => {

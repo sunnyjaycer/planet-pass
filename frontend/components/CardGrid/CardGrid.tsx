@@ -10,8 +10,6 @@ type CardGridProps = {
 
 const CardGrid: FunctionComponent<CardGridProps> = ({
   header,
-  linkText,
-  link,
   largeCards,
   children
 }) => {
