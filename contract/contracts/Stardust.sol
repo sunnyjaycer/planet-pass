@@ -9,20 +9,25 @@ contract Stardust is ERC20, ERC20Burnable, AccessControl {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     constructor() ERC20("Stardust", "STARDUST") {
-        _mint(msg.sender, 1_000_000 * 10 ** decimals());
+        _mint(msg.sender, 1_000_000 * 10**decimals());
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(MINTER_ROLE, msg.sender);
     }
 
+    /// Mint extra STARDUST tokens.
+    /// @param to the address to send new tokens to
+    /// @param amount amount of tokens to mint
     function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
         _mint(to, amount);
     }
 
-    /**
-    @notice Lets Wanderer Admin set up new contracts that can mint Stardust as Planet Pass ecosystem grows 
-    @dev Roles can be revoked by DEFAULT_ADMIN_ROLE with the public revokeRole inherited in AccessControl
-     */
-    function setUpMinterRole(address newMinter) public onlyRole(DEFAULT_ADMIN_ROLE) {
+    /// @notice Allows DEFAULT_ADMIN_ROLE to authorise addresses to mint Stardust.
+    /// @dev Roles can be revoked by DEFAULT_ADMIN_ROLE with the public revokeRole inherited in AccessControl
+    /// @param newMinter address of new minter to be authorised
+    function setUpMinterRole(address newMinter)
+        public
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         _setupRole(MINTER_ROLE, newMinter);
     }
 }
