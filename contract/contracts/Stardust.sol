@@ -17,4 +17,12 @@ contract Stardust is ERC20, ERC20Burnable, AccessControl {
     function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
         _mint(to, amount);
     }
+
+    /**
+    @notice Lets Wanderer Admin set up new contracts that can mint Stardust as Planet Pass ecosystem grows 
+    @dev Roles can be revoked by DEFAULT_ADMIN_ROLE with the public revokeRole inherited in AccessControl
+     */
+    function addMinterRole(address newMinter) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _setupRole(MINTER_ROLE, newMinter);
+    }
 }
