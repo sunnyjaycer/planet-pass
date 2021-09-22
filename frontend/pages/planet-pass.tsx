@@ -2,9 +2,9 @@ import type { NextPage } from 'next'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import UserInfo from '../components/UserInfo'
-import fpoImage2 from '../assets/fpo-img-2.png'
-import Card from '../components/Card'
-import CardGrid from '../components/CardGrid'
+import fpoImg from '../assets/fpo-img-2.png'
+import fpoImageThumb from '../assets/planet-fpo-thumb.jpg'
+import FilterableGrid from '../components/FilterableGrid'
 import ConnectButton from '../components/ConnectButton'
 
 // placeholder data
@@ -22,9 +22,9 @@ const cards = new Array(40).fill(0).map((e, i) => ({
   name: 'Planet Name',
   visits: 100,
   price: 0.5,
-  imgSrc: fpoImage2,
+  imgSrc: fpoImageThumb,
   id: `card${i}`,
-  properties: sampleProperties
+  attributes: sampleProperties
 }))
 
 const Home: NextPage = () => {
@@ -38,22 +38,12 @@ const Home: NextPage = () => {
       {/* <ConnectButton/> */}
       <UserInfo
         userName="username"
-        userImageUrl={fpoImage2}
+        userImageUrl={fpoImg}
         passportName="Passport Name"
         stampCount={360}
         visitors={100}
       />
-      <CardGrid>
-        {cards.map((card) => (
-          <Card
-            name={card.name}
-            visits={card.visits}
-            price={card.price}
-            imgSrc={card.imgSrc}
-            key={card.id}
-          />
-        ))}
-      </CardGrid>
+      <FilterableGrid data={cards} />
     </Layout>
   )
 }
