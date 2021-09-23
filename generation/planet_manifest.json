@@ -227,6 +227,10 @@
             "probability": 0.5
           },
           {
+            "file": "churned",
+            "probability": 0.5
+          },
+          {
             "file": "cracks-a",
             "probability": 0.5
           },
@@ -235,11 +239,27 @@
             "probability": 0.5
           },
           {
+            "file": "craggy",
+            "probability": 0.5
+          },
+          {
             "file": "craters",
             "probability": 0.5
           },
           {
+            "file": "desert-vortex",
+            "probability": 0.5
+          },
+          {
+            "file": "desiccated-ground",
+            "probability": 0.5
+          },
+          {
             "file": "dots",
+            "probability": 0.5
+          },
+          {
+            "file": "ethane-smog",
             "probability": 0.5
           },
           {
@@ -264,6 +284,10 @@
           },
           {
             "file": "gas-d",
+            "probability": 0.5
+          },
+          {
+            "file": "gaseous",
             "probability": 0.5
           },
           {
@@ -295,7 +319,23 @@
             "probability": 0.5
           },
           {
+            "file": "mudcracks",
+            "probability": 0.5
+          },
+          {
+            "file": "multipolarity",
+            "probability": 0.5
+          },
+          {
             "file": "natural",
+            "probability": 0.5
+          },
+          {
+            "file": "noxious-fumes",
+            "probability": 0.5
+          },
+          {
+            "file": "pitted",
             "probability": 0.5
           },
           {
@@ -347,7 +387,15 @@
             "probability": 0.5
           },
           {
+            "file": "rugged",
+            "probability": 0.5
+          },
+          {
             "file": "sand",
+            "probability": 0.5
+          },
+          {
+            "file": "sandscape",
             "probability": 0.5
           },
           {
@@ -364,6 +412,10 @@
           },
           {
             "file": "sandscapes-e",
+            "probability": 0.5
+          },
+          {
+            "file": "sandswept",
             "probability": 0.5
           },
           {
@@ -397,6 +449,14 @@
           {
             "file": "trees",
             "probability": 0.5
+          },
+          {
+            "file": "vapour-veil",
+            "probability": 0.5
+          },
+          {
+            "file": "zenscape",
+            "probability": 0.5
           }
         ]
       },
@@ -407,6 +467,10 @@
         "probability": 0.5,
         "files": [
           {
+            "file": "amoeba",
+            "probability": 0.5
+          },
+          {
             "file": "ancient-bones",
             "probability": 0.5
           },
@@ -416,6 +480,18 @@
           },
           {
             "file": "ancient-tech",
+            "probability": 0.5
+          },
+          {
+            "file": "brainforest",
+            "probability": 0.5
+          },
+          {
+            "file": "burial",
+            "probability": 0.5
+          },
+          {
+            "file": "cavern",
             "probability": 0.5
           },
           {
@@ -447,6 +523,10 @@
             "probability": 0.5
           },
           {
+            "file": "crater-flames",
+            "probability": 0.5
+          },
+          {
             "file": "crater-gas",
             "probability": 0.5
           },
@@ -459,11 +539,19 @@
             "probability": 0.5
           },
           {
+            "file": "crumbling-nodes",
+            "probability": 0.5
+          },
+          {
             "file": "crystals-blue",
             "probability": 0.5
           },
           {
             "file": "crystals-pink",
+            "probability": 0.5
+          },
+          {
+            "file": "desert",
             "probability": 0.5
           },
           {
@@ -484,6 +572,10 @@
           },
           {
             "file": "dungeon",
+            "probability": 0.5
+          },
+          {
+            "file": "ender-door",
             "probability": 0.5
           },
           {
@@ -508,6 +600,14 @@
           },
           {
             "file": "forest-full",
+            "probability": 0.5
+          },
+          {
+            "file": "forged-dune",
+            "probability": 0.5
+          },
+          {
+            "file": "glowing-lotus",
             "probability": 0.5
           },
           {
@@ -571,6 +671,14 @@
             "probability": 0.5
           },
           {
+            "file": "portal-end",
+            "probability": 0.5
+          },
+          {
+            "file": "portal-start",
+            "probability": 0.5
+          },
+          {
             "file": "pyramids",
             "probability": 0.5
           },
@@ -595,6 +703,10 @@
             "probability": 0.5
           },
           {
+            "file": "shards",
+            "probability": 0.5
+          },
+          {
             "file": "shattered",
             "probability": 0.5
           },
@@ -603,7 +715,15 @@
             "probability": 0.5
           },
           {
+            "file": "snake",
+            "probability": 0.5
+          },
+          {
             "file": "solar-panels",
+            "probability": 0.5
+          },
+          {
+            "file": "spikes",
             "probability": 0.5
           },
           {
@@ -627,6 +747,10 @@
             "probability": 0.5
           },
           {
+            "file": "wind-dunes",
+            "probability": 0.5
+          },
+          {
             "file": "windmills",
             "probability": 0.5
           },
@@ -642,6 +766,14 @@
         "alwaysOn": false,
         "probability": 0.5,
         "files": [
+          {
+            "file": "alpenglow",
+            "probability": 0.5
+          },
+          {
+            "file": "atomic-ring",
+            "probability": 0.5
+          },
           {
             "file": "aura-a",
             "probability": 0.5
@@ -659,7 +791,15 @@
             "probability": 0.5
           },
           {
+            "file": "aurora",
+            "probability": 0.5
+          },
+          {
             "file": "bubbles",
+            "probability": 0.5
+          },
+          {
+            "file": "circlet",
             "probability": 0.5
           },
           {
@@ -679,7 +819,35 @@
             "probability": 0.5
           },
           {
+            "file": "dayspring",
+            "probability": 0.5
+          },
+          {
+            "file": "fire",
+            "probability": 0.5
+          },
+          {
+            "file": "gaseous-poison",
+            "probability": 0.5
+          },
+          {
+            "file": "gaseous-vapour",
+            "probability": 0.5
+          },
+          {
+            "file": "gossamer-ring",
+            "probability": 0.5
+          },
+          {
             "file": "guardian-grid",
+            "probability": 0.5
+          },
+          {
+            "file": "haloette",
+            "probability": 0.5
+          },
+          {
+            "file": "haze",
             "probability": 0.5
           },
           {
@@ -688,6 +856,18 @@
           },
           {
             "file": "ice-clouds",
+            "probability": 0.5
+          },
+          {
+            "file": "luminous-ring",
+            "probability": 0.5
+          },
+          {
+            "file": "magnetic-storm",
+            "probability": 0.5
+          },
+          {
+            "file": "neon-ring",
             "probability": 0.5
           },
           {
@@ -729,6 +909,18 @@
           {
             "file": "shower",
             "probability": 0.5
+          },
+          {
+            "file": "silk-ring",
+            "probability": 0.5
+          },
+          {
+            "file": "toxic",
+            "probability": 0.5
+          },
+          {
+            "file": "triad-ring",
+            "probability": 0.5
           }
         ]
       },
@@ -759,7 +951,15 @@
             "probability": 0.5
           },
           {
-            "file": "asteroid-cluster-1",
+            "file": "asteroid-cluster",
+            "probability": 0.5
+          },
+          {
+            "file": "asteroid-maze",
+            "probability": 0.5
+          },
+          {
+            "file": "carbonaceous-asteroids",
             "probability": 0.5
           },
           {
@@ -787,6 +987,18 @@
             "probability": 0.5
           },
           {
+            "file": "planetary-remnants",
+            "probability": 0.5
+          },
+          {
+            "file": "planetesimals",
+            "probability": 0.5
+          },
+          {
+            "file": "protoplanets",
+            "probability": 0.5
+          },
+          {
             "file": "supernova",
             "probability": 0.5
           }
@@ -803,7 +1015,15 @@
             "probability": 0.5
           },
           {
+            "file": "disc",
+            "probability": 0.5
+          },
+          {
             "file": "docking",
+            "probability": 0.5
+          },
+          {
+            "file": "fleet",
             "probability": 0.5
           },
           {
