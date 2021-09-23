@@ -9,10 +9,10 @@ from typing import List, Dict, Optional, Tuple
 from PIL import Image
 import numpy as np
 
-folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v4"
+folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v5"
 
 # Number of anomalies that will be randomly distributed.
-anomalies_count = 23
+anomalies_count = 28
 
 # Container for manifest file
 class Manifest:
@@ -32,7 +32,7 @@ def main():
     processes = 20
 
     # How many planets to make
-    n = 200
+    n = 800
 
     # List of planets to make (by ID). You can override this.
     items_to_make = list(range(0, n))
@@ -111,7 +111,7 @@ def get_anomaly(manifest: Manifest, anomaly) -> Tuple[List, Dict]:
 
     # Grab anomaly
     anomaly_files = get_file(anomaly, "anomalies", "anomalies")
-    aud = get_anomaly_audio(anomaly)
+    aud = get_audio(anomaly)
     if aud:
         audio.append(aud)
 
@@ -119,17 +119,6 @@ def get_anomaly(manifest: Manifest, anomaly) -> Tuple[List, Dict]:
     data["anomaly"] = [anomaly["file"]]
 
     return frames, audio, data
-
-
-# Get the audio files for a single anomaly
-def get_anomaly_audio(file) -> Optional[str]:
-    file_basename = file["file"]
-    file_name = f"{folder}/music/anomalies/{file_basename}.wav"
-
-    if not os.path.isfile(file_name):
-        return None
-    else:
-        return file_name
 
 
 # Worker function that generates a range of images

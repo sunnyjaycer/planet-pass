@@ -235,11 +235,11 @@
             "probability": 0.5
           },
           {
-            "file": "dots",
+            "file": "craters",
             "probability": 0.5
           },
           {
-            "file": "fire",
+            "file": "dots",
             "probability": 0.5
           },
           {
@@ -459,7 +459,11 @@
             "probability": 0.5
           },
           {
-            "file": "crystals",
+            "file": "crystals-blue",
+            "probability": 0.5
+          },
+          {
+            "file": "crystals-pink",
             "probability": 0.5
           },
           {
@@ -471,7 +475,15 @@
             "probability": 0.5
           },
           {
-            "file": "dunes",
+            "file": "dunes-a",
+            "probability": 0.5
+          },
+          {
+            "file": "dunes-b",
+            "probability": 0.5
+          },
+          {
+            "file": "dungeon",
             "probability": 0.5
           },
           {
@@ -527,6 +539,10 @@
             "probability": 0.5
           },
           {
+            "file": "mesa",
+            "probability": 0.5
+          },
+          {
             "file": "mountains-dark",
             "probability": 0.5
           },
@@ -547,6 +563,14 @@
             "probability": 0.5
           },
           {
+            "file": "portal-a",
+            "probability": 0.5
+          },
+          {
+            "file": "portal-b",
+            "probability": 0.5
+          },
+          {
             "file": "pyramids",
             "probability": 0.5
           },
@@ -560,6 +584,14 @@
           },
           {
             "file": "river-spread",
+            "probability": 0.5
+          },
+          {
+            "file": "rocks",
+            "probability": 0.5
+          },
+          {
+            "file": "ruins",
             "probability": 0.5
           },
           {
@@ -591,10 +623,6 @@
             "probability": 0.5
           },
           {
-            "file": "volcano",
-            "probability": 0.5
-          },
-          {
             "file": "weed",
             "probability": 0.5
           },
@@ -615,11 +643,31 @@
         "probability": 0.5,
         "files": [
           {
-            "file": "aura",
+            "file": "aura-a",
+            "probability": 0.5
+          },
+          {
+            "file": "aura-b",
+            "probability": 0.5
+          },
+          {
+            "file": "aura-c",
+            "probability": 0.5
+          },
+          {
+            "file": "aura-e",
+            "probability": 0.5
+          },
+          {
+            "file": "bubbles",
             "probability": 0.5
           },
           {
             "file": "clouds",
+            "probability": 0.5
+          },
+          {
+            "file": "clouds-lightning",
             "probability": 0.5
           },
           {
@@ -672,6 +720,14 @@
           },
           {
             "file": "rings-g",
+            "probability": 0.5
+          },
+          {
+            "file": "rings-h",
+            "probability": 0.5
+          },
+          {
+            "file": "shower",
             "probability": 0.5
           }
         ]
@@ -823,6 +879,11 @@
             "reserved": false
           },
           {
+            "file": "cheese",
+            "probability": 0.5,
+            "reserved": false
+          },
+          {
             "file": "collapse",
             "probability": 0.5,
             "reserved": false
@@ -839,6 +900,11 @@
           },
           {
             "file": "donut",
+            "probability": 0.5,
+            "reserved": false
+          },
+          {
+            "file": "earth",
             "probability": 0.5,
             "reserved": false
           },
@@ -898,7 +964,17 @@
             "reserved": false
           },
           {
+            "file": "pizza-slice",
+            "probability": 0.5,
+            "reserved": false
+          },
+          {
             "file": "rose",
+            "probability": 0.5,
+            "reserved": false
+          },
+          {
+            "file": "vacation",
             "probability": 0.5,
             "reserved": false
           },
@@ -909,6 +985,11 @@
           },
           {
             "file": "wetworld",
+            "probability": 0.5,
+            "reserved": false
+          },
+          {
+            "file": "whiskey",
             "probability": 0.5,
             "reserved": false
           },
