@@ -22,6 +22,7 @@ abstract contract Nameable is ERC721, Ownable, Pausable {
         nameOfToken[id] = _name;
     }
 
+    // NOTE: is this necessary? would we just have a user or contract just call the single setName
     /// Set then names of tokens.
     /// @param id an array token IDs
     /// @param _name an array of new names

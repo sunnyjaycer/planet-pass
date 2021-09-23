@@ -3,11 +3,13 @@ pragma solidity ^0.8.2;
 
 import "./WanderersPlanet.sol";
 import "./WanderersPass.sol";
+import "./Stardust.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "solidity-bytes-utils/contracts/BytesLib.sol";
+
 
 contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     using BytesLib for bytes;
@@ -23,6 +25,13 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
 
     /// Location of WETH contract.
     IERC20 public wrappedEthContract;
+
+    /// Location of STARDUST contract
+    IERC20 public stardustContract;
+
+    /// Ratio of STARDUST tokens rewarded to WETH charge for reach flashStamp.
+    /// Ex: 700,000 is 70% of WETH visitation fee quantity is quantity provided in STARDUST to traveler
+    uint256 public stardustRewardRatio;
 
     /// Fee charged by the contract deployer in basis points
     uint256 public operatorFeeBp;
@@ -70,7 +79,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
 
     /// Updates the location of the Planet contract.
     /// @param _planetContract the new location of the Planet contract
-    function updatePlanetContract(WanderersPlanet _planetContract)
+    function setPlanetContract(WanderersPlanet _planetContract)
         external
         onlyOwner
     {
@@ -79,7 +88,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
 
     /// Updates the location of the Pass contract.
     /// @param _passContract the new location of the Pass contract
-    function updatePassContract(WanderersPass _passContract)
+    function setPassContract(WanderersPass _passContract)
         external
         onlyOwner
     {
@@ -88,19 +97,35 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
 
     /// Updates the location of the WETH contract.
     /// @param _wrappedEthContract the new location of the WETH contract
-    function updateWrappedEthContract(IERC20 _wrappedEthContract)
+    function setWrappedEthContract(IERC20 _wrappedEthContract)
         external
         onlyOwner
     {
         wrappedEthContract = _wrappedEthContract;
     }
 
+    /// Updates the location of the STARDUST contract.
+    /// @param _stardustContract the new location of the STARDUST contract
+    function setStardustContract(IERC20 _stardustContract)
+        external
+        onlyOwner
+    {
+        stardustContract = _stardustContract   
+    }
+
+    /// Updates the ratio of STARDUST tokens rewarded to WETH charge for reach flashStamp
+    /// @param _stardustRewardRate the new reward ratio
+    function setStardustRewardRatio(uint256 _stardustRewardRatio) external onlyOwner {
+        stardustRewardRatio = _stardustRewardRatio;
+    }
+
     /// Updates the fee charged by the contract deployer.
     /// @param _operatorFeeBp the new fee charged, in basis points
-    function updateOperatorFeeBp(uint256 _operatorFeeBp) external onlyOwner {
+    function setOperatorFeeBp(uint256 _operatorFeeBp) external onlyOwner {
         operatorFeeBp = _operatorFeeBp;
     }
 
+    // TODO: test stardust reward dispersal
     /// Perform a flash-stamp of planetId onto passId.
     /// Note: this requires an approval from Planet Pass for passId, otherwise it will revert.
     /// Note: this requqires ERC-20 spending approval for WETH, otherwise it will revert.
@@ -123,6 +148,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
             uint256 payoutFee = fee - ownerFee;
 
             ownerFeesAccrued[planetOwner] += payoutFee;
+            // NOTE: Great, we increase the fees accrued, but where do we actually take that fee from the traveler??
             operatorFeeAccrued += ownerFee;
 
             bool success = wrappedEthContract.transferFrom(
@@ -147,6 +173,29 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
 
         // Return it to the sender
         passContract.safeTransferFrom(address(this), msg.sender, passId);
+
+        // calculate stardust reward to traveler off of stardustRewardRatio and WETH fee paid by traveler
+        uint256 stardustReward = ( fee * stardustRewardRatio ) / 1_000_000;
+
+        // If TravelAgency has been approved for minting and there is enough stardust in contract to successfully send
+        if (  hasRole(keccak256("MINTER_ROLE"),address(this))  &&  stardustContract.balanceOf(address(this) > stardustReward)  ) {
+            // mint STARDUST to traveler
+            stardustContract.mint(msg.sender, stardustReward);
+        }
+    }
+
+    // TODO: test that deposit works
+    /// @dev allows owner to deposit STARDUST into contract for flashStamp rewards
+    /// @param depositAmount amount owner desires to deposit
+    function depositStardust(uint256 depositAmount) external onlyOwner whenNotPaused {
+        require(stardustContract.transferFrom(msg.sender, address(this), depositAmount), "!transferable");
+    }
+
+    // TODO: test that withdraw works
+    /// @dev allows owner to withdraw STARDUST from contract
+    /// @param withdrawAmount amount owner desires to withdraw
+    function withdrawStardust(uint256 withdrawAmount) external onlyOwner whenNotPaused {
+        require(stardustContract.transferFrom(address(this), msg.sender, withdrawAmount), "!transferable");
     }
 
     /// @dev calculates the fee designated for the operator (owner of contract).
@@ -161,7 +210,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     function updateOwnerFee(uint256 id, uint256 _fee) external whenNotPaused {
         require(msg.sender == planetOwners[id], "Not owner of planet");
         planetFees[id] = _fee;
-    }
+    } 
 
     /// Withdraws the accured operator fees to a designated address.
     /// @param to the address to send fees to

@@ -30,4 +30,6 @@ contract Stardust is ERC20, ERC20Burnable, AccessControl {
     {
         _setupRole(MINTER_ROLE, newMinter);
     }
+
+    // You can check an accounts role with _checkRole(role,account) in AccessControl
 }
