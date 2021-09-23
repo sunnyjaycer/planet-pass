@@ -7,7 +7,8 @@ for i in {0..8887}; do
   count=$(find ./*.wav 2>/dev/null | wc -l)
   if [ "$count" -gt 1 ]; then
     # wav files found
-    sox -m ./*.wav output.wav
+    files=$(find ./ -name '*.wav' -printf '-v 1 %p ')
+    sox -m ${files} output.wav
     ffmpeg -r 15 -start_number 0 -i "${i}_%05d.png" -i output.wav -c:a aac -c:v libx264 -crf 18 -pix_fmt yuv420p -profile:v high -level 4.2 ../../videos/"${i}".mp4
     # clean up so if we re-run it doesn't get mixed again
     rm output.wav
