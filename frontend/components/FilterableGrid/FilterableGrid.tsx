@@ -3,10 +3,28 @@ import FilterDrawer from './FilterDrawer'
 import style from './FilterableGrid.module.scss'
 import CardGrid from '../CardGrid'
 import Card from '../Card'
+import DetailsModal from '../DetailsModal'
+import { PlanetData } from '../../types'
 
 type FilterSet = {
   name: string
   values: Array<string>
+}
+type FilterState = {
+  [index: string]: boolean
+}
+type FilterGroupState = {
+  [index: string]: FilterState
+}
+type ActiveFilter = {
+  name: string
+  value: string
+}
+
+type ActiveFilterList = Array<ActiveFilter>
+
+type FilterableGridProps = {
+  itemData: PlanetData[]
 }
 
 // TODO Handle number values
@@ -29,18 +47,6 @@ const filters: Array<FilterSet> = [
   }
 ]
 
-type FilterState = {
-  [index: string]: boolean
-}
-type FilterGroupState = {
-  [index: string]: FilterState
-}
-
-type Attribute = {
-  trait_type: string
-  value: string
-}
-
 const initFilterState: FilterGroupState = {}
 
 filters.forEach((filter) => {
@@ -51,20 +57,17 @@ filters.forEach((filter) => {
   })
 })
 
-type ActiveFilter = {
-  name: string
-  value: string
-}
-
-type ActiveFilterList = Array<ActiveFilter>
-
-type FilterableGridProps = {
-  itemData: Array<any>
-}
-
 const FilterableGrid: FunctionComponent<FilterableGridProps> = ({
   itemData
 }) => {
+  const [modalIsOpen, setModalIsOpen] = useState(false)
+  const [modalData, setModalData] = useState<PlanetData | null>()
+
+  const handlePlanetClick = (cardData: PlanetData) => {
+    setModalIsOpen(true)
+    setModalData(cardData)
+  }
+
   const [filterState, setFilterState] = useState(initFilterState)
 
   const handleFilterChange = (filterName: string, filterVal: string): void => {
@@ -121,7 +124,22 @@ const FilterableGrid: FunctionComponent<FilterableGridProps> = ({
 
   return (
     <div className={style.filterableGrid}>
+      {modalData && (
+        <DetailsModal
+          isOpen={modalIsOpen}
+          name={modalData.name}
+          attributes={modalData.attributes}
+          price={modalData.price}
+          videoSrc={modalData.videoSrc}
+          handleClose={() => {
+            setModalIsOpen(false)
+            setModalData(null)
+          }}
+        />
+      )}
       <div className={style.filterContainer}>
+        {/* ----- */}
+        {/* FILTER SIDEBAR */}
         <div className={style.filters}>
           <div className={style.filterCell}>
             <h2>Filters</h2>
@@ -152,7 +170,10 @@ const FilterableGrid: FunctionComponent<FilterableGridProps> = ({
           ))}
         </div>
       </div>
+
       <div className={style.filterGridContent}>
+        {/* ----- */}
+        {/* ACTIVE FILTER TABS */}
         <div className={style.activeFilterContainer}>
           {activeFilters.map((activeFilter) => (
             <button
@@ -162,36 +183,37 @@ const FilterableGrid: FunctionComponent<FilterableGridProps> = ({
                 handleFilterChange(activeFilter.name, activeFilter.value)
               }}
             >
-              <span
-                style={{
-                  fontSize: '1rem',
-                  textTransform: 'uppercase',
-                  color: '#999'
-                }}
-              >
-                {activeFilter.name}:
-              </span>{' '}
+              <span className={style.filterTagLabel}>{activeFilter.name}:</span>{' '}
               {activeFilter.value}
             </button>
           ))}
         </div>
-        {numActive} Results
+
+        <div className={style.results}>{numActive} Results</div>
+        {/* ----- */}
+        {/* FILTER CARDS */}
         <div className={style.cardContainer}>
           <CardGrid noPad>
             {filteredItems.map((cardData) => (
               <div key={cardData.id}>
                 <Card
                   name={cardData.name}
-                  visits={cardData.visits}
                   price={cardData.price}
                   imgSrc={cardData.imgSrc}
+                  onClick={() => {
+                    handlePlanetClick(cardData)
+                  }}
                 />
                 <br />
-                {cardData.attributes.map((attr) => (
-                  <span style={{ fontSize: '1.3rem' }}>
-                    {attr.trait_type}: {attr.value} <br />
-                  </span>
-                ))}
+                <div className={style.debug}>
+                  <strong>Temporary Debug attributes:</strong>
+                  <br />
+                  {cardData.attributes.map((attr) => (
+                    <span key={`${attr.trait_type}${attr.value}`}>
+                      {attr.trait_type}: {attr.value} <br />
+                    </span>
+                  ))}
+                </div>
               </div>
             ))}
           </CardGrid>

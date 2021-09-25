@@ -2,7 +2,6 @@
   padding: 0 3rem;
   max-width: $s-maxWidth;
   margin: 0 auto;
-
   // @include break-md {
   //   max-width: 75%;
   //   margin: 0 auto;
@@ -10,6 +9,8 @@
 }
 
 .userInfoInner {
+  background: $c-grey;
+
   padding: 2rem;
   border: 1px solid $c-green;
   border-radius: 15px;

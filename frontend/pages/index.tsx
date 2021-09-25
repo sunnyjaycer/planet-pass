@@ -62,12 +62,12 @@ const Home: NextPage = () => {
         isOpen={modalIsOpen}
         name={categoryCards[0].name}
         attributes={[
-          { attribute: 'Planet Spec', value: 'Purple Wormhole' },
-          { attribute: 'Planet Spec', value: 'Purple Wormhole' },
-          { attribute: 'Planet Spec', value: 'Purple Wormhole' },
-          { attribute: 'Planet Spec', value: 'Purple Wormhole' },
-          { attribute: 'Planet Spec', value: 'Purple Wormhole' },
-          { attribute: 'Planet Spec', value: 'Purple Wormhole' }
+          { trait_type: 'Planet Spec', value: 'Purple Wormhole' },
+          { trait_type: 'Planet Spec', value: 'Purple Wormhole' },
+          { trait_type: 'Planet Spec', value: 'Purple Wormhole' },
+          { trait_type: 'Planet Spec', value: 'Purple Wormhole' },
+          { trait_type: 'Planet Spec', value: 'Purple Wormhole' },
+          { trait_type: 'Planet Spec', value: 'Purple Wormhole' }
         ]}
         price={categoryCards[0].price}
         videoSrc="/GasGiant.mp4"
@@ -91,7 +91,6 @@ const Home: NextPage = () => {
         {eventCards.map((card) => (
           <Card
             name={card.name}
-            visits={card.visits}
             price={card.price}
             imgSrc={card.imgSrc}
             key={card.id}
@@ -110,7 +109,6 @@ const Home: NextPage = () => {
         {categoryCards.map((card) => (
           <Card
             name={card.name}
-            visits={card.visits}
             price={card.price}
             imgSrc={card.imgSrc}
             key={card.id}
@@ -127,7 +125,6 @@ const Home: NextPage = () => {
         {categoryCards.map((card) => (
           <Card
             name={card.name}
-            visits={card.visits}
             price={card.price}
             imgSrc={card.imgSrc}
             key={card.id}
@@ -144,7 +141,6 @@ const Home: NextPage = () => {
         {categoryCards.map((card) => (
           <Card
             name={card.name}
-            visits={card.visits}
             price={card.price}
             imgSrc={card.imgSrc}
             key={card.id}

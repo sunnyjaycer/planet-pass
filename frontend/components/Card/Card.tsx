@@ -4,7 +4,7 @@ import Image from 'next/image'
 
 type CardProps = {
   name: string
-  visits: number
+  // visits: number
   price: number
   priceUnit?: string
   imgSrc: string | StaticImageData
@@ -13,7 +13,7 @@ type CardProps = {
 
 const Card: FunctionComponent<CardProps> = ({
   name,
-  visits,
+  // visits,
   price,
   imgSrc,
   priceUnit = 'WETH',
@@ -36,7 +36,7 @@ const Card: FunctionComponent<CardProps> = ({
       <div className={style.cardDetails}>
         <div className={style.cardName}>{name}</div>
         <div className={style.cardSubDetails}>
-          <div className={style.cardVisits}>{visits} Visits</div>
+          {/* <div className={style.cardVisits}>{visits} Visits</div> */}
           <div className={style.cardPrice}>
             {price} {priceUnit}
           </div>

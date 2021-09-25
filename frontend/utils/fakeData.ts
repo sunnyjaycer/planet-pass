@@ -1,3 +1,4 @@
+import { PlanetData } from '../types'
 import fpoImageThumb from '../assets/planet-fpo-thumb.jpg'
 
 const samplePropertiesData = [
@@ -18,13 +19,13 @@ const samplePropertiesData = [
   }
 ]
 
-export const fpoCards = new Array(500).fill(0).map((e, i) => ({
+export const fpoCards: PlanetData[] = new Array(500).fill(0).map((e, i) => ({
   name: 'Planet Name',
-  visits: 100,
   price: 0.5,
   imgSrc: fpoImageThumb,
   id: `card${i}`,
-  attributes: []
+  attributes: [],
+  videoSrc: '/GasGiant.mp4'
 }))
 
 fpoCards.forEach((cardData) => {

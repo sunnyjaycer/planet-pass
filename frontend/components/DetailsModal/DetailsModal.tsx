@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Modal from 'react-modal'
 
 type Attribute = {
-  attribute: string
+  trait_type: string
   value: string | number
 }
 
@@ -60,12 +60,12 @@ const DetailsModal: FunctionComponent<DetailsModal> = ({
           <div className={style.planetText}>
             <h1 className={style.planetName}>{name}</h1>
             <ul className={style.planetAttributes}>
-              {attributes.map(({ attribute, value }) => (
+              {attributes.map(({ trait_type, value }) => (
                 <li
                   className={style.attribute}
-                  key={`${name}-attribute-${attribute}`}
+                  key={`${name}-attribute-${trait_type}`}
                 >
-                  <div className={style.attributeName}>{attribute}</div>
+                  <div className={style.attributeName}>{trait_type}</div>
                   <div className={style.attributeValue}>{value}</div>
                 </li>
               ))}
