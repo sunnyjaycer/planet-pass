@@ -9,6 +9,7 @@ type CardProps = {
   priceUnit?: string
   imgSrc: string | StaticImageData
   onClick?: React.MouseEventHandler<HTMLButtonElement>
+  stampSrc?: string | StaticImageData
 }
 
 const Card: FunctionComponent<CardProps> = ({
@@ -17,6 +18,7 @@ const Card: FunctionComponent<CardProps> = ({
   price,
   imgSrc,
   priceUnit = 'WETH',
+  stampSrc,
   onClick
 }) => {
   const Wrapper: FunctionComponent = ({ children }) =>
@@ -32,6 +34,17 @@ const Card: FunctionComponent<CardProps> = ({
     <Wrapper>
       <div className={style.cardImage}>
         <Image src={imgSrc} alt="planet" layout="fill" />
+        {stampSrc && (
+          <div className={style.cardStamp}>
+            <Image
+              src={stampSrc}
+              alt="planet"
+              layout="fixed"
+              width="75"
+              height="75"
+            />
+          </div>
+        )}
       </div>
       <div className={style.cardDetails}>
         <div className={style.cardName}>{name}</div>

@@ -3,13 +3,13 @@ import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import FilterableGrid from '../components/FilterableGrid'
 
-import { fpoCards } from '../utils/fakeData'
+import { fpoPlanets } from '../utils/fakeData'
 
 const Home: NextPage = () => {
   return (
     <Layout title={'All Planets'}>
       <PageHeader title="All Planets" />
-      <FilterableGrid itemData={fpoCards} />
+      <FilterableGrid itemData={fpoPlanets} />
     </Layout>
   )
 }

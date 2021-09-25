@@ -7,7 +7,7 @@ import FilterableGrid from '../components/FilterableGrid'
 
 import ConnectButton from '../components/ConnectButton'
 
-import { fpoCards } from '../utils/fakeData'
+import { fpoStamps } from '../utils/fakeData'
 
 const Home: NextPage = () => {
   return (
@@ -25,7 +25,7 @@ const Home: NextPage = () => {
         stampCount={360}
         visitors={100}
       />
-      <FilterableGrid itemData={fpoCards} />
+      <FilterableGrid itemData={fpoStamps} />
     </Layout>
   )
 }

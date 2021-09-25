@@ -34,3 +34,9 @@
     justify-content: space-between;
   }
 }
+.cardStamp {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  transform: rotate(15deg);
+}
