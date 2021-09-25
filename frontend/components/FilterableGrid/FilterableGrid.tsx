@@ -1,34 +1,12 @@
 import { FunctionComponent, useState } from 'react'
 import FilterDrawer from './FilterDrawer'
 import style from './FilterableGrid.module.scss'
-import CardGrid from '../CardGrid'
-import Card from '../Card'
 import DetailsModal from '../DetailsModal'
-import { PlanetData } from '../../types'
+import FilteredItems from './FilteredItems'
+import { PlanetData, FilterSet, FilterGroupState, Filter } from '../../types'
+import FilterTab from './FilterTab'
 
-type FilterSet = {
-  name: string
-  values: Array<string>
-}
-type FilterState = {
-  [index: string]: boolean
-}
-type FilterGroupState = {
-  [index: string]: FilterState
-}
-type ActiveFilter = {
-  name: string
-  value: string
-}
-
-type ActiveFilterList = Array<ActiveFilter>
-
-type FilterableGridProps = {
-  itemData: PlanetData[]
-}
-
-// TODO Handle number values
-
+// TODO Handle number values as filters
 const filters: Array<FilterSet> = [
   { name: 'Space', values: ['bright', 'dark'] },
   { name: 'Core Type', values: ['ice', 'lava'] },
@@ -47,15 +25,18 @@ const filters: Array<FilterSet> = [
   }
 ]
 
+// Assemble filter state object
 const initFilterState: FilterGroupState = {}
-
 filters.forEach((filter) => {
   initFilterState[filter.name] = {}
-
   filter.values.forEach((filterValue) => {
     initFilterState[filter.name][filterValue] = false
   })
 })
+
+interface FilterableGridProps {
+  itemData: PlanetData[]
+}
 
 const FilterableGrid: FunctionComponent<FilterableGridProps> = ({
   itemData
@@ -70,14 +51,14 @@ const FilterableGrid: FunctionComponent<FilterableGridProps> = ({
 
   const [filterState, setFilterState] = useState(initFilterState)
 
-  const handleFilterChange = (filterName: string, filterVal: string): void => {
+  const handleFilterChange = (filter: Filter): void => {
     const newState = { ...filterState }
-    newState[filterName][filterVal] = !newState[filterName][filterVal]
+    newState[filter.name][filter.value] = !newState[filter.name][filter.value]
     setFilterState(newState)
   }
 
   // Create list of filters from filterState which are active
-  const activeFilters: ActiveFilterList = []
+  const activeFilters: Filter[] = []
   filters.forEach((filter) => {
     filter.values.forEach((filterValue) => {
       if (filterState[filter.name][filterValue]) {
@@ -85,42 +66,6 @@ const FilterableGrid: FunctionComponent<FilterableGridProps> = ({
       }
     })
   })
-
-  const activeFilterShape: FilterGroupState = {}
-  for (const category in filterState) {
-    Object.entries(filterState[category])
-      .filter(([prop, val]) => val === true)
-      .forEach(([entryName, val]) => {
-        if (!activeFilterShape.hasOwnProperty(category)) {
-          activeFilterShape[category] = {}
-        }
-        activeFilterShape[category][entryName] = true
-      })
-  }
-
-  const filteredItems =
-    activeFilters.length > 0
-      ? itemData.filter((item, i) => {
-          const filterGroups = Object.entries(activeFilterShape)
-          const categoriesFound: boolean[] = []
-
-          // Find if each active filter category is met in the item's attributes
-          filterGroups.forEach(([category, values]) => {
-            const itemIsCategoryActive = item.attributes.findIndex(
-              (el) => el.trait_type === category && values[el.value]
-            )
-            categoriesFound.push(itemIsCategoryActive !== -1)
-          })
-
-          const isActive = categoriesFound.reduce(
-            (prev, next) => prev && next,
-            true
-          )
-          return isActive
-        })
-      : itemData
-
-  const numActive = filteredItems.length
 
   return (
     <div className={style.filterableGrid}>
@@ -157,7 +102,10 @@ const FilterableGrid: FunctionComponent<FilterableGridProps> = ({
                       type="checkbox"
                       checked={filterState[filter.name][filterVal]}
                       onChange={() => {
-                        handleFilterChange(filter.name, filterVal)
+                        handleFilterChange({
+                          name: filter.name,
+                          value: filterVal
+                        })
                       }}
                     />
                     <label htmlFor={`${filter.name}${filterVal}`}>
@@ -175,49 +123,21 @@ const FilterableGrid: FunctionComponent<FilterableGridProps> = ({
         {/* ----- */}
         {/* ACTIVE FILTER TABS */}
         <div className={style.activeFilterContainer}>
-          {activeFilters.map((activeFilter) => (
-            <button
-              className={style.activeFilterTag}
-              key={`${activeFilter.name}${activeFilter.value}`}
-              onClick={() => {
-                handleFilterChange(activeFilter.name, activeFilter.value)
-              }}
-            >
-              <span className={style.filterTagLabel}>{activeFilter.name}:</span>{' '}
-              {activeFilter.value}
-            </button>
+          {activeFilters.map((filter) => (
+            <FilterTab
+              filter={filter}
+              handleFilterChange={handleFilterChange}
+              key={`${filter.name}${filter.value}`}
+            />
           ))}
         </div>
 
-        <div className={style.results}>{numActive} Results</div>
-        {/* ----- */}
-        {/* FILTER CARDS */}
-        <div className={style.cardContainer}>
-          <CardGrid noPad>
-            {filteredItems.map((cardData) => (
-              <div key={cardData.id}>
-                <Card
-                  name={cardData.name}
-                  price={cardData.price}
-                  imgSrc={cardData.imgSrc}
-                  onClick={() => {
-                    handlePlanetClick(cardData)
-                  }}
-                />
-                <br />
-                <div className={style.debug}>
-                  <strong>Temporary Debug attributes:</strong>
-                  <br />
-                  {cardData.attributes.map((attr) => (
-                    <span key={`${attr.trait_type}${attr.value}`}>
-                      {attr.trait_type}: {attr.value} <br />
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </CardGrid>
-        </div>
+        <FilteredItems
+          itemData={itemData}
+          handlePlanetClick={handlePlanetClick}
+          filterState={filterState}
+          activeFilters={activeFilters}
+        />
       </div>
     </div>
   )
