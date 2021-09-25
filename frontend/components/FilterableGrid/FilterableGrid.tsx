@@ -4,32 +4,28 @@ import style from './FilterableGrid.module.scss'
 import CardGrid from '../CardGrid'
 import Card from '../Card'
 
-type FilterValue = {
-  value: string
-  active: boolean
-}
-
-type Filter = {
+type FilterSet = {
   name: string
   values: Array<string>
-  stateValues?: Array<FilterValue>
 }
 
-const filters: Array<Filter> = [
-  { name: 'Space', values: ['foo', 'bar', 'bat'] },
+// TODO Handle number values
+
+const filters: Array<FilterSet> = [
+  { name: 'Space', values: ['bright', 'dark'] },
   { name: 'Core Type', values: ['ice', 'lava'] },
   { name: 'Terrain', values: ['grass', 'mountain', 'valley'] },
-  { name: 'Features', values: ['foo', 'bar', 'bat'] },
-  { name: 'Atmosphere', values: ['foo', 'bar', 'bat'] },
-  { name: 'Satellites', values: ['foo', 'bar', 'bat'] },
-  { name: 'Ships', values: ['foo', 'bar', 'bat'] },
-  { name: 'Anomalies', values: ['foo', 'bar', 'bat'] },
-  { name: 'Diameter', values: ['foo', 'bar', 'bat'] },
-  { name: 'Age', values: ['foo', 'bar', 'bat'] },
-  { name: 'Faction', values: ['foo', 'bar', 'bat'] },
+  { name: 'Features', values: ['cave', 'lake'] },
+  { name: 'Atmosphere', values: ['oxygen', 'hydrogen', 'nitrogen'] },
+  { name: 'Satellites', values: ['asteroid', 'mechanical'] },
+  { name: 'Ships', values: ['death star', 'x-wing'] },
+  { name: 'Anomalies', values: ['squishy', 'smelly', 'hamburger'] },
+  { name: 'Diameter', values: ['real small', 'average', 'real big'] },
+  { name: 'Age', values: ['1', '2', '3'] },
+  { name: 'Faction', values: ['good', 'bad', 'neutral'] },
   {
     name: 'Distance from Center of Galaxy',
-    values: ['foo', 'bar', 'bat']
+    values: ['near', 'far', 'wherever you are']
   }
 ]
 
@@ -38,6 +34,11 @@ type FilterState = {
 }
 type FilterGroupState = {
   [index: string]: FilterState
+}
+
+type Attribute = {
+  trait_type: string
+  value: string
 }
 
 const initFilterState: FilterGroupState = {}
@@ -50,10 +51,6 @@ filters.forEach((filter) => {
   })
 })
 
-type FilterableGridProps = {
-  data: Array<any>
-}
-
 type ActiveFilter = {
   name: string
   value: string
@@ -61,7 +58,13 @@ type ActiveFilter = {
 
 type ActiveFilterList = Array<ActiveFilter>
 
-const FilterableGrid: FunctionComponent<FilterableGridProps> = ({ data }) => {
+type FilterableGridProps = {
+  itemData: Array<any>
+}
+
+const FilterableGrid: FunctionComponent<FilterableGridProps> = ({
+  itemData
+}) => {
   const [filterState, setFilterState] = useState(initFilterState)
 
   const handleFilterChange = (filterName: string, filterVal: string): void => {
@@ -70,8 +73,8 @@ const FilterableGrid: FunctionComponent<FilterableGridProps> = ({ data }) => {
     setFilterState(newState)
   }
 
+  // Create list of filters from filterState which are active
   const activeFilters: ActiveFilterList = []
-
   filters.forEach((filter) => {
     filter.values.forEach((filterValue) => {
       if (filterState[filter.name][filterValue]) {
@@ -79,6 +82,42 @@ const FilterableGrid: FunctionComponent<FilterableGridProps> = ({ data }) => {
       }
     })
   })
+
+  const activeFilterShape: FilterGroupState = {}
+  for (const category in filterState) {
+    Object.entries(filterState[category])
+      .filter(([prop, val]) => val === true)
+      .forEach(([entryName, val]) => {
+        if (!activeFilterShape.hasOwnProperty(category)) {
+          activeFilterShape[category] = {}
+        }
+        activeFilterShape[category][entryName] = true
+      })
+  }
+
+  const filteredItems =
+    activeFilters.length > 0
+      ? itemData.filter((item, i) => {
+          const filterGroups = Object.entries(activeFilterShape)
+          const categoriesFound: boolean[] = []
+
+          // Find if each active filter category is met in the item's attributes
+          filterGroups.forEach(([category, values]) => {
+            const itemIsCategoryActive = item.attributes.findIndex(
+              (el) => el.trait_type === category && values[el.value]
+            )
+            categoriesFound.push(itemIsCategoryActive !== -1)
+          })
+
+          const isActive = categoriesFound.reduce(
+            (prev, next) => prev && next,
+            true
+          )
+          return isActive
+        })
+      : itemData
+
+  const numActive = filteredItems.length
 
   return (
     <div className={style.filterableGrid}>
@@ -113,31 +152,50 @@ const FilterableGrid: FunctionComponent<FilterableGridProps> = ({ data }) => {
           ))}
         </div>
       </div>
-      <div className={style.activeFilterContainer}>
-        {activeFilters.map((activeFilter) => (
-          <button
-            className={style.activeFilterTag}
-            key={`${activeFilter.name}${activeFilter.value}`}
-            onClick={() => {
-              handleFilterChange(activeFilter.name, activeFilter.value)
-            }}
-          >
-            {activeFilter.value}
-          </button>
-        ))}
-      </div>
-      <div className={style.cardContainer}>
-        <CardGrid noPad>
-          {data.map((cardData) => (
-            <Card
-              name={cardData.name}
-              visits={cardData.visits}
-              price={cardData.price}
-              imgSrc={cardData.imgSrc}
-              key={cardData.id}
-            />
+      <div className={style.filterGridContent}>
+        <div className={style.activeFilterContainer}>
+          {activeFilters.map((activeFilter) => (
+            <button
+              className={style.activeFilterTag}
+              key={`${activeFilter.name}${activeFilter.value}`}
+              onClick={() => {
+                handleFilterChange(activeFilter.name, activeFilter.value)
+              }}
+            >
+              <span
+                style={{
+                  fontSize: '1rem',
+                  textTransform: 'uppercase',
+                  color: '#999'
+                }}
+              >
+                {activeFilter.name}:
+              </span>{' '}
+              {activeFilter.value}
+            </button>
           ))}
-        </CardGrid>
+        </div>
+        {numActive} Results
+        <div className={style.cardContainer}>
+          <CardGrid noPad>
+            {filteredItems.map((cardData) => (
+              <div key={cardData.id}>
+                <Card
+                  name={cardData.name}
+                  visits={cardData.visits}
+                  price={cardData.price}
+                  imgSrc={cardData.imgSrc}
+                />
+                <br />
+                {cardData.attributes.map((attr) => (
+                  <span style={{ fontSize: '1.3rem' }}>
+                    {attr.trait_type}: {attr.value} <br />
+                  </span>
+                ))}
+              </div>
+            ))}
+          </CardGrid>
+        </div>
       </div>
     </div>
   )

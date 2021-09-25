@@ -25,7 +25,14 @@
   font-weight: 300;
   font-family: $f-mono;
   padding: 1rem 0;
+  .activeNav {
+    font-weight: 700;
+  }
   @include break-md {
+    font-size: 1.6rem;
+    padding: 0;
+  }
+  @include break-xl {
     font-size: 1.8rem;
     padding: 0;
   }

@@ -9,15 +9,14 @@
 
 .filterContainer {
   grid-column: 1 / span 3;
-  grid-row: 1 / span 2;
-}
-.activeFilterContainer {
-  grid-column: 4 / span 9;
-}
-.cardContainer {
-  grid-column: 4 / span 9;
 }
 
+.cardContainer {
+}
+
+.filterGridContent {
+  grid-column: 4 / span 9;
+}
 .filters {
   position: sticky;
   top: 3rem;
