@@ -23,7 +23,7 @@ const Home: NextPage = () => {
         userImageUrl={fpoImg}
         passportName="Passport Name"
         stampCount={360}
-        visitors={100}
+        // visitors={100}
       />
       <FilterableGrid itemData={fpoStamps} />
     </Layout>

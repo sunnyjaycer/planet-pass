@@ -36,13 +36,7 @@ const Card: FunctionComponent<CardProps> = ({
         <Image src={imgSrc} alt="planet" layout="fill" />
         {stampSrc && (
           <div className={style.cardStamp}>
-            <Image
-              src={stampSrc}
-              alt="planet"
-              layout="fixed"
-              width="75"
-              height="75"
-            />
+            <Image src={stampSrc} alt="planet" layout="fill" />
           </div>
         )}
       </div>
