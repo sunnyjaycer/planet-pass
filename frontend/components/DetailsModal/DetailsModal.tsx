@@ -5,7 +5,7 @@ import SelectPassport from '../SelectPassport'
 import Button from '../Button'
 import Modal from 'react-modal'
 import Lottie, { LottieRefCurrentProps } from 'lottie-react'
-import { visitLottieData } from '../../assets/lottie-visit/visitLottieData'
+import { visitLottieData } from '../../assets/lottie-visit/visitLottieData2'
 
 type Attribute = {
   trait_type: string
