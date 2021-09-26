@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import { useState } from 'react'
-
+import Lottie from 'lottie-react'
+import { visitLottieData } from '../assets/lottie-visit/visitLottieData'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import fpoPlanet from '../assets/planet-fpo.png'
@@ -44,18 +45,29 @@ const Home: NextPage = () => {
         title="Galactic Gateway"
         description="Text about how these are all planets available to visit. Text about how these are all planets available to visit and currated lists."
       />
+      {/* Lottie test */}
+      {/* <div
+        style={{
+          width: 400,
+          height: 400,
+          margin: '0 auto',
+          background: '#333'
+        }}
+      >
+        <Lottie animationData={visitLottieData} loop />;
+      </div> */}
 
       {/* TODO, will populate with active planet data onClick. Depends on planet data structure */}
       <DetailsModal
         isOpen={modalIsOpen}
         name={categoryCards[0].name}
         attributes={[
-          { attribute: 'Planet Spec', value: 'Purple Wormhole' },
-          { attribute: 'Planet Spec', value: 'Purple Wormhole' },
-          { attribute: 'Planet Spec', value: 'Purple Wormhole' },
-          { attribute: 'Planet Spec', value: 'Purple Wormhole' },
-          { attribute: 'Planet Spec', value: 'Purple Wormhole' },
-          { attribute: 'Planet Spec', value: 'Purple Wormhole' }
+          { trait_type: 'Planet Spec', value: 'Purple Wormhole' },
+          { trait_type: 'Planet Spec', value: 'Purple Wormhole' },
+          { trait_type: 'Planet Spec', value: 'Purple Wormhole' },
+          { trait_type: 'Planet Spec', value: 'Purple Wormhole' },
+          { trait_type: 'Planet Spec', value: 'Purple Wormhole' },
+          { trait_type: 'Planet Spec', value: 'Purple Wormhole' }
         ]}
         price={categoryCards[0].price}
         videoSrc="/GasGiant.mp4"
@@ -63,7 +75,6 @@ const Home: NextPage = () => {
           setModalIsOpen(false)
         }}
       />
-
       {/* ----- */}
       {/* Featured Event */}
       <FeatureBlock
@@ -80,7 +91,6 @@ const Home: NextPage = () => {
         {eventCards.map((card) => (
           <Card
             name={card.name}
-            visits={card.visits}
             price={card.price}
             imgSrc={card.imgSrc}
             key={card.id}
@@ -88,7 +98,6 @@ const Home: NextPage = () => {
           />
         ))}
       </CardGrid>
-
       {/* ----- */}
       {/* Highlighted Groups/Categories */}
       <CardGrid
@@ -100,7 +109,6 @@ const Home: NextPage = () => {
         {categoryCards.map((card) => (
           <Card
             name={card.name}
-            visits={card.visits}
             price={card.price}
             imgSrc={card.imgSrc}
             key={card.id}
@@ -117,7 +125,6 @@ const Home: NextPage = () => {
         {categoryCards.map((card) => (
           <Card
             name={card.name}
-            visits={card.visits}
             price={card.price}
             imgSrc={card.imgSrc}
             key={card.id}
@@ -134,7 +141,6 @@ const Home: NextPage = () => {
         {categoryCards.map((card) => (
           <Card
             name={card.name}
-            visits={card.visits}
             price={card.price}
             imgSrc={card.imgSrc}
             key={card.id}
@@ -142,7 +148,6 @@ const Home: NextPage = () => {
           />
         ))}
       </CardGrid>
-
       {/* ----- */}
       {/* Utility Links/Cards */}
       <UtilBlock />

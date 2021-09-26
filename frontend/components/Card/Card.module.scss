@@ -1,5 +1,6 @@
 .card {
   max-width: 500px;
+  width: 100%;
 }
 .buttonCard {
   display: block;
@@ -32,4 +33,12 @@
     display: flex;
     justify-content: space-between;
   }
+}
+.cardStamp {
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  transform: rotate(15deg);
+  width: 40%;
+  height: 40%;
 }

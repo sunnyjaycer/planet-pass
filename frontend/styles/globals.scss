@@ -7,6 +7,7 @@ body {
   margin: 0;
   font-family: $f-sans;
   color: $c-green;
+  -webkit-font-smoothing: antialiased;
 }
 html {
   background: $c-grey url('/bk-balloon.png') no-repeat;
@@ -19,8 +20,12 @@ html {
 body {
   background: url('/bk-dots.svg') repeat-y;
   background-size: 100% auto;
+  min-height: 100vh;
 }
 a {
   color: inherit;
   text-decoration: none;
+}
+button {
+  cursor: pointer;
 }

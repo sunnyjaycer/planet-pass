@@ -2,6 +2,10 @@
   padding: 3rem;
   max-width: $s-maxWidth;
   margin: 0 auto 3rem;
+
+  &.noPad {
+    padding: 0;
+  }
 }
 .cardGridCards {
   display: grid;
@@ -11,7 +15,7 @@
 
   @include break-md {
     gap: 3rem;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
   }
   &.largeCards {
     grid-template-columns: 1fr 1fr 1fr;
