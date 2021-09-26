@@ -1,7 +1,6 @@
 import type { NextPage } from 'next'
 import { useState } from 'react'
-import Lottie from 'lottie-react'
-import { visitLottieData } from '../assets/lottie-visit/visitLottieData'
+
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import fpoPlanet from '../assets/planet-fpo.png'
@@ -45,17 +44,6 @@ const Home: NextPage = () => {
         title="Galactic Gateway"
         description="Text about how these are all planets available to visit. Text about how these are all planets available to visit and currated lists."
       />
-      {/* Lottie test */}
-      {/* <div
-        style={{
-          width: 400,
-          height: 400,
-          margin: '0 auto',
-          background: '#333'
-        }}
-      >
-        <Lottie animationData={visitLottieData} loop />;
-      </div> */}
 
       {/* TODO, will populate with active planet data onClick. Depends on planet data structure */}
       <DetailsModal

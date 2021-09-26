@@ -1,16 +1,33 @@
 .button {
-  background: $c-grey;
-  border: 1px solid $c-green;
-  border-radius: 5rem;
-  padding: 1.5rem 3rem;
-  color: $c-green;
   font-family: $f-sans;
-  font-size: 2rem;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
+.buttonPrimary {
+  background: $c-grey;
+  border: 1px solid $c-green;
+  border-radius: 5rem;
+  padding: 1.5rem 3rem;
+  color: $c-green;
+  font-size: 2rem;
+}
+
+.buttonSecondary {
+  background: $c-green;
+  border: none;
+  border-radius: 5rem;
+  padding: 1rem 5rem;
+
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: $c-grey;
+
+  font-weight: 900;
+  font-size: 1.6rem;
+}
+
 .button.icon {
   padding: 1.5rem 4rem 1.5rem 1.5rem;
   &:before {
