@@ -1,15 +1,15 @@
 import type { NextPage } from 'next'
-import Layout from '../components/Layout'
-import PageHeader from '../components/PageHeader'
-import UserInfo from '../components/UserInfo'
-import fpoImg from '../assets/fpo-img-2.png'
-import FilterableGrid from '../components/FilterableGrid'
+import Layout from '../../components/Layout'
+import PageHeader from '../../components/PageHeader'
+import UserInfo from '../../components/UserInfo'
+import fpoImg from '../../assets/fpo-img-2.png'
+import FilterableGrid from '../../components/FilterableGrid'
 
-import ConnectButton from '../components/ConnectButton'
+import ConnectButton from '../../components/ConnectButton'
 
-import { fpoStamps } from '../utils/fakeData'
+import { fpoStamps } from '../../utils/fakeData'
 
-const Home: NextPage = () => {
+const Passport: NextPage = () => {
   return (
     <Layout title={'Planet Pass'}>
       <PageHeader
@@ -30,4 +30,4 @@ const Home: NextPage = () => {
   )
 }
 
-export default Home
+export default Passport

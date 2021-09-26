@@ -36,7 +36,12 @@ const GlobalHeader = () => {
               <Link href={linkItem.url}>
                 <a
                   className={
-                    router.pathname === linkItem.url ? style.activeNav : ''
+                    (linkItem.url === '/' &&
+                      router.pathname === linkItem.url) ||
+                    (linkItem.url !== '/' &&
+                      router.pathname.includes(linkItem.url))
+                      ? style.activeNav
+                      : ''
                   }
                 >
                   {linkItem.name}
