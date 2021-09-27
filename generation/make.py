@@ -9,7 +9,7 @@ from typing import List, Dict, Optional, Tuple
 from PIL import Image
 import numpy as np
 
-folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v5"
+folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v7"
 
 # Number of anomalies that will be randomly distributed.
 anomalies_count = 28
@@ -32,7 +32,7 @@ def main():
     processes = 20
 
     # How many planets to make
-    n = 800
+    n = 400
 
     # List of planets to make (by ID). You can override this.
     items_to_make = list(range(0, n))
