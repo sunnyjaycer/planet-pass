@@ -4,6 +4,7 @@ import { BigNumber, Signer } from "ethers";
 import { expect, use } from "chai";
 import { solidity } from "ethereum-waffle";
 import { parseEther, solidityPack } from "ethers/lib/utils";
+import { start } from "repl";
 
 use(solidity);
 
@@ -13,6 +14,7 @@ describe("TravelAgency", function () {
     let pass: any;
     let agency: any;
     let dummyWeth: any;
+    let stardust: any;
 
     beforeEach(async function () {
         accounts = await ethers.getSigners();
@@ -31,12 +33,17 @@ describe("TravelAgency", function () {
         dummyWeth = await DummyWeth.connect(accounts[0]).deploy();
         await dummyWeth.deployed();
 
+        const Stardust = await ethers.getContractFactory("Stardust");
+        stardust = await Stardust.connect(accounts[0]).deploy();
+        await stardust.deployed();
+
         const Agency = await ethers.getContractFactory("TravelAgency");
         agency = await Agency.connect(accounts[0]).deploy(
             0,
             planets.address,
             pass.address,
-            dummyWeth.address
+            dummyWeth.address,
+            stardust.address
         );
         await agency.deployed();
     });
@@ -53,7 +60,7 @@ describe("TravelAgency", function () {
 
         it("should be able to update Planet contract address", async function () {
             expect(await agency.planetContract()).to.equal(planets.address);
-            await agency.updatePlanetContract(newPlanets.address);
+            await agency.connect(accounts[0]).setPlanetContract(newPlanets.address);
             expect(await agency.planetContract()).to.equal(newPlanets.address);
         });
     });
@@ -69,7 +76,7 @@ describe("TravelAgency", function () {
 
         it("should be able to update Pass contract address", async function () {
             expect(await agency.passContract()).to.equal(pass.address);
-            await agency.updatePassContract(newPass.address);
+            await agency.connect(accounts[0]).setPassContract(newPass.address);
             expect(await agency.passContract()).to.equal(newPass.address);
         });
     });
@@ -85,7 +92,7 @@ describe("TravelAgency", function () {
 
         it("should be able to update WETH contract address", async function () {
             expect(await agency.wrappedEthContract()).to.equal(dummyWeth.address);
-            await agency.updateWrappedEthContract(newDummyWeth.address);
+            await agency.connect(accounts[0]).setWrappedEthContract(newDummyWeth.address);
             expect(await agency.wrappedEthContract()).to.equal(newDummyWeth.address);
         });
     });
@@ -116,13 +123,13 @@ describe("TravelAgency", function () {
 
         it("planet owner should be able to update fee", async function () {
             expect(await agency.planetFees(0)).to.equal(oldCost);
-            await agency.updateOwnerFee(0, newCost);
+            await agency.connect(accounts[0]).setOwnerFee(0, newCost);
             expect(await agency.planetFees(0)).to.equal(newCost);
         });
 
         it("non-owner should not be able to update fee", async function () {
             expect(await agency.planetFees(0)).to.equal(oldCost);
-            await expect(agency.connect(accounts[1]).updateOwnerFee(0, newCost))
+            await expect(agency.connect(accounts[1]).setOwnerFee(0, newCost))
                 .to.be.revertedWith("Not owner of planet");
         });
     })
@@ -131,7 +138,7 @@ describe("TravelAgency", function () {
         it("should be able to update fee percent", async function () {
             const oldFee = await agency.operatorFeeBp();
             const newFee = oldFee + BigNumber.from(1);
-            await agency.updateOperatorFeeBp(newFee);
+            await agency.connect(accounts[0]).setOperatorFeeBp(newFee);
             expect(await agency.operatorFeeBp()).to.equal(newFee);
         });
     });
@@ -341,7 +348,7 @@ describe("TravelAgency", function () {
 
                 context("with zero operator fees", async function () {
                     beforeEach(async function () {
-                        await agency.updateOperatorFeeBp(0);
+                        await agency.setOperatorFeeBp(0);
                     });
 
                     for (const [name, test] of Object.entries(flashStampTests)) {
@@ -351,7 +358,7 @@ describe("TravelAgency", function () {
 
                 context("with non-zero operator fees", async function () {
                     beforeEach(async function () {
-                        await agency.updateOperatorFeeBp(500);
+                        await agency.setOperatorFeeBp(500);
                     });
 
                     for (const [name, test] of Object.entries(flashStampTests)) {
@@ -383,7 +390,7 @@ describe("TravelAgency", function () {
 
                 context("with zero operator fees", async function () {
                     beforeEach(async function () {
-                        await agency.updateOperatorFeeBp(0);
+                        await agency.setOperatorFeeBp(0);
                     });
 
                     for (const [name, test] of Object.entries(flashStampTests)) {
@@ -393,7 +400,7 @@ describe("TravelAgency", function () {
 
                 context("with non-zero operator fees", async function () {
                     beforeEach(async function () {
-                        await agency.updateOperatorFeeBp(500);
+                        await agency.setOperatorFeeBp(500);
                     });
 
                     for (const [name, test] of Object.entries(flashStampTests)) {
@@ -440,7 +447,7 @@ describe("TravelAgency", function () {
             await pass.connect(accounts[2]).setApprovalForAll(agency.address, true);
 
             // Make sure operator fee is 0
-            await agency.updateOperatorFeeBp(0);
+            await agency.setOperatorFeeBp(0);
 
             if (await agency.paused()) {
                 await agency.unpause();
@@ -527,7 +534,7 @@ describe("TravelAgency", function () {
             await pass.connect(accounts[1]).setApprovalForAll(agency.address, true);
 
             // Make sure operator fee is 0
-            await agency.updateOperatorFeeBp(500);
+            await agency.setOperatorFeeBp(500);
 
             if (await agency.paused()) {
                 await agency.unpause();

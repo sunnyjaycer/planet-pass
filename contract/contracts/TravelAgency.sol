@@ -27,7 +27,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     IERC20 public wrappedEthContract;
 
     /// Location of STARDUST contract
-    IERC20 public stardustContract;
+    Stardust public stardustContract;
 
     /// Ratio of STARDUST tokens rewarded to WETH charge for reach flashStamp.
     /// Ex: 700,000 is 70% of WETH visitation fee quantity is quantity provided in STARDUST to traveler
@@ -57,8 +57,10 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         uint256 _operatorFeeBp,
         WanderersPlanet _planetContract,
         WanderersPass _passContract,
-        IERC20 _wrappedEthContract
+        IERC20 _wrappedEthContract,
+        Stardust _stardustContract
     ) {
+        stardustContract = _stardustContract;
         operatorFeeBp = _operatorFeeBp;
         planetContract = _planetContract;
         passContract = _passContract;
@@ -106,15 +108,15 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
 
     /// Updates the location of the STARDUST contract.
     /// @param _stardustContract the new location of the STARDUST contract
-    function setStardustContract(IERC20 _stardustContract)
+    function setStardustContract(Stardust _stardustContract)
         external
         onlyOwner
     {
-        stardustContract = _stardustContract   
+        stardustContract = _stardustContract;   
     }
 
     /// Updates the ratio of STARDUST tokens rewarded to WETH charge for reach flashStamp
-    /// @param _stardustRewardRate the new reward ratio
+    /// @param _stardustRewardRatio the new reward ratio
     function setStardustRewardRatio(uint256 _stardustRewardRatio) external onlyOwner {
         stardustRewardRatio = _stardustRewardRatio;
     }
@@ -178,7 +180,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         uint256 stardustReward = ( fee * stardustRewardRatio ) / 1_000_000;
 
         // If TravelAgency has been approved for minting and there is enough stardust in contract to successfully send
-        if (  hasRole(keccak256("MINTER_ROLE"),address(this))  &&  stardustContract.balanceOf(address(this) > stardustReward)  ) {
+        if (  stardustContract.hasRole(keccak256("MINTER_ROLE"),address(this))  &&  stardustContract.balanceOf(address(this)) > stardustReward ) {
             // mint STARDUST to traveler
             stardustContract.mint(msg.sender, stardustReward);
         }
@@ -207,7 +209,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     /// Updates the fee charged by the Planet owner.
     /// @param id the token ID of the planet
     /// @param _fee the new fee charged by the planet owner
-    function updateOwnerFee(uint256 id, uint256 _fee) external whenNotPaused {
+    function setOwnerFee(uint256 id, uint256 _fee) external whenNotPaused {
         require(msg.sender == planetOwners[id], "Not owner of planet");
         planetFees[id] = _fee;
     } 
