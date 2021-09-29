@@ -32,7 +32,7 @@ def main():
     processes = 20
 
     # How many planets to make
-    n = 400
+    n = 40
 
     # List of planets to make (by ID). You can override this.
     items_to_make = list(range(0, n))
@@ -116,7 +116,7 @@ def get_anomaly(manifest: Manifest, anomaly) -> Tuple[List, Dict]:
         audio.append(aud)
 
     frames.append(anomaly_files)
-    data["anomaly"] = [anomaly["file"]]
+    data["anomalies"] = [anomaly["file"]]
 
     return frames, audio, data
 
