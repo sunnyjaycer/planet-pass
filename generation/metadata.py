@@ -3,7 +3,8 @@ import os
 
 state = 0
 
-media_id = f"https://assets.wanderers.ai/file/planetpass/{str(state)}"
+video_id = f"https://assets.wanderers.ai/file/planetpass/video/{str(state)}"
+thumbnail_id = f"https://assets.wanderers.ai/file/planetpass/thumbnail/{str(state)}"
 
 
 def main():
@@ -39,8 +40,10 @@ def transform(data, readable_names, file_name):
     print(file_name)
 
     metadata = {
-        "animation_url": f"{media_id}/{file_name}.mp4",
-        "image": f"{media_id}/{file_name}.mp4",
+        "animation_url": f"{video_id}/{file_name}.mp4",
+        "image": f"{video_id}/{file_name}.mp4",
+        # Custom thumbnail, just for planet pass!
+        "thumbnail": f"{thumbnail_id}/{file_name}.png",
         "attributes": [],
     }
 
