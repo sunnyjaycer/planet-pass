@@ -28,9 +28,9 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     /// Location of STARDUST contract
     Stardust public stardustContract;
 
-    /// Ratio of STARDUST tokens rewarded to WETH charge for reach flashStamp.
-    /// Ex: 700,000 is 70% of WETH visitation fee quantity is quantity provided in STARDUST to traveler
-    uint256 public stardustRewardRatio;
+    /// Ratio of Stardust tokens rewarded to WETH charge for each flashStamp, in basis points
+    /// Ex: 7,000 is 70% of WETH visitation fee quantity is quantity provided in STARDUST to traveler
+    uint256 public starDustRewardBp;
 
     /// Fee charged by the contract deployer in basis points
     uint256 public operatorFeeBp;
@@ -112,12 +112,9 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     }
 
     /// Updates the ratio of STARDUST tokens rewarded to WETH charge for reach flashStamp
-    /// @param _stardustRewardRatio the new reward ratio
-    function setStardustRewardRatio(uint256 _stardustRewardRatio)
-        external
-        onlyOwner
-    {
-        stardustRewardRatio = _stardustRewardRatio;
+    /// @param _starDustRewardBp the new reward ratio
+    function setStardustRewardBp(uint256 _starDustRewardBp) external onlyOwner {
+        starDustRewardBp = _starDustRewardBp;
     }
 
     /// Updates the fee charged by the contract deployer.
@@ -175,8 +172,9 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         // Return it to the sender
         passContract.safeTransferFrom(address(this), msg.sender, passId);
 
-        // calculate stardust reward to traveler off of stardustRewardRatio and WETH fee paid by traveler
-        uint256 stardustReward = (fee * stardustRewardRatio) / 1_000_000;
+        // calculate stardust reward to traveler off of starDustRewardBp and WETH fee paid by traveler
+        uint256 stardustReward = (fee * starDustRewardBp) /
+            BASIS_POINTS_DIVISOR;
 
         // If TravelAgency has been approved for minting and there is enough stardust in contract to successfully send
         if (stardustContract.hasRole(keccak256("MINTER_ROLE"), address(this))) {
