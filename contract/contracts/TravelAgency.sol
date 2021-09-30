@@ -10,7 +10,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "solidity-bytes-utils/contracts/BytesLib.sol";
 
-
 contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     using BytesLib for bytes;
 
@@ -90,10 +89,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
 
     /// Updates the location of the Pass contract.
     /// @param _passContract the new location of the Pass contract
-    function setPassContract(WanderersPass _passContract)
-        external
-        onlyOwner
-    {
+    function setPassContract(WanderersPass _passContract) external onlyOwner {
         passContract = _passContract;
     }
 
@@ -112,12 +108,15 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         external
         onlyOwner
     {
-        stardustContract = _stardustContract;   
+        stardustContract = _stardustContract;
     }
 
     /// Updates the ratio of STARDUST tokens rewarded to WETH charge for reach flashStamp
     /// @param _stardustRewardRatio the new reward ratio
-    function setStardustRewardRatio(uint256 _stardustRewardRatio) external onlyOwner {
+    function setStardustRewardRatio(uint256 _stardustRewardRatio)
+        external
+        onlyOwner
+    {
         stardustRewardRatio = _stardustRewardRatio;
     }
 
@@ -177,27 +176,13 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         passContract.safeTransferFrom(address(this), msg.sender, passId);
 
         // calculate stardust reward to traveler off of stardustRewardRatio and WETH fee paid by traveler
-        uint256 stardustReward = ( fee * stardustRewardRatio ) / 1_000_000;
+        uint256 stardustReward = (fee * stardustRewardRatio) / 1_000_000;
 
         // If TravelAgency has been approved for minting and there is enough stardust in contract to successfully send
-        if (  stardustContract.hasRole(keccak256("MINTER_ROLE"),address(this))  &&  stardustContract.balanceOf(address(this)) > stardustReward ) {
+        if (stardustContract.hasRole(keccak256("MINTER_ROLE"), address(this))) {
             // mint STARDUST to traveler
             stardustContract.mint(msg.sender, stardustReward);
         }
-    }
-
-    // TODO: test that deposit works
-    /// @dev allows owner to deposit STARDUST into contract for flashStamp rewards
-    /// @param depositAmount amount owner desires to deposit
-    function depositStardust(uint256 depositAmount) external onlyOwner whenNotPaused {
-        require(stardustContract.transferFrom(msg.sender, address(this), depositAmount), "!transferable");
-    }
-
-    // TODO: test that withdraw works
-    /// @dev allows owner to withdraw STARDUST from contract
-    /// @param withdrawAmount amount owner desires to withdraw
-    function withdrawStardust(uint256 withdrawAmount) external onlyOwner whenNotPaused {
-        require(stardustContract.transferFrom(address(this), msg.sender, withdrawAmount), "!transferable");
     }
 
     /// @dev calculates the fee designated for the operator (owner of contract).
@@ -212,7 +197,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     function setOwnerFee(uint256 id, uint256 _fee) external whenNotPaused {
         require(msg.sender == planetOwners[id], "Not owner of planet");
         planetFees[id] = _fee;
-    } 
+    }
 
     /// Withdraws the accured operator fees to a designated address.
     /// @param to the address to send fees to
