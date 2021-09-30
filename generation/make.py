@@ -32,7 +32,7 @@ def main():
     processes = 20
 
     # How many planets to make
-    n = 80
+    n = 200
 
     # List of planets to make (by ID). You can override this.
     items_to_make = list(range(0, n))
@@ -52,7 +52,7 @@ def main():
     print(f"Generated {n} planets. Now generating anomalies")
 
     # Generate anomalies
-    # anomaly(n, manifest)
+    anomaly(n, manifest)
 
 
 # Main function for generating `n` anomalies
