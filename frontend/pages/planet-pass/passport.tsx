@@ -12,10 +12,7 @@ import { fpoStamps } from '../../utils/fakeData'
 const Passport: NextPage = () => {
   return (
     <Layout title={'Planet Pass'}>
-      <PageHeader
-        title="Planet Pass"
-        description="Text about how these are planets you have visited"
-      />
+      <PageHeader title="Planet Pass" />
       {/* Example Connect button */}
       {/* <ConnectButton/> */}
       <UserInfo

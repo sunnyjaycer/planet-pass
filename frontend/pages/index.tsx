@@ -42,7 +42,7 @@ const Home: NextPage = () => {
     <Layout title={'Galactic Gateway'}>
       <PageHeader
         title="Galactic Gateway"
-        description="Text about how these are all planets available to visit. Text about how these are all planets available to visit and currated lists."
+        description="We have curated a list of exotic planets just for you, Wanderer. Browse at your leisure."
       />
 
       {/* TODO, will populate with active planet data onClick. Depends on planet data structure */}
@@ -68,7 +68,7 @@ const Home: NextPage = () => {
       <FeatureBlock
         kicker="Trending"
         headline="Treasure Hunt"
-        description="Description of this sweet treasure hunt. Description of this sweet sweet treasure hunt event."
+        description="Space pirates have left behind buried ETH. For your chance to uncover it, simply visit this planet before the end of the month. Winners will be randomly selected."
         imgSrc={fpoPlanet}
         videoSrc="/GasGiant.mp4"
         extraSpace

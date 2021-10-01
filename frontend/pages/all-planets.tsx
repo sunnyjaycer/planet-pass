@@ -8,7 +8,10 @@ import { fpoPlanets } from '../utils/fakeData'
 const Home: NextPage = () => {
   return (
     <Layout title={'All Planets'}>
-      <PageHeader title="All Planets" />
+      <PageHeader
+        title="All Planets"
+        description="Your ticket to every available planet in the galaxy."
+      />
       <FilterableGrid itemData={fpoPlanets} />
     </Layout>
   )

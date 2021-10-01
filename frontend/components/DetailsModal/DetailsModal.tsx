@@ -90,6 +90,13 @@ const DetailsModal: FunctionComponent<DetailsModal> = ({
                 View on OPENSEA
               </a>
             </div>
+
+            <div className={style.visitTransactionWrap}>
+              <strong style={{ fontSize: 14 }}>
+                TODO: if owned, manage visit price
+              </strong>
+            </div>
+
             <div className={style.visitTransactionWrap}>
               <div>
                 <SelectPassport
