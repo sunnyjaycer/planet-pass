@@ -28,10 +28,10 @@
   min-width: 200px;
   position: relative;
 
-  outline: 0;
   border-radius: 0.25em;
   cursor: pointer;
   line-height: 1.1;
+
   background: transparent;
   color: $c-green;
 
@@ -44,10 +44,16 @@
   appearance: none;
   -moz-appearance: none;
   -webkit-appearance: none;
+  border: none;
 
+  option {
+    background: $c-grey-mid;
+    font-size: 1.8rem;
+
+    font-weight: 400;
+  }
   &:hover,
   &:focus {
-    outline: 0;
-    background: rgba(255, 255, 255, 0.1);
+    background: $c-grey-mid;
   }
 }
