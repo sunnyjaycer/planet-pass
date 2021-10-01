@@ -32,9 +32,10 @@ const DetailsModal: FunctionComponent<DetailsModal> = ({
   isOpen
 }) => {
   const lottieRef = useRef<LottieRefCurrentProps>(null)
-
+  console.log(lottieRef && lottieRef.current)
   const testStamp = () => {
     if (lottieRef.current && lottieRef.current?.play) {
+      lottieRef.current.setSubframe(false)
       lottieRef.current.play()
     }
   }
@@ -74,6 +75,7 @@ const DetailsModal: FunctionComponent<DetailsModal> = ({
                 autoPlay
                 muted
                 loop
+                controls
               />
             </div>
           </div>
@@ -87,7 +89,7 @@ const DetailsModal: FunctionComponent<DetailsModal> = ({
               </strong>
               <span className={style.priceSpacer}>/</span>
               <a href="https://opensea.io/collection/the-wanderers">
-                View on OPENSEA
+                View on OPENSEA{' '}
               </a>
             </div>
 
