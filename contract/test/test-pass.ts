@@ -118,7 +118,7 @@ describe("WanderersPass", function () {
                     0
                 );
 
-            const stamps = await pass.getStamps(0);
+            const stamps = await pass.getVisits(0);
 
             expect(stamps.length).to.equal(1);
             expect(stamps[0]["planetId"]).to.equal(0);
@@ -167,7 +167,7 @@ describe("WanderersPass", function () {
                     0
                 );
 
-            const stamps = await pass.getStamps(0);
+            const stamps = await pass.getVisits(0);
 
             expect(stamps.length).to.equal(3);
             for (let i = 0; i < 3; i++) {
@@ -206,7 +206,7 @@ describe("WanderersPass", function () {
                     0
                 );
 
-            const stamps = await pass.getStamps(0);
+            const stamps = await pass.getVisits(0);
 
             expect(stamps.length).to.equal(1);
             expect(stamps[0]["planetId"]).to.equal(0);
@@ -223,12 +223,12 @@ describe("WanderersPass", function () {
                     0
                 );
 
-            const stampsTwo = await pass.getStamps(2);
+            const stampsTwo = await pass.getVisits(2);
             expect(stampsTwo.length).to.equal(1);
             expect(stampsTwo[0]["planetId"]).to.equal(1);
             expect(stampsTwo[0]["state"]).to.equal(0);
 
-            const stampsOriginal = await pass.getStamps(0);
+            const stampsOriginal = await pass.getVisits(0);
             expect(stampsOriginal.length).to.equal(1);
             expect(stampsOriginal[0]["planetId"]).to.equal(0);
             expect(stampsOriginal[0]["state"]).to.equal(0);

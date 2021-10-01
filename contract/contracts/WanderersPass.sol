@@ -22,7 +22,7 @@ contract WanderersPass is
     Counters.Counter private _tokenIdCounter;
 
     /// The contents of a single stamp.
-    struct PassStamp {
+    struct Visit {
         /// Token ID of Planet
         uint256 planetId;
         /// State of planet at time to stamping
@@ -30,7 +30,7 @@ contract WanderersPass is
     }
 
     /// Mapping of Passes to array of stamps
-    mapping(uint256 => PassStamp[]) private stamps;
+    mapping(uint256 => Visit[]) private stamps;
 
     /// Location of Planet contract
     WanderersPlanet public planetContract;
@@ -85,21 +85,21 @@ contract WanderersPass is
         _tokenIdCounter.increment();
     }
 
-    /// @dev create a PassStamp struct
+    /// @dev create a Visit struct
     /// @param planetId the token ID of the Planet
-    /// @return a PassStamp struct
-    function makePassStamp(uint256 planetId)
+    /// @return a Visit struct
+    function makeVisit(uint256 planetId)
         internal
         view
-        returns (PassStamp memory)
+        returns (Visit memory)
     {
-        return PassStamp(planetId, planetContract.planetState(planetId));
+        return Visit(planetId, planetContract.planetState(planetId));
     }
 
     /// Gets all stamps of a Pass
     /// @param id the token ID of the Pass
     /// @return an array of all stamps
-    function getStamps(uint256 id) external view returns (PassStamp[] memory) {
+    function getVisits(uint256 id) external view returns (Visit[] memory) {
         return stamps[id];
     }
 
@@ -115,7 +115,7 @@ contract WanderersPass is
         // Make sure pass is owned by sender
         require(ownerOf(id) == msg.sender, "Not owner of pass");
 
-        stamps[id].push(makePassStamp(planetId));
+        stamps[id].push(makeVisit(planetId));
 
         emit Stamp(
             msg.sender,
@@ -143,7 +143,7 @@ contract WanderersPass is
             );
             uint256 _planetId = planetId[i];
 
-            stamps[id].push(makePassStamp(_planetId));
+            stamps[id].push(makeVisit(_planetId));
 
             emit Stamp(
                 msg.sender,

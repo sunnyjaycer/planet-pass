@@ -242,7 +242,7 @@ describe("TravelAgency", function () {
 
             expect(await pass.ownerOf(2)).to.equal(await accounts[2].getAddress());
 
-            const stamps = await pass.getStamps(2);
+            const stamps = await pass.getVisits(2);
             expect(stamps.length).to.equal(1);
             expect(stamps[0]["planetId"]).to.equal(0);
 
@@ -257,7 +257,7 @@ describe("TravelAgency", function () {
 
             expect(await pass.ownerOf(0)).to.equal(await accounts[0].getAddress());
 
-            const stamps = await pass.getStamps(0);
+            const stamps = await pass.getVisits(0);
             expect(stamps.length).to.equal(1);
             expect(stamps[0]["planetId"]).to.equal(0);
 
