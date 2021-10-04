@@ -9,10 +9,10 @@ from typing import List, Dict, Optional, Tuple
 from PIL import Image
 import numpy as np
 
-folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v7"
+folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v8"
 
 # Number of anomalies that will be randomly distributed.
-anomalies_count = 28
+anomalies_count = 29
 
 # Container for manifest file
 class Manifest:

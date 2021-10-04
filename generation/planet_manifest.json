@@ -20,6 +20,11 @@
             "probability": 0.1
           },
           {
+            "file": "darkside",
+            "readableName": "Darkside",
+            "probability": 0.1
+          },
+          {
             "file": "fabric",
             "readableName": "Fabric",
             "probability": 0.1
@@ -180,6 +185,11 @@
             "probability": 0.25
           },
           {
+            "file": "core-burnt",
+            "readableName": "Burnt",
+            "probability": 1
+          },
+          {
             "file": "core-dark",
             "readableName": "Dark",
             "probability": 1
@@ -192,6 +202,11 @@
           {
             "file": "core-dots",
             "readableName": "Dots",
+            "probability": 1
+          },
+          {
+            "file": "core-gradiate",
+            "readableName": "Gradiate",
             "probability": 1
           },
           {
@@ -216,7 +231,7 @@
           },
           {
             "file": "core-mosaic",
-            "readableName": "Blob",
+            "readableName": "Mosaic",
             "probability": 1
           },
           {
@@ -336,11 +351,6 @@
           {
             "file": "gaseous",
             "readableName": "Gaseous",
-            "probability": 1
-          },
-          {
-            "file": "glacier",
-            "readableName": "Glacier",
             "probability": 1
           },
           {
@@ -528,6 +538,11 @@
             "probability": 0.25
           },
           {
+            "file": "barren",
+            "readableName": "Barren",
+            "probability": 1
+          },
+          {
             "file": "blackwater-river",
             "readableName": "Blackwater River",
             "probability": 1
@@ -566,6 +581,11 @@
             "file": "chains",
             "readableName": "Chains",
             "probability": 0.25
+          },
+          {
+            "file": "circuit",
+            "readableName": "Cities",
+            "probability": 1
           },
           {
             "file": "cities",
@@ -673,9 +693,24 @@
             "probability": 0.25
           },
           {
+            "file": "glyphs",
+            "readableName": "Glyphs",
+            "probability": 0.25
+          },
+          {
+            "file": "gotem",
+            "readableName": "Gotem",
+            "probability": 0.25
+          },
+          {
             "file": "grass",
             "readableName": "Grass",
             "probability": 0.25
+          },
+          {
+            "file": "icy",
+            "readableName": "Icy",
+            "probability": 1
           },
           {
             "file": "igneous",
@@ -716,6 +751,11 @@
             "file": "mountains",
             "readableName": "Mountains",
             "probability": 1
+          },
+          {
+            "file": "ocean-of-osiris",
+            "readableName": "Ocean of Osiris",
+            "probability": 0.25
           },
           {
             "file": "portal-end",
@@ -892,9 +932,19 @@
             "probability": 1
           },
           {
+            "file": "ethereal-vapor",
+            "readableName": "Ethereal Vapor",
+            "probability": 1
+          },
+          {
             "file": "fire",
             "readableName": "Fire",
             "probability": 0.1
+          },
+          {
+            "file": "force-field",
+            "readableName": "Force Field",
+            "probability": 1
           },
           {
             "file": "gaseous-poison",
@@ -947,6 +997,11 @@
             "probability": 1
           },
           {
+            "file": "miasma",
+            "readableName": "Miasma",
+            "probability": 1
+          },
+          {
             "file": "neon-ring",
             "readableName": "Neon Ring",
             "probability": 1
@@ -954,6 +1009,11 @@
           {
             "file": "ozone",
             "readableName": "Ozone",
+            "probability": 1
+          },
+          {
+            "file": "psychedelic-fumes",
+            "readableName": "Psychedelic Fumes",
             "probability": 1
           },
           {
@@ -1295,8 +1355,20 @@
             "reserved": false
           },
           {
+            "file": "puffie",
+            "readableName": "Puffie",
+            "probability": 1,
+            "reserved": false
+          },
+          {
             "file": "rose",
             "readableName": "Rose",
+            "probability": 1,
+            "reserved": false
+          },
+          {
+            "file": "treasure",
+            "readableName": "Treasure",
             "probability": 1,
             "reserved": false
           },
@@ -1315,12 +1387,6 @@
           {
             "file": "wetworld",
             "readableName": "Wet World",
-            "probability": 1,
-            "reserved": false
-          },
-          {
-            "file": "whiskey",
-            "readableName": "Whiskey",
             "probability": 1,
             "reserved": false
           },
