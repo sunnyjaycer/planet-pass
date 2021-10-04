@@ -1,0 +1,97 @@
+.visitComplete {
+  width: 300px;
+  pointer-events: auto;
+  position: relative;
+  @media (min-width: $bp-md) and (min-height: 700px) {
+    width: 500px;
+  }
+}
+
+.videoContainer {
+  width: 100%;
+  height: 0;
+  position: relative;
+  padding-bottom: 100%;
+  margin-bottom: 1rem;
+  box-shadow: 0 10px 60px rgba(0, 0, 0, 0.5);
+  background: $c-grey;
+  @include break-md {
+    margin-bottom: 0;
+  }
+  opacity: 0;
+  animation: textReveal 0.8s cubic-bezier(0.5, 0, 0.5, 1) 0.5s forwards;
+}
+.video {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+.lottieContainer {
+  pointer-events: none;
+  width: 140%;
+  height: 140%;
+  position: absolute;
+  z-index: 1;
+  left: -20%;
+  top: -20%;
+}
+
+.visitInfo {
+  text-align: center;
+  margin-top: -2rem;
+  position: relative;
+  z-index: 1;
+}
+.visitedHeader {
+  font-size: 3.2rem;
+  font-weight: 900;
+  @include break-md {
+    font-size: 4.2rem;
+  }
+
+  opacity: 0;
+  animation: textReveal 0.8s cubic-bezier(0.5, 0, 0.5, 1) 1s forwards;
+}
+.visitedEarnings {
+  font-size: 2rem;
+  opacity: 0;
+  animation: textReveal 0.8s cubic-bezier(0.5, 0, 0.5, 1) 1.5s forwards;
+}
+.visitedButton {
+  margin-top: 2rem;
+  opacity: 0;
+  animation: textReveal 0.8s cubic-bezier(0.5, 0, 0.5, 1) 2s forwards;
+}
+
+@keyframes textReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.closeButton {
+  background: transparent;
+  border: 0;
+  position: absolute;
+
+  transition: all 0.3s;
+  padding: 0;
+  margin: 0;
+  transform: scale(0.7);
+  opacity: 0;
+  animation: textReveal 0.8s cubic-bezier(0.5, 0, 0.5, 1) 0s forwards;
+  &:hover {
+    cursor: pointer;
+  }
+  top: -75px;
+  right: -75px;
+
+  @include break-xl {
+    transform: scale(0.9);
+  }
+}

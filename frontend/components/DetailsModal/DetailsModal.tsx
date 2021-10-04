@@ -1,11 +1,12 @@
-import { FunctionComponent, useRef } from 'react'
+import { FunctionComponent, useRef, useContext } from 'react'
+import { TransactionContext } from '../../context/TransactionContext'
 import style from './DetailsModal.module.scss'
 import { CloseIcon } from '../Icons'
 import SelectPassport from '../SelectPassport'
 import Button from '../Button'
 import Modal from 'react-modal'
+
 import Lottie, { LottieRefCurrentProps } from 'lottie-react'
-import { visitLottieData } from '../../assets/lottie-visit/visitLottieData2'
 
 type Attribute = {
   trait_type: string
@@ -31,13 +32,13 @@ const DetailsModal: FunctionComponent<DetailsModal> = ({
   handleClose,
   isOpen
 }) => {
-  const lottieRef = useRef<LottieRefCurrentProps>(null)
-  console.log(lottieRef && lottieRef.current)
-  const testStamp = () => {
-    if (lottieRef.current && lottieRef.current?.play) {
-      lottieRef.current.setSubframe(false)
-      lottieRef.current.play()
-    }
+  const transactionContext = useContext(TransactionContext)
+
+  const handleVisitClick = () => {
+    transactionContext.startTransaction('visitPlanet', {
+      id: 'foo'
+    })
+    handleClose && handleClose()
   }
 
   return (
@@ -60,15 +61,6 @@ const DetailsModal: FunctionComponent<DetailsModal> = ({
         <div className={style.planetInfo}>
           <div className={style.planetMedia}>
             <div className={style.videoContainer}>
-              <div className={style.lottieContainer}>
-                <Lottie
-                  animationData={visitLottieData}
-                  loop={false}
-                  autoplay={false}
-                  lottieRef={lottieRef}
-                />
-                ;
-              </div>
               <video
                 className={style.video}
                 src={videoSrc}
@@ -108,7 +100,7 @@ const DetailsModal: FunctionComponent<DetailsModal> = ({
               <Button
                 text="visit"
                 buttonStyle="secondary"
-                handleClick={testStamp}
+                handleClick={handleVisitClick}
               />
             </div>
 

@@ -25,7 +25,10 @@
   color: $c-grey;
 
   font-weight: 900;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
+  @include break-md {
+    font-size: 1.6rem;
+  }
 }
 
 .button.icon {
