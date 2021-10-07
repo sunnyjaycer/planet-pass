@@ -29,7 +29,7 @@ contract WanderersPlanet is
     bool public claimEnabled;
 
     /// Mapping of Planets to states (see internal docs for what they represent)
-    mapping(uint256 => uint256) public planetState;
+    mapping(uint256 => bytes32) public planetState;
 
     constructor(string memory baseURI_, bytes32 _root)
         ERC721("Wanderers Planet", "WANDERER-PLANET")
@@ -132,14 +132,14 @@ contract WanderersPlanet is
     /// Update the state of a Planet.
     /// @param id the token ID of the Planet
     /// @param state the state to update to
-    function setPlanetState(uint256 id, uint256 state) external onlyOwner {
+    function setPlanetState(uint256 id, bytes32 state) external onlyOwner {
         planetState[id] = state;
     }
 
     /// Update the states of Planets.
     /// @param id the token ID of the Planet
     /// @param state the state to update to
-    function setPlanetState(uint256[] calldata id, uint256 state)
+    function setPlanetState(uint256[] calldata id, bytes32 state)
         external
         onlyOwner
     {
@@ -178,7 +178,7 @@ contract WanderersPlanet is
 
     /// @dev token URI with state override
     /// @return the token URI of a given token, with a given state
-    function tokenURIWithState(uint256 tokenId, uint256 state)
+    function tokenURIWithState(uint256 tokenId, bytes32 state)
         public
         view
         returns (string memory)
@@ -193,7 +193,7 @@ contract WanderersPlanet is
                 ? string(
                     abi.encodePacked(
                         _baseURI(),
-                        state.toString(),
+                        string(abi.encodePacked(state)),
                         "/",
                         tokenId.toString()
                     )

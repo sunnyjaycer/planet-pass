@@ -46,6 +46,12 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
 
     /// Mapping of owners to fees accured
     mapping(address => uint256) public ownerFeesAccrued;
+    
+    /// Mapping of Planet States to Reward Rates
+    mapping(bytes32 => uint256) public planetStateToRewardRates;
+
+    /// Switch for turning rewards on and off (initially false!)
+    bool public rewardSwitch;
 
     /// Prevent non-stamping Pass deposits into this contract.
     /// This variable is temporarily set to true during a call to flashStamp() and is required
@@ -65,6 +71,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         passContract = _passContract;
         wrappedEthContract = _wrappedEthContract;
         acceptPass = false;
+        rewardSwitch = false;
         _pause();
     }
 
@@ -115,6 +122,12 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     /// @param _starDustRewardBp the new reward ratio
     function setStardustRewardBp(uint256 _starDustRewardBp) external onlyOwner {
         starDustRewardBp = _starDustRewardBp;
+    }
+
+    /// Updates the reward switch to true or false
+    /// @param _rewardSwitch new state of rewards (on or off)
+    function setRewardSwitch(bool _rewardSwitch) external onlyOwner {
+        rewardSwitch = _rewardSwitch;
     }
 
     /// Updates the fee charged by the contract deployer.
@@ -172,16 +185,15 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         // Return it to the sender
         passContract.safeTransferFrom(address(this), msg.sender, passId);
 
-        // calculate stardust reward to traveler off of starDustRewardBp and WETH fee paid by traveler
-        uint256 stardustReward = (fee * starDustRewardBp) /
-            BASIS_POINTS_DIVISOR;
-
         // If TravelAgency has been approved for minting and there is enough stardust in contract to successfully send
-        if (stardustContract.hasRole(keccak256("MINTER_ROLE"), address(this))) {
+        if (stardustContract.hasRole(keccak256("MINTER_ROLE"), address(this)) && rewardSwitch) {
             // mint STARDUST to traveler
-            stardustContract.mint(msg.sender, stardustReward);
+            uint256 stateReward = planetStateToRewardRates[ planetContract.planetState(planetId) ];
+            uint256 feeReward = (fee * starDustRewardBp) / BASIS_POINTS_DIVISOR;
+            stardustContract.mint(msg.sender, stateReward + feeReward);
         }
     }
+
 
     /// @dev calculates the fee designated for the operator (owner of contract).
     /// @param fee the fee charged by the planet owner
