@@ -177,7 +177,6 @@ const Home: NextPage = () => {
         {signsCards.map((card) => (
           <Card
             name={card.name}
-            price={card.price}
             imgSrc={card.imgSrc}
             key={card.id}
             onClick={handlePlanetClick}
@@ -193,7 +192,6 @@ const Home: NextPage = () => {
         {dangerCards.map((card) => (
           <Card
             name={card.name}
-            price={card.price}
             imgSrc={card.imgSrc}
             key={card.id}
             onClick={handlePlanetClick}
