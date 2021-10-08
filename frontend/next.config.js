@@ -6,5 +6,8 @@ module.exports = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
     prependData: `@import "vars.scss"; @import "mixins.scss";`
+  },
+  images: {
+    domains: ['assets.wanderers.ai']
   }
 }

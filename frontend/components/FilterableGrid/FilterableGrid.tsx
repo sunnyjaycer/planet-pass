@@ -7,8 +7,6 @@ import { PlanetData, FilterSet, FilterGroupState, Filter } from '../../types'
 import FilterTab from './FilterTab'
 import planetManifest from '../../assets/planetManifest.json'
 
-console.log(planetManifest)
-
 const filters: Array<FilterSet> = []
 // const filters: Array<FilterSet> = [
 //   { name: 'Space', values: ['bright', 'dark'] },
@@ -19,7 +17,6 @@ const filters: Array<FilterSet> = []
 // ]
 planetManifest.forEach((category) => {
   category.subcategories.forEach((subcategory) => {
-    console.log(subcategory.readableName)
     filters.push({
       name: subcategory.readableName,
       values: subcategory.files.map((file) => file.readableName)
@@ -80,7 +77,7 @@ const FilterableGrid: FunctionComponent<FilterableGridProps> = ({
           name={modalData.name}
           attributes={modalData.attributes}
           price={modalData.price}
-          videoSrc={modalData.videoSrc}
+          videoSrc={modalData.animation_url}
           handleClose={() => {
             setModalIsOpen(false)
             setModalData(null)

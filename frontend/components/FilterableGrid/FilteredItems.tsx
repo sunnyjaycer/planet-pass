@@ -65,7 +65,7 @@ const FilteredItems: FunctionComponent<FilteredItemsProps> = ({
               <Card
                 name={cardData.name}
                 price={cardData.price}
-                imgSrc={cardData.imgSrc}
+                imgSrc={cardData.thumbnail}
                 stampSrc={cardData.stampSrc}
                 onClick={() => {
                   if (handlePlanetClick) {
