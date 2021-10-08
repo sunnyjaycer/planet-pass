@@ -20,7 +20,10 @@
 .blockMedia {
   position: relative;
   height: 0;
-  padding-bottom: 56.25%;
+
+  // padding-bottom: 56.25%;
+  // temporoarily making taller
+  padding-bottom: 75%;
 }
 
 .video {
@@ -32,7 +35,12 @@
 }
 .blockDetails {
   @include break-lg {
-    padding-right: 10rem;
+    padding-right: 8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    left: -50px;
   }
 }
 .headline {
@@ -42,7 +50,6 @@
   font-size: 1.8rem;
   display: block;
   font-weight: 300;
-  letter-spacing: 0.025em;
 
   @include break-md {
     font-size: 3.2rem;
@@ -53,4 +60,7 @@
 }
 .description {
   @include displayText;
+  p {
+    margin-bottom: 1.5rem;
+  }
 }

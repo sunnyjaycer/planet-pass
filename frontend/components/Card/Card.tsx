@@ -8,7 +8,8 @@ type CardProps = {
   // visits: number
   price?: number
   priceUnit?: string
-  imgSrc: string | StaticImageData
+  imgSrc?: string | StaticImageData
+  videoSrc?: string
   onClick?: React.MouseEventHandler<HTMLButtonElement>
   stampSrc?: string | StaticImageData
   linkUrl?: string
@@ -19,6 +20,7 @@ const Card: FunctionComponent<CardProps> = ({
   // visits,
   price,
   imgSrc,
+  videoSrc,
   priceUnit = 'WETH',
   stampSrc,
   onClick,
@@ -40,7 +42,12 @@ const Card: FunctionComponent<CardProps> = ({
   return (
     <Wrapper>
       <div className={style.cardImage}>
-        <Image src={imgSrc} alt="planet" layout="fill" />
+        {videoSrc ? (
+          <video className={style.video} src={videoSrc} autoPlay muted loop />
+        ) : imgSrc ? (
+          <Image src={imgSrc} alt="planet" layout="fill" />
+        ) : null}
+
         {stampSrc && (
           <div className={style.cardStamp}>
             <Image src={stampSrc} alt="planet" layout="fill" />

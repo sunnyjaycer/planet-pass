@@ -12,23 +12,78 @@ import Card from '../components/Card'
 
 import DetailsModal from '../components/DetailsModal'
 
-// event cards
-const eventCards = new Array(3).fill(0).map((e, i) => ({
-  name: 'Event Planet Name',
-  visits: 100,
-  price: 0.5,
-  imgSrc: fpoPlanet,
-  id: `card${i}`
-}))
+const eventCards = [
+  {
+    name: 'M4nyMoonz',
+    imgSrc: '/temp-data/media/76.png',
+    id: `ECard1`
+  },
+  {
+    name: 'DunceDunce Partytown 6',
+    imgSrc: '/temp-data/media/81.png',
+    id: `ECard2`
+  },
+  {
+    name: 'HotnDry',
+    imgSrc: '/temp-data/media/265.png',
+    id: `ECard3`
+  }
+]
 
-// placeholder data
-const categoryCards = new Array(3).fill(0).map((e, i) => ({
-  name: 'Category Planet Name',
-  visits: 100,
-  price: 0.5,
-  imgSrc: fpoPlanet,
-  id: `card${i}`
-}))
+const ancientCards = [
+  {
+    name: 'HengeHenge 6',
+    imgSrc: '/temp-data/media/45.png',
+    id: `ACard1`
+  },
+  {
+    name: "Medusa's Last Breath",
+    imgSrc: '/temp-data/media/58.png',
+    id: `aCard2`
+  },
+  {
+    name: 'A Planet-Sized Hamster',
+    imgSrc: '/temp-data/media/84.png',
+    id: `aCard3`
+  }
+]
+
+const signsCards = [
+  {
+    name: 'Atlanticon',
+    imgSrc: '/temp-data/media/15.png',
+    id: `sCard1`
+  },
+  {
+    name: 'Hedera Helix',
+    imgSrc: '/temp-data/media/19.png',
+    id: `sCard2`
+  },
+  {
+    name: 'PsiloSector',
+    imgSrc: '/temp-data/media/37.png',
+    id: `sCard3`
+  }
+]
+
+const dangerCards = [
+  {
+    name: 'IntestinalV5',
+    imgSrc: '/temp-data/media/26.png',
+    id: `dCard1`
+  },
+  {
+    name: 'Uhoh, Hole.',
+    imgSrc: '/temp-data/media/29.png',
+    id: `dCard2`
+  },
+  {
+    name: 'Plouton',
+    imgSrc: '/temp-data/media/227.png',
+    videoSrc: '/temp-data/media/227.mp4',
+    id: `dCard3`
+  }
+]
 
 const Home: NextPage = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false)
@@ -39,7 +94,7 @@ const Home: NextPage = () => {
   }
 
   return (
-    <Layout title={'Galactic Gateway'}>
+    <Layout title={'Galactic Gateway'} background="gateway">
       <PageHeader
         title="Galactic Gateway"
         description="We have curated a list of exotic planets just for you, Wanderer. Browse at your leisure."
@@ -48,17 +103,19 @@ const Home: NextPage = () => {
       {/* TODO, will populate with active planet data onClick. Depends on planet data structure */}
       <DetailsModal
         isOpen={modalIsOpen}
-        name={categoryCards[0].name}
+        name="Plouton"
         attributes={[
-          { trait_type: 'Planet Spec', value: 'Purple Wormhole' },
-          { trait_type: 'Planet Spec', value: 'Purple Wormhole' },
-          { trait_type: 'Planet Spec', value: 'Purple Wormhole' },
-          { trait_type: 'Planet Spec', value: 'Purple Wormhole' },
-          { trait_type: 'Planet Spec', value: 'Purple Wormhole' },
-          { trait_type: 'Planet Spec', value: 'Purple Wormhole' }
+          { trait_type: 'Atmosphere', value: 'Lightning Clouds' },
+          { trait_type: 'Feature', value: 'Large Lava' },
+          { trait_type: 'Terrain', value: 'Splatter' },
+          { trait_type: 'Core', value: 'Pink' },
+          { trait_type: 'Space', value: 'Fabric' },
+          { trait_type: 'Space', value: 'Smudge' },
+          { trait_type: 'Space', value: 'Galaxy Blue' },
+          { trait_type: 'Space', value: 'Sparkles' }
         ]}
-        price={categoryCards[0].price}
-        videoSrc="/GasGiant.mp4"
+        price={0.6}
+        videoSrc="/temp-data/media/227.mp4"
         handleClose={() => {
           setModalIsOpen(false)
         }}
@@ -66,11 +123,20 @@ const Home: NextPage = () => {
       {/* ----- */}
       {/* Featured Event */}
       <FeatureBlock
-        kicker="Trending"
-        headline="Treasure Hunt"
-        description="Space pirates have left behind buried ETH. For your chance to uncover it, simply visit this planet before the end of the month. Winners will be randomly selected."
-        imgSrc={fpoPlanet}
-        videoSrc="/GasGiant.mp4"
+        kicker="Trending Faction"
+        headline="CyberCore"
+        description={
+          <div>
+            <p>
+              Cybercore believes that our weak biological shells hold us back
+              from perfection.
+            </p>
+            <p style={{ fontStyle: 'italic' }}>
+              We’re trapped inside these shells no longer.
+            </p>
+          </div>
+        }
+        videoSrc="/temp-data/media/174.mp4"
         extraSpace
       />
       {/* ----- */}
@@ -79,7 +145,6 @@ const Home: NextPage = () => {
         {eventCards.map((card) => (
           <Card
             name={card.name}
-            price={card.price}
             imgSrc={card.imgSrc}
             key={card.id}
             onClick={handlePlanetClick}
@@ -89,12 +154,27 @@ const Home: NextPage = () => {
       {/* ----- */}
       {/* Highlighted Groups/Categories */}
       <CardGrid
-        header="Most Visited"
+        header="Ancient Mysteries"
         linkText="View All"
         link="/planet-pass"
         largeCards
       >
-        {categoryCards.map((card) => (
+        {ancientCards.map((card) => (
+          <Card
+            name={card.name}
+            imgSrc={card.imgSrc}
+            key={card.id}
+            onClick={handlePlanetClick}
+          />
+        ))}
+      </CardGrid>
+      <CardGrid
+        header="Signs of Life"
+        linkText="View All"
+        link="/planet-pass"
+        largeCards
+      >
+        {signsCards.map((card) => (
           <Card
             name={card.name}
             price={card.price}
@@ -105,28 +185,12 @@ const Home: NextPage = () => {
         ))}
       </CardGrid>
       <CardGrid
-        header="Hidden Gems"
+        header="Dangerous Visits"
         linkText="View All"
         link="/planet-pass"
         largeCards
       >
-        {categoryCards.map((card) => (
-          <Card
-            name={card.name}
-            price={card.price}
-            imgSrc={card.imgSrc}
-            key={card.id}
-            onClick={handlePlanetClick}
-          />
-        ))}
-      </CardGrid>
-      <CardGrid
-        header="Gassiest Giants"
-        linkText="View All"
-        link="/planet-pass"
-        largeCards
-      >
-        {categoryCards.map((card) => (
+        {dangerCards.map((card) => (
           <Card
             name={card.name}
             price={card.price}

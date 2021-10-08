@@ -1,14 +1,15 @@
-import { FunctionComponent } from 'react'
+import { FunctionComponent, ReactNode } from 'react'
 import style from './FeatureBlock.module.scss'
 import Image from 'next/image'
 
 type FeatureBlockProps = {
   kicker?: string
   headline: string
-  description?: string
+  description?: string | ReactNode
   imgSrc?: string | StaticImageData
   videoSrc?: string
   extraSpace?: boolean
+  videoControls?: boolean
 }
 
 const FeatureBlock: FunctionComponent<FeatureBlockProps> = ({
@@ -17,7 +18,8 @@ const FeatureBlock: FunctionComponent<FeatureBlockProps> = ({
   description,
   imgSrc,
   videoSrc,
-  extraSpace
+  extraSpace,
+  videoControls
 }) => {
   return (
     <div
@@ -27,7 +29,14 @@ const FeatureBlock: FunctionComponent<FeatureBlockProps> = ({
     >
       <div className={style.blockMedia}>
         {videoSrc ? (
-          <video className={style.video} src={videoSrc} autoPlay muted loop />
+          <video
+            className={style.video}
+            src={videoSrc}
+            autoPlay
+            muted
+            loop
+            controls={!!videoControls}
+          />
         ) : imgSrc ? (
           <Image src={imgSrc} alt="planet" layout="fill" />
         ) : null}
@@ -37,7 +46,7 @@ const FeatureBlock: FunctionComponent<FeatureBlockProps> = ({
           <span className={style.kicker}>{kicker}</span>
           {headline}
         </h2>
-        <p className={style.description}>{description}</p>
+        <div className={style.description}>{description}</div>
       </div>
     </div>
   )

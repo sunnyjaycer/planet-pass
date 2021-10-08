@@ -1,0 +1,34 @@
+.bkImage {
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  background-color: $c-grey;
+  background-repeat: no-repeat;
+  background-image: url('/bk-balloon.png');
+  background-size: 100% auto;
+  @include break-lg {
+    background-image: url('/bk-balloon-2x.png');
+  }
+  &:after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: url('/bk-dots.svg') repeat-y;
+    background-size: 100% auto;
+  }
+
+  &.gateway {
+    background-image: url('/bk-gateway.png');
+    @include break-lg {
+      background-image: url('/bk-gateway.png');
+    }
+  }
+}

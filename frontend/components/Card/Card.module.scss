@@ -20,9 +20,17 @@
   position: relative;
   margin-bottom: 1rem;
 }
+.video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: absolute;
+  object-fit: contain;
+}
 .cardName {
   font-size: 1.6rem;
   margin: 0.75rem 0;
+  font-weight: 700;
   @include break-md {
     font-size: 2rem;
   }

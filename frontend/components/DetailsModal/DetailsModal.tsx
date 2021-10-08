@@ -85,16 +85,16 @@ const DetailsModal: FunctionComponent<DetailsModal> = ({
               </a>
             </div>
 
-            <div className={style.visitTransactionWrap}>
+            {/* <div className={style.visitTransactionWrap}>
               <strong style={{ fontSize: 14 }}>
                 TODO: if owned, manage visit price
               </strong>
-            </div>
+            </div> */}
 
             <div className={style.visitTransactionWrap}>
               <div>
                 <SelectPassport
-                  options={['Passport 1', 'Passport 2', 'Passport 3']}
+                  options={['BigBigOceans', 'JustWanderin', 'The Pyramids']}
                 />
               </div>
               <Button

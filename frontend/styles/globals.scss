@@ -10,16 +10,9 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 html {
-  background: $c-grey url('/bk-balloon.png') no-repeat;
-  background-size: 100% auto;
-  @include break-lg {
-    background: $c-grey url('/bk-balloon-2x.png') no-repeat;
-    background-size: 100% auto;
-  }
+  position: relative;
 }
 body {
-  background: url('/bk-dots.svg') repeat-y;
-  background-size: 100% auto;
   min-height: 100vh;
 }
 a {
