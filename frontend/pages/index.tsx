@@ -114,7 +114,7 @@ const Home: NextPage = () => {
           { trait_type: 'Space', value: 'Galaxy Blue' },
           { trait_type: 'Space', value: 'Sparkles' }
         ]}
-        price={0.6}
+        price={0.69}
         videoSrc="/temp-data/media/227.mp4"
         handleClose={() => {
           setModalIsOpen(false)
