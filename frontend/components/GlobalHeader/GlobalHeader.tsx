@@ -58,15 +58,13 @@ const GlobalHeader = () => {
         <div className={style.earnings}>
           <span className={style.earningsLabel}>Earnings </span>
           <span className={style.earningsAmount}>13.4 WETH</span>
-          <div className={style.earningsClaim}>
-            <Button
-              text="Claim"
-              buttonStyle="secondary"
-              handleClick={() => {
-                alert('TODO: Handle Claim')
-              }}
-            />
-          </div>
+          <Button
+            text="Claim"
+            buttonStyle="secondary"
+            handleClick={() => {
+              alert('TODO: Handle Claim')
+            }}
+          />
         </div>
       </div>
     </header>

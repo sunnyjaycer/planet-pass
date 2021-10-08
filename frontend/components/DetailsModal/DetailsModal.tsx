@@ -6,8 +6,6 @@ import SelectPassport from '../SelectPassport'
 import Button from '../Button'
 import Modal from 'react-modal'
 
-import Lottie, { LottieRefCurrentProps } from 'lottie-react'
-
 type Attribute = {
   trait_type: string
   value: string | number
