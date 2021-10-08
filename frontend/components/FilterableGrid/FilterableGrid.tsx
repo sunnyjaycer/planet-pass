@@ -5,28 +5,33 @@ import DetailsModal from '../DetailsModal'
 import FilteredItems from './FilteredItems'
 import { PlanetData, FilterSet, FilterGroupState, Filter } from '../../types'
 import FilterTab from './FilterTab'
+import planetManifest from '../../assets/planetManifest.json'
+
+console.log(planetManifest)
+
+const filters: Array<FilterSet> = []
+// const filters: Array<FilterSet> = [
+//   { name: 'Space', values: ['bright', 'dark'] },
+//   { name: 'Core Type', values: ['ice', 'lava'] },
+//   { name: 'Terrain', values: ['grass', 'mountain', 'valley'] },
+//   { name: 'Features', values: ['cave', 'lake'] },
+//   { name: 'Atmosphere', values: ['oxygen', 'hydrogen', 'nitrogen'] },
+// ]
+planetManifest.forEach((category) => {
+  category.subcategories.forEach((subcategory) => {
+    console.log(subcategory.readableName)
+    filters.push({
+      name: subcategory.readableName,
+      values: subcategory.files.map((file) => file.readableName)
+    })
+  })
+})
 
 // TODO Handle number values as filters
-const filters: Array<FilterSet> = [
-  { name: 'Space', values: ['bright', 'dark'] },
-  { name: 'Core Type', values: ['ice', 'lava'] },
-  { name: 'Terrain', values: ['grass', 'mountain', 'valley'] },
-  { name: 'Features', values: ['cave', 'lake'] },
-  { name: 'Atmosphere', values: ['oxygen', 'hydrogen', 'nitrogen'] },
-  { name: 'Satellites', values: ['asteroid', 'mechanical'] },
-  { name: 'Ships', values: ['death star', 'x-wing'] },
-  { name: 'Anomalies', values: ['squishy', 'smelly', 'hamburger'] },
-  { name: 'Diameter', values: ['real small', 'average', 'real big'] },
-  { name: 'Age', values: ['1', '2', '3'] },
-  { name: 'Faction', values: ['good', 'bad', 'neutral'] },
-  {
-    name: 'Distance from Center of Galaxy',
-    values: ['near', 'far', 'wherever you are']
-  }
-]
 
 // Assemble filter state object
 const initFilterState: FilterGroupState = {}
+
 filters.forEach((filter) => {
   initFilterState[filter.name] = {}
   filter.values.forEach((filterValue) => {
@@ -90,31 +95,12 @@ const FilterableGrid: FunctionComponent<FilterableGridProps> = ({
             <h2>Filters</h2>
           </div>
           {filters.map((filter) => (
-            <FilterDrawer heading={filter.name} key={`${filter.name}`}>
-              <ul className={style.filterValList}>
-                {filter.values.map((filterVal) => (
-                  <li
-                    key={`${filter.name}${filterVal}`}
-                    className={style.filterItem}
-                  >
-                    <input
-                      id={`${filter.name}${filterVal}`}
-                      type="checkbox"
-                      checked={filterState[filter.name][filterVal]}
-                      onChange={() => {
-                        handleFilterChange({
-                          name: filter.name,
-                          value: filterVal
-                        })
-                      }}
-                    />
-                    <label htmlFor={`${filter.name}${filterVal}`}>
-                      {filterVal}
-                    </label>
-                  </li>
-                ))}
-              </ul>
-            </FilterDrawer>
+            <FilterDrawer
+              key={`filterDrawer ${filter.name}`}
+              filterState={filterState}
+              filter={filter}
+              handleFilterChange={handleFilterChange}
+            ></FilterDrawer>
           ))}
         </div>
       </div>
