@@ -1,3 +1,5 @@
+# Combines the metadata of generated planets into a large file.
+
 import json
 import os
 
@@ -10,7 +12,9 @@ def main():
         # Split the file name
         name = file.name.split(".")[0]
         j = json.load(open(file))
-        big_json[name] = j
+        big_json[name] = {}
+        big_json[name]["metadata"] = j
+        big_json[name]["state"] = 0
 
     print(f"Output has {len(big_json)} entries.")
 
