@@ -4,9 +4,7 @@ import Modal from 'react-modal'
 import style from './TransactionLayer.module.scss'
 import VisitComplete from '../VisitComplete'
 
-type TransactionLayerProps = {}
-
-const TransactionLayer: FunctionComponent<TransactionLayerProps> = () => {
+const TransactionLayer: FunctionComponent = () => {
   const { status, type, data, clearTransaction } =
     useContext(TransactionContext)
 
