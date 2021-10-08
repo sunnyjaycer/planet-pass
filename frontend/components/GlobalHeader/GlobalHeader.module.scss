@@ -2,7 +2,8 @@
   padding: 3rem;
   max-width: $s-maxWidth;
   margin: 0 auto;
-
+}
+.headerMain {
   @include break-md {
     display: flex;
     justify-content: space-between;
@@ -49,4 +50,33 @@
       }
     }
   }
+}
+
+.earningsWrap {
+  display: flex;
+  justify-content: flex-end;
+}
+.earnings {
+  border-top: 1px solid $c-green;
+  margin-top: 2rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 2rem 0;
+  justify-content: flex-end;
+  & > * {
+    margin: 0 0 0 2rem;
+  }
+}
+.earningsLabel {
+  font-family: $f-mono;
+  font-weight: 400;
+  font-size: 1.4rem;
+}
+
+.earningsAmount {
+  font-family: $f-mono;
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+.earningsClaim {
 }
