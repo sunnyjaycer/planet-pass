@@ -19,33 +19,12 @@ const samplePropertiesData = [
   }
 ]
 
-export const fpoPlanets: PlanetData[] = new Array(500).fill(0).map((e, i) => ({
-  name: 'Planet Name',
-  price: 0.5,
-  imgSrc: fpoImageThumb,
-  id: `card${i}`,
-  attributes: [],
-  videoSrc: '/GasGiant.mp4'
-}))
-
-fpoPlanets.forEach((cardData) => {
-  samplePropertiesData.forEach((property) => {
-    if (Math.random() <= 0.333) {
-      const chooseFrom = property.values
-      const randomValue =
-        chooseFrom[Math.floor(Math.random() * chooseFrom.length)]
-      cardData.attributes.push({
-        trait_type: property.name,
-        value: randomValue
-      })
-    }
-  })
-})
-
 export const fpoStamps: PlanetData[] = new Array(500).fill(0).map((e, i) => ({
   name: 'Planet Name',
   price: 0.5,
+  image: fpoImageThumb,
   imgSrc: fpoImageThumb,
+  thumbnail: fpoImageThumb,
   id: `card${i}`,
   attributes: [],
   videoSrc: '/GasGiant.mp4',

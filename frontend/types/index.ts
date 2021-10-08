@@ -4,9 +4,9 @@ export interface Attribute {
 }
 
 export interface PlanetData {
-  animation_url: string
-  image: string
-  thumbnail: string
+  animation_url?: string
+  image: string | StaticImageData
+  thumbnail?: string | StaticImageData
   name: string
   price: number
   id: string

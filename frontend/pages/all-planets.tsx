@@ -4,7 +4,6 @@ import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import FilterableGrid from '../components/FilterableGrid'
 
-import { fpoPlanets } from '../utils/fakeData'
 import { PlanetData } from '../types'
 
 const urls: string[] = []
