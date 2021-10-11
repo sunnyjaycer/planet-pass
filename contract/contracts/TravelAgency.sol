@@ -185,7 +185,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         // Return it to the sender
         passContract.safeTransferFrom(address(this), msg.sender, passId);
 
-        // If TravelAgency has been approved for minting and there is enough stardust in contract to successfully send
+        // If TravelAgency has been approved for minting and rewards are active
         if (stardustContract.hasRole(keccak256("MINTER_ROLE"), address(this)) && rewardSwitch) {
             // mint STARDUST to traveler
             uint256 stateReward = planetStateToRewardRates[ planetContract.planetState(planetId) ];

@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Nameable.sol";
+import "./Stardust.sol";
 
 contract WanderersPlanet is
     ERC721,
@@ -30,6 +31,12 @@ contract WanderersPlanet is
 
     /// Mapping of Planets to states (see internal docs for what they represent)
     mapping(uint256 => bytes32) public planetState;
+
+    /// Location of STARDUST contract
+    Stardust public stardustContract;
+
+    /// Stardust burn cost for renaming planet
+    uint256 public renameCost;
 
     constructor(string memory baseURI_, bytes32 _root)
         ERC721("Wanderers Planet", "WANDERER-PLANET")
@@ -146,6 +153,21 @@ contract WanderersPlanet is
         for (uint256 i = 0; i < id.length; i++) {
             planetState[id[i]] = state;
         }
+    }
+
+    /// Allows owner of planet to reset the name of the planet for a fee of stardust
+    /// @param id the token ID of planet who's name is to be reset
+    /// @param _name the new name
+    // TODO: test that this takes and burns the STARDUST
+    function setName(uint256 id, string calldata _name) public virtual override whenNotPaused {
+        require(msg.sender == ownerOf(id), "Not owner of token");
+        require(!renameLocked[id], "Token renaming locked");
+
+        require(stardustContract.transferFrom(msg.sender,address(this),renameCost),"!transfer");
+
+        stardustContract.burn(renameCost);
+
+        nameOfToken[id] = _name;
     }
 
     /// Return the tokens owned by a owner

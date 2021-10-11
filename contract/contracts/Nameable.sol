@@ -15,7 +15,7 @@ abstract contract Nameable is ERC721, Ownable, Pausable {
     /// Set the name of a token.
     /// @param id the token ID
     /// @param _name the new name of the token
-    function setName(uint256 id, string calldata _name) public whenNotPaused {
+    function setName(uint256 id, string calldata _name) public virtual whenNotPaused {
         require(msg.sender == ownerOf(id), "Not owner of token");
         require(!renameLocked[id], "Token renaming locked");
 
@@ -28,6 +28,7 @@ abstract contract Nameable is ERC721, Ownable, Pausable {
     /// @param _name an array of new names
     function setName(uint256[] calldata id, string[] calldata _name)
         public
+        virtual
         whenNotPaused
     {
         require(id.length == _name.length, "Array length mismatch");
@@ -39,7 +40,7 @@ abstract contract Nameable is ERC721, Ownable, Pausable {
     /// Set the name of a token.
     /// @param id the token ID
     /// @param _name the new name of the token
-    function _setName(uint256 id, string memory _name) internal {
+    function _setName(uint256 id, string memory _name) internal virtual {
         nameOfToken[id] = _name;
     }
 
@@ -49,6 +50,7 @@ abstract contract Nameable is ERC721, Ownable, Pausable {
     /// @param _name the new name of the token
     function forceRenameAndLock(uint256 id, string calldata _name)
         external
+        virtual
         onlyOwner
     {
         nameOfToken[id] = _name;
@@ -57,19 +59,19 @@ abstract contract Nameable is ERC721, Ownable, Pausable {
 
     /// Disables renaming of a token by its owner
     /// @param id the token ID
-    function _lockRename(uint256 id) internal {
+    function _lockRename(uint256 id) internal virtual {
         renameLocked[id] = true;
     }
 
     /// Re-enables renaming of a token by its owner
     /// @param id the token ID
-    function _unlockRename(uint256 id) internal {
+    function _unlockRename(uint256 id) internal virtual {
         renameLocked[id] = false;
     }
 
     /// Re-enables renaming of a token by its owner
     /// @param id the token ID
-    function unlockRename(uint256 id) external onlyOwner {
+    function unlockRename(uint256 id) external virtual onlyOwner {
         _unlockRename(id);
     }
 }
