@@ -12,7 +12,7 @@ for i in {0..8887}; do
     sox -m ${files} output_stage1.wav
 
     ffmpeg -i output_stage1.wav -filter_complex \
-    "compand=attacks=0:points=-80/-900|-45/-15|-27/-9|0/-2|20/-2:volume=-90" \
+    "compand=attacks=0:points=-80/-900|-45/-15|-27/-9|0/-2|20/-2:volume=-90,loudnorm=i=-14:lra=7:tp=-2:measured_thresh=-6.1" \
     output_stage2.wav
 
     ffmpeg -r 15 -start_number 0 -i "${i}_%05d.png" -i output_stage2.wav -c:a aac -c:v libx264 -crf 18 -pix_fmt yuv420p -profile:v high -level 4.2 ../../videos/"${i}".mp4

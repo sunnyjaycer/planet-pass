@@ -9,10 +9,10 @@ from typing import List, Dict, Optional, Tuple
 from PIL import Image
 import numpy as np
 
-folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v8"
+folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v9"
 
 # Number of anomalies that will be randomly distributed.
-anomalies_count = 29
+anomalies_count = 36
 
 # Container for manifest file
 class Manifest:
@@ -32,7 +32,7 @@ def main():
     processes = 20
 
     # How many planets to make
-    n = 200
+    n = 400
 
     # List of planets to make (by ID). You can override this.
     items_to_make = list(range(0, n))

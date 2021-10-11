@@ -304,6 +304,11 @@
             "probability": 1
           },
           {
+            "file": "circuit",
+            "readableName": "Circuit",
+            "probability": 1
+          },
+          {
             "file": "craggy",
             "readableName": "Craggy",
             "probability": 1
@@ -351,6 +356,11 @@
           {
             "file": "gaseous",
             "readableName": "Gaseous",
+            "probability": 1
+          },
+          {
+            "file": "glacier",
+            "readableName": "Glacier",
             "probability": 1
           },
           {
@@ -583,11 +593,6 @@
             "probability": 0.25
           },
           {
-            "file": "circuit",
-            "readableName": "Cities",
-            "probability": 1
-          },
-          {
             "file": "cities",
             "readableName": "Cities",
             "probability": 1
@@ -778,11 +783,6 @@
             "probability": 1
           },
           {
-            "file": "rocks",
-            "readableName": "Rocks",
-            "probability": 1
-          },
-          {
             "file": "ruins",
             "readableName": "Ruins",
             "probability": 1
@@ -839,6 +839,11 @@
           },
           {
             "file": "star-ruby",
+            "readableName": "Star Ruby",
+            "probability": 1
+          },
+          {
+            "file": "stones",
             "readableName": "Star Ruby",
             "probability": 1
           },
@@ -1229,6 +1234,18 @@
         "multiple": false,
         "files": [
           {
+            "file": "ape-world",
+            "readableName": "Ape World",
+            "probability": 1,
+            "reserved": false
+          },
+          {
+            "file": "aranea",
+            "readableName": "Aranea",
+            "probability": 1,
+            "reserved": false
+          },
+          {
             "file": "atom",
             "readableName": "Atom",
             "probability": 1,
@@ -1331,6 +1348,18 @@
             "reserved": false
           },
           {
+            "file": "generator",
+            "readableName": "Generator",
+            "probability": 1,
+            "reserved": false
+          },
+          {
+            "file": "gloopglop",
+            "readableName": "Gloop Glop",
+            "probability": 1,
+            "reserved": false
+          },
+          {
             "file": "jpeg",
             "readableName": "JPEG",
             "probability": 1,
@@ -1339,6 +1368,24 @@
           {
             "file": "marble",
             "readableName": "Marble",
+            "probability": 1,
+            "reserved": false
+          },
+          {
+            "file": "necropolis",
+            "readableName": "Necropolis",
+            "probability": 1,
+            "reserved": false
+          },
+          {
+            "file": "Neron",
+            "readableName": "neron",
+            "probability": 1,
+            "reserved": false
+          },
+          {
+            "file": "Observatory",
+            "readableName": "observatory",
             "probability": 1,
             "reserved": false
           },
@@ -1361,26 +1408,26 @@
             "reserved": false
           },
           {
+            "file": "purple-flame",
+            "readableName": "Purple Flame",
+            "probability": 1,
+            "reserved": false
+          },
+          {
             "file": "rose",
             "readableName": "Rose",
             "probability": 1,
             "reserved": false
           },
           {
-            "file": "treasure",
-            "readableName": "Treasure",
+            "file": "treasure-island",
+            "readableName": "Treasure Island",
             "probability": 1,
             "reserved": false
           },
           {
-            "file": "vacation",
-            "readableName": "Vacation",
-            "probability": 1,
-            "reserved": false
-          },
-          {
-            "file": "vega",
-            "readableName": "Vega",
+            "file": "vibe-world",
+            "readableName": "Vibe World",
             "probability": 1,
             "reserved": false
           },
