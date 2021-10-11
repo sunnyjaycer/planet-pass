@@ -203,6 +203,14 @@
   &:hover:after {
     opacity: 1;
   }
+  &.bold {
+    font-weight: 700;
+    border: none;
+    background: transparent;
+  }
+  &.bold:after {
+    opacity: 1;
+  }
 }
 .filterTagLabel {
   font-size: 1rem;

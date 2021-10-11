@@ -11,9 +11,6 @@ const filters: Array<FilterSet> = []
 // const filters: Array<FilterSet> = [
 //   { name: 'Space', values: ['bright', 'dark'] },
 //   { name: 'Core Type', values: ['ice', 'lava'] },
-//   { name: 'Terrain', values: ['grass', 'mountain', 'valley'] },
-//   { name: 'Features', values: ['cave', 'lake'] },
-//   { name: 'Atmosphere', values: ['oxygen', 'hydrogen', 'nitrogen'] },
 // ]
 planetManifest.forEach((category) => {
   category.subcategories.forEach((subcategory) => {
@@ -24,17 +21,18 @@ planetManifest.forEach((category) => {
   })
 })
 
-// TODO Handle number values as filters
-
-// Assemble filter state object
-const initFilterState: FilterGroupState = {}
-
-filters.forEach((filter) => {
-  initFilterState[filter.name] = {}
-  filter.values.forEach((filterValue) => {
-    initFilterState[filter.name][filterValue] = false
+const createDefaultFilterState = () => {
+  // Assemble filter state object
+  const initFilterState: FilterGroupState = {}
+  filters.forEach((filter) => {
+    initFilterState[filter.name] = {}
+    filter.values.forEach((filterValue) => {
+      initFilterState[filter.name][filterValue] = false
+    })
   })
-})
+
+  return initFilterState
+}
 
 interface FilterableGridProps {
   itemData: PlanetData[]
@@ -51,7 +49,7 @@ const FilterableGrid: FunctionComponent<FilterableGridProps> = ({
     setModalData(cardData)
   }
 
-  const [filterState, setFilterState] = useState(initFilterState)
+  const [filterState, setFilterState] = useState(createDefaultFilterState())
 
   const handleFilterChange = (filter: Filter): void => {
     const newState = { ...filterState }
@@ -108,11 +106,24 @@ const FilterableGrid: FunctionComponent<FilterableGridProps> = ({
         <div className={style.activeFilterContainer}>
           {activeFilters.map((filter) => (
             <FilterTab
-              filter={filter}
-              handleFilterChange={handleFilterChange}
+              label={filter.name}
+              value={filter.value}
+              handleClick={() => {
+                handleFilterChange(filter)
+              }}
               key={`${filter.name}${filter.value}`}
             />
           ))}
+
+          {activeFilters.length > 0 && (
+            <FilterTab
+              value="CLEAR ALL"
+              handleClick={() => {
+                setFilterState(createDefaultFilterState())
+              }}
+              bold
+            />
+          )}
         </div>
 
         <FilteredItems

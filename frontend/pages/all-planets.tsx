@@ -3,7 +3,7 @@ import type { NextPage } from 'next'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import FilterableGrid from '../components/FilterableGrid'
-
+import Loader from '../components/Loader'
 import { PlanetData } from '../types'
 
 const urls: string[] = []
@@ -34,7 +34,7 @@ const Home: NextPage = () => {
         title="All Planets"
         description="Your ticket to every available planet in the galaxy."
       />
-      <FilterableGrid itemData={data} />
+      {isLoading ? <Loader /> : <FilterableGrid itemData={data} />}
     </Layout>
   )
 }
