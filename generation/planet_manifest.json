@@ -22,7 +22,7 @@
           {
             "file": "darkside",
             "readableName": "Darkside",
-            "probability": 0.1
+            "probability": 0.01
           },
           {
             "file": "fabric",
@@ -67,12 +67,12 @@
           {
             "file": "rivers",
             "readableName": "Rivers",
-            "probability": 0.1
+            "probability": 0.05
           },
           {
             "file": "smudge",
             "readableName": "Smudge",
-            "probability": 0.1
+            "probability": 0.05
           },
           {
             "file": "sparkles",
@@ -306,7 +306,7 @@
           {
             "file": "circuit",
             "readableName": "Circuit",
-            "probability": 1
+            "probability": 0.25
           },
           {
             "file": "craggy",
@@ -426,7 +426,7 @@
           {
             "file": "pixels",
             "readableName": "Pixels",
-            "probability": 1
+            "probability": 0.25
           },
           {
             "file": "polar",
@@ -700,7 +700,7 @@
           {
             "file": "glyphs",
             "readableName": "Glyphs",
-            "probability": 0.25
+            "probability": 1
           },
           {
             "file": "gotem",
@@ -894,7 +894,7 @@
         "readableName": "Atmosphere",
         "multiple": false,
         "alwaysOn": false,
-        "probability": 1,
+        "probability": 0.75,
         "files": [
           {
             "file": "alpenglow",
@@ -949,7 +949,7 @@
           {
             "file": "force-field",
             "readableName": "Force Field",
-            "probability": 1
+            "probability": 0.25
           },
           {
             "file": "gaseous-poison",
@@ -1004,7 +1004,7 @@
           {
             "file": "miasma",
             "readableName": "Miasma",
-            "probability": 1
+            "probability": 0.1
           },
           {
             "file": "neon-ring",
@@ -1058,7 +1058,7 @@
         "readableName": "Satellite",
         "multiple": false,
         "alwaysOn": false,
-        "probability": 1,
+        "probability": 0.75,
         "files": [
           {
             "file": "asteroid-cluster",
@@ -1142,12 +1142,12 @@
           {
             "file": "citadel-of-osiris-active",
             "readableName": "Citadel of Osiris (Active)",
-            "probability": 1
+            "probability": 0.25
           },
           {
             "file": "citadel-of-osiris-rogue",
             "readableName": "Citadel of Osiris (Rogue)",
-            "probability": 1
+            "probability": 0.1
           },
           {
             "file": "docking",
@@ -1202,7 +1202,7 @@
           {
             "file": "technomid",
             "readableName": "Technomid",
-            "probability": 1
+            "probability": 0.25
           },
           {
             "file": "triforce",
