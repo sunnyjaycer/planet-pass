@@ -1132,7 +1132,7 @@
         "readableName": "Ship",
         "multiple": false,
         "alwaysOn": false,
-        "probability": 1,
+        "probability": 0.5,
         "files": [
           {
             "file": "alien-outpost",
@@ -1361,7 +1361,7 @@
           },
           {
             "file": "jpeg",
-            "readableName": "JPEG",
+            "readableName": "planet.jpeg",
             "probability": 1,
             "reserved": false
           },
