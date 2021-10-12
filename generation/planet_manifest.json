@@ -894,7 +894,7 @@
         "readableName": "Atmosphere",
         "multiple": false,
         "alwaysOn": false,
-        "probability": 0.75,
+        "probability": 0.98,
         "files": [
           {
             "file": "alpenglow",
@@ -1058,7 +1058,7 @@
         "readableName": "Satellite",
         "multiple": false,
         "alwaysOn": false,
-        "probability": 0.75,
+        "probability": 0.85,
         "files": [
           {
             "file": "asteroid-cluster",
