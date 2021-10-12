@@ -22,7 +22,7 @@
           {
             "file": "darkside",
             "readableName": "Darkside",
-            "probability": 0.1
+            "probability": 0.01
           },
           {
             "file": "fabric",
@@ -67,12 +67,12 @@
           {
             "file": "rivers",
             "readableName": "Rivers",
-            "probability": 0.1
+            "probability": 0.05
           },
           {
             "file": "smudge",
             "readableName": "Smudge",
-            "probability": 0.1
+            "probability": 0.05
           },
           {
             "file": "sparkles",
@@ -304,6 +304,11 @@
             "probability": 1
           },
           {
+            "file": "circuit",
+            "readableName": "Circuit",
+            "probability": 0.25
+          },
+          {
             "file": "craggy",
             "readableName": "Craggy",
             "probability": 1
@@ -351,6 +356,11 @@
           {
             "file": "gaseous",
             "readableName": "Gaseous",
+            "probability": 1
+          },
+          {
+            "file": "glacier",
+            "readableName": "Glacier",
             "probability": 1
           },
           {
@@ -416,7 +426,7 @@
           {
             "file": "pixels",
             "readableName": "Pixels",
-            "probability": 1
+            "probability": 0.25
           },
           {
             "file": "polar",
@@ -583,11 +593,6 @@
             "probability": 0.25
           },
           {
-            "file": "circuit",
-            "readableName": "Cities",
-            "probability": 1
-          },
-          {
             "file": "cities",
             "readableName": "Cities",
             "probability": 1
@@ -695,7 +700,7 @@
           {
             "file": "glyphs",
             "readableName": "Glyphs",
-            "probability": 0.25
+            "probability": 1
           },
           {
             "file": "gotem",
@@ -778,11 +783,6 @@
             "probability": 1
           },
           {
-            "file": "rocks",
-            "readableName": "Rocks",
-            "probability": 1
-          },
-          {
             "file": "ruins",
             "readableName": "Ruins",
             "probability": 1
@@ -843,6 +843,11 @@
             "probability": 1
           },
           {
+            "file": "stones",
+            "readableName": "Star Ruby",
+            "probability": 1
+          },
+          {
             "file": "summit",
             "readableName": "Summit",
             "probability": 1
@@ -889,7 +894,7 @@
         "readableName": "Atmosphere",
         "multiple": false,
         "alwaysOn": false,
-        "probability": 1,
+        "probability": 0.98,
         "files": [
           {
             "file": "alpenglow",
@@ -944,7 +949,7 @@
           {
             "file": "force-field",
             "readableName": "Force Field",
-            "probability": 1
+            "probability": 0.25
           },
           {
             "file": "gaseous-poison",
@@ -999,7 +1004,7 @@
           {
             "file": "miasma",
             "readableName": "Miasma",
-            "probability": 1
+            "probability": 0.1
           },
           {
             "file": "neon-ring",
@@ -1053,7 +1058,7 @@
         "readableName": "Satellite",
         "multiple": false,
         "alwaysOn": false,
-        "probability": 1,
+        "probability": 0.85,
         "files": [
           {
             "file": "asteroid-cluster",
@@ -1127,7 +1132,7 @@
         "readableName": "Ship",
         "multiple": false,
         "alwaysOn": false,
-        "probability": 1,
+        "probability": 0.5,
         "files": [
           {
             "file": "alien-outpost",
@@ -1137,12 +1142,12 @@
           {
             "file": "citadel-of-osiris-active",
             "readableName": "Citadel of Osiris (Active)",
-            "probability": 1
+            "probability": 0.25
           },
           {
             "file": "citadel-of-osiris-rogue",
             "readableName": "Citadel of Osiris (Rogue)",
-            "probability": 1
+            "probability": 0.1
           },
           {
             "file": "docking",
@@ -1197,7 +1202,7 @@
           {
             "file": "technomid",
             "readableName": "Technomid",
-            "probability": 1
+            "probability": 0.25
           },
           {
             "file": "triforce",
@@ -1228,6 +1233,18 @@
         "alwaysOn": true,
         "multiple": false,
         "files": [
+          {
+            "file": "ape-world",
+            "readableName": "Ape World",
+            "probability": 1,
+            "reserved": false
+          },
+          {
+            "file": "aranea",
+            "readableName": "Aranea",
+            "probability": 1,
+            "reserved": false
+          },
           {
             "file": "atom",
             "readableName": "Atom",
@@ -1331,14 +1348,44 @@
             "reserved": false
           },
           {
+            "file": "generator",
+            "readableName": "Generator",
+            "probability": 1,
+            "reserved": false
+          },
+          {
+            "file": "gloopglop",
+            "readableName": "Gloop Glop",
+            "probability": 1,
+            "reserved": false
+          },
+          {
             "file": "jpeg",
-            "readableName": "JPEG",
+            "readableName": "planet.jpeg",
             "probability": 1,
             "reserved": false
           },
           {
             "file": "marble",
             "readableName": "Marble",
+            "probability": 1,
+            "reserved": false
+          },
+          {
+            "file": "necropolis",
+            "readableName": "Necropolis",
+            "probability": 1,
+            "reserved": false
+          },
+          {
+            "file": "Neron",
+            "readableName": "neron",
+            "probability": 1,
+            "reserved": false
+          },
+          {
+            "file": "Observatory",
+            "readableName": "observatory",
             "probability": 1,
             "reserved": false
           },
@@ -1361,26 +1408,26 @@
             "reserved": false
           },
           {
+            "file": "purple-flame",
+            "readableName": "Purple Flame",
+            "probability": 1,
+            "reserved": false
+          },
+          {
             "file": "rose",
             "readableName": "Rose",
             "probability": 1,
             "reserved": false
           },
           {
-            "file": "treasure",
-            "readableName": "Treasure",
+            "file": "treasure-island",
+            "readableName": "Treasure Island",
             "probability": 1,
             "reserved": false
           },
           {
-            "file": "vacation",
-            "readableName": "Vacation",
-            "probability": 1,
-            "reserved": false
-          },
-          {
-            "file": "vega",
-            "readableName": "Vega",
+            "file": "vibe-world",
+            "readableName": "Vibe World",
             "probability": 1,
             "reserved": false
           },
