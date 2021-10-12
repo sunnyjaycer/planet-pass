@@ -94,7 +94,7 @@ const Home: NextPage = () => {
   }
 
   return (
-    <Layout title={'Galactic Gateway'} background="gateway">
+    <Layout title={'Galactic Gateway'}>
       <PageHeader
         title="Galactic Gateway"
         description="We have curated a list of exotic planets just for you, Wanderer. Browse at your leisure."

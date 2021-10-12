@@ -12,6 +12,7 @@ import '@fontsource/roboto-mono/700.css'
 import '../styles/globals.scss'
 
 import type { AppProps } from 'next/app'
+import FadingBackground from '../components/FadingBackground'
 
 import { Web3ContextProvider } from '../context/Web3Context'
 import TransactionLayer from '../components/TransactionLayer'
@@ -27,6 +28,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <div id="root">
       <Web3ContextProvider>
         <TransactionContextProvider>
+          <FadingBackground />
           <Component {...pageProps} />
           <TransactionLayer />
         </TransactionContextProvider>

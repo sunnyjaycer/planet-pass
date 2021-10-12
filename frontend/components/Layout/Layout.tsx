@@ -1,18 +1,17 @@
 import { FunctionComponent } from 'react'
 import Head from 'next/head'
 import GlobalHeader from '../GlobalHeader'
-import style from './Layout.module.scss'
+import { Background } from '../../types'
 
-type LayoutProps = {
+interface LayoutProps {
   title: string
   description?: string
-  background?: 'gateway'
+  background?: Background
 }
 
 const Layout: FunctionComponent<LayoutProps> = ({
   title,
   description,
-  background,
   children
 }) => {
   return (
@@ -22,7 +21,6 @@ const Layout: FunctionComponent<LayoutProps> = ({
         {description && <meta name="description" content={description} />}
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className={`${style.bkImage} ${background && style[background]}`} />
       <GlobalHeader />
       <main>{children}</main>
     </>
