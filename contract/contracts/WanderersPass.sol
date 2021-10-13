@@ -26,7 +26,7 @@ contract WanderersPass is
         /// Token ID of Planet
         uint256 planetId;
         /// State of planet at time to stamping
-        bytes32 state;
+        uint256 state;
     }
 
     /// Mapping of Passes to array of stamps
@@ -44,7 +44,7 @@ contract WanderersPass is
         address indexed from,
         uint256 indexed passId,
         uint256 indexed planetId,
-        bytes32 planetState
+        uint256 planetState
     );
 
     constructor(WanderersPlanet _planetContract)

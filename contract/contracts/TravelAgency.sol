@@ -48,7 +48,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     mapping(address => uint256) public ownerFeesAccrued;
     
     /// Mapping of Planet States to Reward Rates
-    mapping(bytes32 => uint256) public planetStateToRewardRates;
+    mapping(uint256 => uint256) public planetStateToRewardRates;
 
     /// Switch for turning rewards on and off (initially false!)
     bool public rewardSwitch;
@@ -158,9 +158,9 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
             uint256 ownerFee = calculateOperatorFee(fee);
             uint256 payoutFee = fee - ownerFee;
 
-            ownerFeesAccrued[planetOwner] += payoutFee;
+            ownerFeesAccrued[planetOwner] += ownerCut;
             // NOTE: Great, we increase the fees accrued, but where do we actually take that fee from the traveler??
-            operatorFeeAccrued += ownerFee;
+            operatorFeeAccrued += operatorCut;
 
             bool success = wrappedEthContract.transferFrom(
                 msg.sender,
