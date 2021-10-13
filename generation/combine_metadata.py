@@ -3,7 +3,7 @@
 import json
 import os
 
-output_name = "dump.json"
+output_name = "all_planets.json"
 
 
 def main():
