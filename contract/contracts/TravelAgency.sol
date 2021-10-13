@@ -118,17 +118,16 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         // Send WETH to contract
         // The owner of the planet never pays any fees
         if (fee != 0 && msg.sender != planetOwner) {
-            // Calculate contract deployer's cut and planet owner's cut
-            uint256 ownerFee = calculateOperatorFee(fee);
-            uint256 payoutFee = fee - ownerFee;
+            // Calculate operator's cut and owner's cut
+            (uint256 operatorCut, uint256 ownerCut) = calculateFee(fee);
 
-            ownerFeesAccrued[planetOwner] += payoutFee;
-            operatorFeeAccrued += ownerFee;
+            ownerFeesAccrued[planetOwner] += ownerCut;
+            operatorFeeAccrued += operatorCut;
 
             bool success = wrappedEthContract.transferFrom(
                 msg.sender,
                 address(this),
-                payoutFee
+                fee
             );
             require(success, "Token transfer failed");
         }
@@ -149,10 +148,15 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         passContract.safeTransferFrom(address(this), msg.sender, passId);
     }
 
-    /// @dev calculates the fee designated for the operator (owner of contract).
+    /// @dev calculates the fee designated for operator (owner of contract) and owner (owner of planet).
     /// @param fee the fee charged by the planet owner
-    function calculateOperatorFee(uint256 fee) internal view returns (uint256) {
-        return (fee * operatorFeeBp) / BASIS_POINTS_DIVISOR;
+    function calculateFee(uint256 fee)
+        internal
+        view
+        returns (uint256 operatorCut, uint256 ownerCut)
+    {
+        operatorCut = (fee * operatorFeeBp) / BASIS_POINTS_DIVISOR;
+        ownerCut = fee - operatorCut;
     }
 
     /// Updates the fee charged by the Planet owner.
