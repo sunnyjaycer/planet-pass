@@ -1,10 +1,18 @@
-import { FunctionComponent, useEffect, useState } from 'react'
+import {
+  FunctionComponent,
+  useEffect,
+  useState,
+  Dispatch,
+  SetStateAction
+} from 'react'
 import style from './FadingBackground.module.scss'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
-import bkBaloon2x from '../../assets/backgrounds/bk-balloon-2x.png'
 import bkGateway from '../../assets/backgrounds/bk-gateway.png'
+import bkClouds from '../../assets/backgrounds/bk-clouds.png'
+import bkPlanetsDark from '../../assets/backgrounds/bk-planets-dark.png'
+import bkPlanetsPurple from '../../assets/backgrounds/bk-planets-purple.png'
 
 const fadeTransitionTime = 1500
 
@@ -27,57 +35,85 @@ const LazyBK: FunctionComponent<LazyBkProps> = ({ imgUrl, exiting }) => {
         onLoadingComplete={() => {
           setIsLoaded(true)
         }}
+        priority
       />
     </div>
   )
 }
 
-const BkBalloon = ({ exiting = false }) => (
-  <LazyBK imgUrl={bkBaloon2x} exiting={exiting} />
-)
-const BkGateway = ({ exiting = false }) => (
-  <LazyBK imgUrl={bkGateway} exiting={exiting} />
-)
-
 type BackgroundState = 'active' | 'exiting' | 'inactive'
+type BackgroundKey = 'gateway' | 'clouds' | 'darkPlanets' | 'purplePlanets'
+type StateGroup = [BackgroundState, Dispatch<SetStateAction<BackgroundState>>]
+
+type BkStateList = {
+  [s: string]: StateGroup
+}
 
 const FadingBackground: FunctionComponent = ({}) => {
   const router = useRouter()
   const [gatewayState, setGatewayState] = useState<BackgroundState>('inactive')
-  const [balloonState, setBalloonState] = useState<BackgroundState>('inactive')
-  const activeBackground =
-    router.pathname && router.pathname === '/' ? 'gateway' : 'balloons'
+  const [darkPlanetState, setDarkPlanetState] =
+    useState<BackgroundState>('inactive')
+  const [cloudsState, setCloudsState] = useState<BackgroundState>('inactive')
+  const [purplePlanetState, setPurplePlanetState] =
+    useState<BackgroundState>('inactive')
+
+  const activeBackground: BackgroundKey =
+    router.pathname === '/'
+      ? 'gateway'
+      : router.pathname === '/all-planets'
+      ? 'darkPlanets'
+      : router.pathname === '/planet-pass'
+      ? 'clouds'
+      : 'purplePlanets'
 
   useEffect(() => {
-    switch (activeBackground) {
-      case 'gateway':
-        if (balloonState === 'active') {
-          setBalloonState('exiting')
-          setTimeout(() => {
-            setBalloonState('inactive')
-          }, fadeTransitionTime)
-        }
-        setGatewayState('active')
-        break
-      case 'balloons':
-      default:
-        if (gatewayState === 'active') {
-          setGatewayState('exiting')
-          setTimeout(() => {
-            setGatewayState('inactive')
-          }, fadeTransitionTime)
-        }
-        setBalloonState('active')
+    const bkStates: BkStateList = {
+      gateway: [gatewayState, setGatewayState],
+      darkPlanets: [darkPlanetState, setDarkPlanetState],
+      clouds: [cloudsState, setCloudsState],
+      purplePlanets: [purplePlanetState, setPurplePlanetState]
     }
-  }, [activeBackground, gatewayState, balloonState])
+
+    Object.keys(bkStates)
+      .filter((key) => key !== activeBackground)
+      .forEach((key) => {
+        const [bkState, setBkState] = bkStates[key]
+        if (bkState === 'active') {
+          setBkState('exiting')
+          setTimeout(() => {
+            setBkState('inactive')
+          }, fadeTransitionTime)
+        }
+      })
+    bkStates[activeBackground][1]('active')
+  }, [
+    activeBackground,
+    gatewayState,
+    darkPlanetState,
+    cloudsState,
+    purplePlanetState
+  ])
 
   return (
     <div className={`${style.fadingBkFrame}`}>
       {gatewayState !== 'inactive' && (
-        <BkGateway exiting={gatewayState === 'exiting'} />
+        <LazyBK imgUrl={bkGateway} exiting={gatewayState === 'exiting'} />
       )}
-      {balloonState !== 'inactive' && (
-        <BkBalloon exiting={balloonState === 'exiting'} />
+      {darkPlanetState !== 'inactive' && (
+        <LazyBK
+          imgUrl={bkPlanetsDark}
+          exiting={darkPlanetState === 'exiting'}
+        />
+      )}
+      {cloudsState !== 'inactive' && (
+        <LazyBK imgUrl={bkClouds} exiting={cloudsState === 'exiting'} />
+      )}
+      {purplePlanetState !== 'inactive' && (
+        <LazyBK
+          imgUrl={bkPlanetsPurple}
+          exiting={purplePlanetState === 'exiting'}
+        />
       )}
     </div>
   )
