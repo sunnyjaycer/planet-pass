@@ -11,7 +11,7 @@ import ConnectButton from '../../components/ConnectButton'
 
 const Passport: NextPage = () => {
   return (
-    <Layout title={'Planet Pass'}>
+    <Layout title={'Passports'}>
       <PageHeader title="My Passports" />
       {/* Example Connect button */}
       {/* <ConnectButton/> */}

@@ -11,8 +11,8 @@ import { fpoStamps } from '../../utils/fakeData'
 
 const Passport: NextPage = () => {
   return (
-    <Layout title={'Planet Pass'}>
-      <PageHeader title="Planet Pass" />
+    <Layout title={'Passport Name'}>
+      <PageHeader title="Passport Name" />
       {/* Example Connect button */}
       {/* <ConnectButton/> */}
       {/* <UserInfo
