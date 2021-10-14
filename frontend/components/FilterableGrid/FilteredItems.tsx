@@ -59,7 +59,7 @@ const FilteredItems: FunctionComponent<FilteredItemsProps> = ({
       {/* ----- */}
       {/* FILTER CARDS */}
       <div className={style.cardContainer}>
-        <CardGrid noPad>
+        <CardGrid noPad largeCards>
           {filteredItems.map((cardData) => (
             <div key={cardData.id}>
               <Card
@@ -74,7 +74,7 @@ const FilteredItems: FunctionComponent<FilteredItemsProps> = ({
                 }}
               />
               <br />
-              <div className={style.debug}>
+              {/* <div className={style.debug}>
                 <strong>Temporary Debug attributes:</strong>
                 <br />
                 {cardData.attributes.map((attr) => (
@@ -82,7 +82,7 @@ const FilteredItems: FunctionComponent<FilteredItemsProps> = ({
                     {attr.trait_type}: {attr.value} <br />
                   </span>
                 ))}
-              </div>
+              </div> */}
             </div>
           ))}
         </CardGrid>

@@ -10,7 +10,7 @@ const navLinks = [
   },
   {
     url: '/all-planets',
-    name: 'Browse Planets'
+    name: 'All Planets'
   },
   {
     url: '/passports',
