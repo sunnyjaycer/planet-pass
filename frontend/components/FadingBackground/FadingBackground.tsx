@@ -13,7 +13,7 @@ import bkGateway from '../../assets/backgrounds/bk-gateway.png'
 import bkClouds from '../../assets/backgrounds/bk-clouds.png'
 import bkPlanetsDark from '../../assets/backgrounds/bk-planets-dark.png'
 import bkPlanetsPurple from '../../assets/backgrounds/bk-planets-purple.png'
-
+import bkOrangePlanets from '../../assets/backgrounds/bk-planets-orange.png'
 const fadeTransitionTime = 1500
 
 interface LazyBkProps {
@@ -42,7 +42,11 @@ const LazyBK: FunctionComponent<LazyBkProps> = ({ imgUrl, exiting }) => {
 }
 
 type BackgroundState = 'active' | 'exiting' | 'inactive'
-type BackgroundKey = 'gateway' | 'clouds' | 'darkPlanets' | 'purplePlanets'
+type BackgroundKey =
+  | 'orangePlanets'
+  | 'clouds'
+  | 'darkPlanets'
+  | 'purplePlanets'
 type StateGroup = [BackgroundState, Dispatch<SetStateAction<BackgroundState>>]
 
 type BkStateList = {
@@ -51,7 +55,8 @@ type BkStateList = {
 
 const FadingBackground: FunctionComponent = ({}) => {
   const router = useRouter()
-  const [gatewayState, setGatewayState] = useState<BackgroundState>('inactive')
+  const [orangePlanetState, setOrangePlanetState] =
+    useState<BackgroundState>('inactive')
   const [darkPlanetState, setDarkPlanetState] =
     useState<BackgroundState>('inactive')
   const [cloudsState, setCloudsState] = useState<BackgroundState>('inactive')
@@ -60,16 +65,16 @@ const FadingBackground: FunctionComponent = ({}) => {
 
   const activeBackground: BackgroundKey =
     router.pathname === '/'
-      ? 'gateway'
+      ? 'orangePlanets'
       : router.pathname === '/all-planets'
       ? 'darkPlanets'
-      : router.pathname === '/planet-pass'
+      : router.pathname === '/passports'
       ? 'clouds'
       : 'purplePlanets'
 
   useEffect(() => {
     const bkStates: BkStateList = {
-      gateway: [gatewayState, setGatewayState],
+      orangePlanets: [orangePlanetState, setOrangePlanetState],
       darkPlanets: [darkPlanetState, setDarkPlanetState],
       clouds: [cloudsState, setCloudsState],
       purplePlanets: [purplePlanetState, setPurplePlanetState]
@@ -89,7 +94,7 @@ const FadingBackground: FunctionComponent = ({}) => {
     bkStates[activeBackground][1]('active')
   }, [
     activeBackground,
-    gatewayState,
+    orangePlanetState,
     darkPlanetState,
     cloudsState,
     purplePlanetState
@@ -97,8 +102,11 @@ const FadingBackground: FunctionComponent = ({}) => {
 
   return (
     <div className={`${style.fadingBkFrame}`}>
-      {gatewayState !== 'inactive' && (
-        <LazyBK imgUrl={bkGateway} exiting={gatewayState === 'exiting'} />
+      {orangePlanetState !== 'inactive' && (
+        <LazyBK
+          imgUrl={bkOrangePlanets}
+          exiting={orangePlanetState === 'exiting'}
+        />
       )}
       {darkPlanetState !== 'inactive' && (
         <LazyBK

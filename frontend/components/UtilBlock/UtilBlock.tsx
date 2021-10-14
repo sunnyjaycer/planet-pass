@@ -16,7 +16,7 @@ const UtilBlock: FunctionComponent = () => {
         </a>
       </Link>
 
-      <Link href="/planet-pass">
+      <Link href="/passports">
         <a className={`${style.utilCard} ${style.planetPass}`}>
           <div className={style.cardImgPad}>
             <Image

@@ -13,8 +13,8 @@ const navLinks = [
     name: 'Browse Planets'
   },
   {
-    url: '/planet-pass',
-    name: 'Planet Pass'
+    url: '/passports',
+    name: 'Passports'
   }
   // {
   //   url: '/',

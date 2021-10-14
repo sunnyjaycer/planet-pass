@@ -23,17 +23,17 @@ const Passport: NextPage = () => {
         <Card
           name="Passport Name"
           imgSrc={fpoImg}
-          linkUrl="/planet-pass/passport"
+          linkUrl="/passports/passport"
         />
         <Card
           name="Passport Name"
           imgSrc={fpoImg}
-          linkUrl="/planet-pass/passport"
+          linkUrl="/passports/passport"
         />
         <Card
           name="Passport Name"
           imgSrc={fpoImg}
-          linkUrl="/planet-pass/passport"
+          linkUrl="/passports/passport"
         />
       </CardGrid>
     </Layout>

@@ -156,7 +156,7 @@ const Home: NextPage = () => {
       <CardGrid
         header="Ancient Mysteries"
         linkText="View All"
-        link="/planet-pass"
+        link="/passports"
         largeCards
       >
         {ancientCards.map((card) => (
@@ -171,7 +171,7 @@ const Home: NextPage = () => {
       <CardGrid
         header="Signs of Life"
         linkText="View All"
-        link="/planet-pass"
+        link="/passports"
         largeCards
       >
         {signsCards.map((card) => (
@@ -186,7 +186,7 @@ const Home: NextPage = () => {
       <CardGrid
         header="Dangerous Visits"
         linkText="View All"
-        link="/planet-pass"
+        link="/passports"
         largeCards
       >
         {dangerCards.map((card) => (
