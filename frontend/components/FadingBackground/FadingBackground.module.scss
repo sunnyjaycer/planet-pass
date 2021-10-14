@@ -33,7 +33,7 @@
   transition: all 1.5s cubic-bezier(0.5, 0, 0.5, 1);
 
   &.loaded {
-    opacity: 0.5;
+    opacity: 0.75;
   }
 
   &.exiting,
