@@ -1,12 +1,10 @@
 import { FunctionComponent } from 'react'
 import Head from 'next/head'
 import GlobalHeader from '../GlobalHeader'
-import { Background } from '../../types'
 
 interface LayoutProps {
   title: string
   description?: string
-  background?: Background
 }
 
 const Layout: FunctionComponent<LayoutProps> = ({
