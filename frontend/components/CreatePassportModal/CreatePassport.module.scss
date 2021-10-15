@@ -1,0 +1,180 @@
+.overlay {
+  position: fixed;
+  inset: 0px;
+  background-color: rgba($c-grey, 0.9);
+  opacity: 0;
+  animation: fadeIn 0.35s cubic-bezier(0.5, 0, 0.5, 1) forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.modal {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.modalContent {
+  pointer-events: auto;
+  background: $c-grey;
+  border: 1px solid $c-green;
+  border-radius: 8px;
+  position: relative;
+  padding: 5rem 2rem 2rem;
+  width: 80%;
+  max-width: 865px;
+  @include break-md {
+    padding: 4rem;
+  }
+  @include break-xl {
+    padding: 6rem;
+  }
+
+  opacity: 0;
+  transform-origin: center;
+  transform: scale(0.975);
+  animation: fadeInSlide 0.5s cubic-bezier(0.5, 0, 0.5, 1) 0.35s forwards;
+}
+
+@keyframes fadeInSlide {
+  0% {
+    opacity: 0;
+    transform: scale(0.975);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.closeButton {
+  background: transparent;
+  border: 0;
+  position: absolute;
+
+  transition: all 0.3s;
+  padding: 0;
+  margin: 0;
+  transform: scale(0.7);
+  &:hover {
+    cursor: pointer;
+  }
+  top: -5px;
+  right: -5px;
+  @include break-md {
+    top: 0;
+    right: 0;
+  }
+  @include break-xl {
+    transform: scale(0.9);
+    top: 8px;
+    right: 8px;
+  }
+}
+.content {
+  @include break-md {
+    display: grid;
+    grid-template-columns: 0.6fr 1fr;
+    gap: 8rem;
+  }
+}
+.mediaContainer {
+  width: 100%;
+  height: 0;
+  position: relative;
+  padding-bottom: 142%;
+  margin-bottom: 1rem;
+  @include break-md {
+    margin-bottom: 0;
+  }
+}
+.video,
+.img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.mainText {
+  padding-right: 3rem;
+}
+.heading {
+  @include headerTitle;
+  @include break-lg {
+    margin-bottom: 2rem;
+  }
+}
+.subhead {
+  @include header4;
+}
+
+.formWrap {
+  background: $c-grey;
+  border: 1px solid $c-green;
+  border-radius: 8px;
+  padding: 2rem;
+
+  margin: 4rem 0 0;
+}
+.selectWrap {
+  margin-left: -1rem;
+  margin-right: -1rem;
+  width: calc(100% + 2rem);
+}
+.textInputWrap {
+  margin: 1rem 0;
+}
+
+.filterInput {
+  background: $c-grey;
+  border: 1px solid $c-green;
+  border-radius: 3px;
+  padding: 1rem;
+  margin: 1rem 0;
+  color: $c-green;
+  width: 100%;
+  font-size: 1.4rem;
+  font-family: $f-mono;
+  transition: all 0.2s;
+  &:focus {
+    background: rgba($c-green, 0.025);
+    outline: 0;
+    box-shadow: 0 0 4px 1px rgba($c-green, 0.65);
+  }
+}
+.label {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  top: 0;
+  left: 1rem;
+}
+
+.formBottom {
+  position: relative;
+  padding-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  &:before {
+    position: absolute;
+    left: -2rem;
+    top: 0;
+    content: '';
+    display: block;
+    width: calc(100% + 4rem);
+    border-top: 1px solid $c-green;
+  }
+}

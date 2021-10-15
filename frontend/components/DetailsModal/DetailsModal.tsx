@@ -5,6 +5,7 @@ import { CloseIcon } from '../Icons'
 import SelectPassport from '../SelectPassport'
 import Button from '../Button'
 import Modal from 'react-modal'
+import LazyMedia from '../LazyMedia'
 
 type Attribute = {
   trait_type: string
@@ -59,14 +60,7 @@ const DetailsModal: FunctionComponent<DetailsModal> = ({
         <div className={style.planetInfo}>
           <div className={style.planetMedia}>
             <div className={style.videoContainer}>
-              <video
-                className={style.video}
-                src={videoSrc}
-                autoPlay
-                muted
-                loop
-                controls
-              />
+              <LazyMedia videoSrc={videoSrc} videoControls />
             </div>
           </div>
           <div className={style.planetText}>

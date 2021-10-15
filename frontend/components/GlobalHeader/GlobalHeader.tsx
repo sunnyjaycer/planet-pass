@@ -9,8 +9,8 @@ const navLinks = [
     name: 'Galactic Gateway'
   },
   {
-    url: '/all-planets',
-    name: 'All Planets'
+    url: '/atlas',
+    name: 'The Atlas'
   },
   {
     url: '/passports',

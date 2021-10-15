@@ -4,7 +4,7 @@ import style from './SelectPassport.module.scss'
 type SelectPassportProps = {
   options: string[]
   label?: string
-  handleSelect?: () => void
+  handleSelect?: (s: string) => void
 }
 
 const SelectPassport: FunctionComponent<SelectPassportProps> = ({
@@ -20,9 +20,9 @@ const SelectPassport: FunctionComponent<SelectPassportProps> = ({
       <select
         id="choose-passport"
         className={style.select}
-        onChange={() => {
+        onChange={(e) => {
           if (handleSelect) {
-            handleSelect()
+            handleSelect(e.target.value)
           }
         }}
       >

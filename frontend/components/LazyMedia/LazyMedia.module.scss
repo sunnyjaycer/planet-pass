@@ -1,0 +1,28 @@
+.mediaContainer {
+  width: 100%;
+  height: 0;
+  position: relative;
+  margin-bottom: 1rem;
+  background: $c-grey-mid;
+  &.noBk {
+    background: transparent;
+  }
+}
+
+.mediaFade {
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.5, 0, 0.5, 1);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  &.loaded {
+    opacity: 1;
+  }
+}
+.video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: absolute;
+  object-fit: contain;
+}

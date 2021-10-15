@@ -1,6 +1,7 @@
 import { FunctionComponent, ReactNode, useState } from 'react'
 import style from './FeatureBlock.module.scss'
 import Image from 'next/image'
+import LazyMedia from '../LazyMedia'
 
 type FeatureBlockProps = {
   kicker?: string
@@ -21,7 +22,6 @@ const FeatureBlock: FunctionComponent<FeatureBlockProps> = ({
   extraSpace,
   videoControls
 }) => {
-  const [isLoaded, setIsLoaded] = useState(false)
   return (
     <div
       className={`${style.featuredBlock} ${
@@ -30,30 +30,14 @@ const FeatureBlock: FunctionComponent<FeatureBlockProps> = ({
     >
       <div>
         <div className={`${style.blockMedia} ${style.square}`}>
-          <div className={`${style.mediaFade} ${isLoaded ? style.loaded : ''}`}>
-            {videoSrc ? (
-              <video
-                className={style.video}
-                src={videoSrc}
-                autoPlay
-                muted
-                loop
-                controls={!!videoControls}
-                onCanPlay={() => {
-                  setIsLoaded(true)
-                }}
-              />
-            ) : imgSrc ? (
-              <Image
-                src={imgSrc}
-                alt="planet"
-                layout="fill"
-                onLoadingComplete={() => {
-                  setIsLoaded(true)
-                }}
-              />
-            ) : null}
-          </div>
+          {(videoSrc || imgSrc) && (
+            <LazyMedia
+              imgSrc={imgSrc}
+              videoSrc={videoSrc}
+              altText="planet"
+              videoControls={videoControls}
+            />
+          )}
         </div>
       </div>
 

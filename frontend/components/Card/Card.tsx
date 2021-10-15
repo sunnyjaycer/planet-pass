@@ -1,11 +1,11 @@
-import { FunctionComponent, useState } from 'react'
+import { FunctionComponent } from 'react'
 import style from './Card.module.scss'
 import Image from 'next/image'
 import Link from 'next/link'
+import LazyMedia from '../LazyMedia'
 
 type CardProps = {
   name: string
-  // visits: number
   price?: number
   priceUnit?: string
   imgSrc?: string | StaticImageData
@@ -37,7 +37,6 @@ const Wrapper: FunctionComponent<WrapperProps> = ({
 
 const Card: FunctionComponent<CardProps> = ({
   name,
-  // visits,
   price,
   imgSrc,
   videoSrc,
@@ -46,35 +45,13 @@ const Card: FunctionComponent<CardProps> = ({
   onClick,
   linkUrl
 }) => {
-  const [isLoaded, setIsLoaded] = useState(false)
-
   return (
     <Wrapper linkUrl={linkUrl} onClick={onClick}>
       <div className={`${style.cardMediaContainer} `}>
-        <div className={`${style.mediaFade} ${isLoaded ? style.loaded : ''}`}>
-          {videoSrc ? (
-            <video
-              className={style.video}
-              src={videoSrc}
-              autoPlay
-              muted
-              loop
-              onCanPlay={() => {
-                setIsLoaded(true)
-              }}
-            />
-          ) : imgSrc ? (
-            <Image
-              src={imgSrc}
-              alt="planet"
-              layout="fill"
-              className={style.cardImage}
-              onLoadingComplete={() => {
-                setIsLoaded(true)
-              }}
-            />
-          ) : null}
-        </div>
+        {videoSrc ||
+          (imgSrc && (
+            <LazyMedia videoSrc={videoSrc} imgSrc={imgSrc} altText="planet" />
+          ))}
 
         {stampSrc && (
           <div className={style.cardStamp}>
@@ -85,7 +62,6 @@ const Card: FunctionComponent<CardProps> = ({
       <div className={style.cardDetails}>
         <div className={style.cardName}>{name}</div>
         <div className={style.cardSubDetails}>
-          {/* <div className={style.cardVisits}>{visits} Visits</div> */}
           {price && (
             <div className={style.cardPrice}>
               {price} {priceUnit}
