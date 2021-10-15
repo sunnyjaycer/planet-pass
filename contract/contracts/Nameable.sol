@@ -12,6 +12,15 @@ abstract contract Nameable is ERC721, Ownable, Pausable {
     /// Mapping to ERC-721 token to whether they are rename-locked
     mapping(uint256 => bool) public renameLocked;
 
+    /// Event emitted when a rename occurs.
+    event Rename(address indexed from, uint256 indexed id, bytes32 indexed newName);
+
+    /// Event emitted when a token is locked (cannot be renamed).
+    event RenameLock(address indexed from, uint256 indexed id);
+
+    /// Event emitted when a token is unlocked (cannot be renamed).
+    event RenameUnlock(address indexed from, uint256 indexed id);
+
     /// Set the name of a token.
     /// @param id the token ID
     /// @param _name the new name of the token
@@ -40,6 +49,7 @@ abstract contract Nameable is ERC721, Ownable, Pausable {
     /// @param _name the new name of the token
     function _setName(uint256 id, string memory _name) internal {
         nameOfToken[id] = _name;
+        emit Rename(msg.sender, id, keccak256(abi.encodePacked(_name)));
     }
 
     /// Force rename a token to a designated name, and then disable further renames by users.
@@ -50,7 +60,7 @@ abstract contract Nameable is ERC721, Ownable, Pausable {
         external
         onlyOwner
     {
-        nameOfToken[id] = _name;
+        _setName(id, _name);
         _lockRename(id);
     }
 
@@ -58,12 +68,14 @@ abstract contract Nameable is ERC721, Ownable, Pausable {
     /// @param id the token ID
     function _lockRename(uint256 id) internal {
         renameLocked[id] = true;
+        emit RenameLock(msg.sender, id);(msg.sender, id);
     }
 
     /// Re-enables renaming of a token by its owner
     /// @param id the token ID
     function _unlockRename(uint256 id) internal {
         renameLocked[id] = false;
+        emit RenameUnlock(msg.sender, id);
     }
 
     /// Re-enables renaming of a token by its owner
