@@ -44,6 +44,21 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     /// to be true for a Pass deposit in onERC721Received().
     bool private acceptPass;
 
+    /// Event emitted when the travel agency is used.
+    event FlashStamp(
+        address indexed from,
+        address indexed planetOwner,
+        uint256 indexed planetId,
+        uint256 passId
+    );
+
+    /// Event emitted when a Planet's fee is updated.
+    event UpdatePlanetFee(
+        address indexed from,
+        uint256 indexed planetId,
+        uint256 fee
+    );
+
     constructor(
         uint256 _operatorFeeBp,
         WanderersPlanet _planetContract,
@@ -146,6 +161,8 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
 
         // Return it to the sender
         passContract.safeTransferFrom(address(this), msg.sender, passId);
+
+        emit FlashStamp(msg.sender, planetOwner, planetId, passId);
     }
 
     /// @dev calculates the fee designated for operator (owner of contract) and owner (owner of planet).
@@ -162,9 +179,10 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     /// Updates the fee charged by the Planet owner.
     /// @param id the token ID of the planet
     /// @param _fee the new fee charged by the planet owner
-    function updateOwnerFee(uint256 id, uint256 _fee) external whenNotPaused {
+    function updatePlanetFee(uint256 id, uint256 _fee) external whenNotPaused {
         require(msg.sender == planetOwners[id], "Not owner of planet");
         planetFees[id] = _fee;
+        emit UpdatePlanetFee(msg.sender, id, _fee);
     }
 
     /// Withdraws the accured operator fees to a designated address.

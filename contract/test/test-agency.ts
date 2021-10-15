@@ -90,7 +90,7 @@ describe("TravelAgency", function () {
         });
     });
 
-    describe("updateOwnerFee", async function () {
+    describe("updatePlanetFee", async function () {
         let oldCost: string;
         let newCost: string;
 
@@ -116,13 +116,13 @@ describe("TravelAgency", function () {
 
         it("planet owner should be able to update fee", async function () {
             expect(await agency.planetFees(0)).to.equal(oldCost);
-            await agency.updateOwnerFee(0, newCost);
+            await agency.updatePlanetFee(0, newCost);
             expect(await agency.planetFees(0)).to.equal(newCost);
         });
 
         it("non-owner should not be able to update fee", async function () {
             expect(await agency.planetFees(0)).to.equal(oldCost);
-            await expect(agency.connect(accounts[1]).updateOwnerFee(0, newCost))
+            await expect(agency.connect(accounts[1]).updatePlanetFee(0, newCost))
                 .to.be.revertedWith("Not owner of planet");
         });
     })
