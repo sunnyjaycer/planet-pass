@@ -9,7 +9,7 @@ from typing import List, Dict, Optional, Tuple
 from PIL import Image
 import numpy as np
 
-folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v9"
+folder = "/mnt/c/Users/sucle/Documents/PlanetPass-v10"
 
 # Number of anomalies that will be randomly distributed.
 anomalies_count = 36
@@ -153,7 +153,7 @@ def make_image(frames, base, prefix: str):
         # Paste images
         for asset in [x[n] for x in frames]:
             to_paste = Image.open(asset)
-            frame.paste(to_paste, mask=to_paste)
+            frame.alpha_composite(to_paste)
 
         frame.save(f"/mnt/e/planetpass/raw/{prefix}/{prefix}_{n:05}.png")
 
