@@ -10,11 +10,6 @@
         "alwaysOn": true,
         "files": [
           {
-            "file": "aura",
-            "readableName": "Aura",
-            "probability": 0.1
-          },
-          {
             "file": "cosmic-clouds",
             "readableName": "Cosmic Clouds",
             "probability": 0.1
@@ -22,11 +17,21 @@
           {
             "file": "darkside",
             "readableName": "Darkside",
-            "probability": 0.01
+            "probability": 0.025
           },
           {
             "file": "fabric",
             "readableName": "Fabric",
+            "probability": 0.1
+          },
+          {
+            "file": "fractal",
+            "readableName": "Fractal",
+            "probability": 0.1
+          },
+          {
+            "file": "fringe",
+            "readableName": "Fringe",
             "probability": 0.1
           },
           {
@@ -55,6 +60,11 @@
             "probability": 0.1
           },
           {
+            "file": "hellish",
+            "readableName": "Hellish",
+            "probability": 0.01
+          },
+          {
             "file": "lights",
             "readableName": "Lights",
             "probability": 0.1
@@ -65,23 +75,23 @@
             "probability": 0.1
           },
           {
+            "file": "painted",
+            "readableName": "Painted",
+            "probability": 0.05
+          },
+          {
             "file": "rivers",
             "readableName": "Rivers",
-            "probability": 0.05
+            "probability": 0.1
           },
           {
             "file": "smudge",
             "readableName": "Smudge",
-            "probability": 0.05
+            "probability": 0.1
           },
           {
             "file": "sparkles",
             "readableName": "Sparkles",
-            "probability": 0.1
-          },
-          {
-            "file": "speckle",
-            "readableName": "Speckle",
             "probability": 0.1
           },
           {
@@ -112,6 +122,11 @@
           {
             "file": "stars-white",
             "readableName": "White Stars",
+            "probability": 0.1
+          },
+          {
+            "file": "stellar",
+            "readableName": "Stellar",
             "probability": 0.1
           },
           {
@@ -252,7 +267,7 @@
           {
             "file": "core-swirl",
             "readableName": "Swirl",
-            "probability": 0.25
+            "probability": 0.1
           },
           {
             "file": "core-vortex",
@@ -406,7 +421,7 @@
           {
             "file": "multipolarity",
             "readableName": "Multipolarity",
-            "probability": 1
+            "probability": 0.25
           },
           {
             "file": "natural",
@@ -1022,6 +1037,11 @@
             "probability": 1
           },
           {
+            "file": "refraction",
+            "readableName": "Refraction",
+            "probability": 1
+          },
+          {
             "file": "shower",
             "readableName": "Shower",
             "probability": 1
@@ -1076,6 +1096,11 @@
             "probability": 1
           },
           {
+            "file": "cargo",
+            "readableName": "Cargo",
+            "probability": 0.25
+          },
+          {
             "file": "comets",
             "readableName": "Comets",
             "probability": 1
@@ -1083,12 +1108,12 @@
           {
             "file": "meteor-shower",
             "readableName": "Meteor Shower",
-            "probability": 1
+            "probability": 0.25
           },
           {
             "file": "moon-glow",
             "readableName": "Glowing Moon",
-            "probability": 1
+            "probability": 0.1
           },
           {
             "file": "moons-color",
@@ -1098,7 +1123,7 @@
           {
             "file": "moons-five",
             "readableName": "Five Moons",
-            "probability": 1
+            "probability": 0.25
           },
           {
             "file": "moons-three",
@@ -1119,6 +1144,11 @@
             "file": "protoplanets",
             "readableName": "Protoplanets",
             "probability": 1
+          },
+          {
+            "file": "stash",
+            "readableName": "Stash",
+            "probability": 0.1
           },
           {
             "file": "supernova",
@@ -1177,7 +1207,7 @@
           {
             "file": "freighter-battle",
             "readableName": "Freighter Battle",
-            "probability": 1
+            "probability": 0.25
           },
           {
             "file": "freighter-destroyed",
@@ -1202,7 +1232,7 @@
           {
             "file": "technomid",
             "readableName": "Technomid",
-            "probability": 0.25
+            "probability": 0.1
           },
           {
             "file": "triforce",
