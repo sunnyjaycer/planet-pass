@@ -67,6 +67,12 @@ const FilteredItems: FunctionComponent<FilteredItemsProps> = ({
                 price={cardData.price}
                 imgSrc={cardData.thumbnail}
                 stampSrc={cardData.stampSrc}
+                // simple hash function to get consistent random position for stamp
+                stampPosition={
+                  cardData.attributes.slice(-3).reduce((prev, next) => {
+                    return prev + next.value + next.trait_type
+                  }, '').length % 15
+                }
                 onClick={() => {
                   if (handlePlanetClick) {
                     handlePlanetClick(cardData)

@@ -61,4 +61,86 @@
   transform: rotate(15deg);
   width: 40%;
   height: 40%;
+
+  &.position0 {
+    top: 12%;
+    right: 5%;
+    transform: rotate(-15deg);
+  }
+  &.position1 {
+    top: auto;
+    bottom: 12%;
+    left: 5%;
+    transform: rotate(5deg);
+  }
+  &.position2 {
+    top: 25%;
+    right: 22%;
+    transform: rotate(19deg);
+  }
+  &.position3 {
+    top: auto;
+    bottom: 3%;
+    right: 6%;
+    transform: rotate(32deg);
+  }
+  &.position4 {
+    top: 8%;
+    left: 16%;
+    transform: rotate(-25deg);
+  }
+  &.position5 {
+    top: 10%;
+    left: 16%;
+    transform: rotate(-17deg);
+  }
+  &.position6 {
+    top: 31%;
+    left: 20%;
+    transform: rotate(70deg);
+  }
+  &.position7 {
+    top: auto;
+    bottom: 30%;
+    left: 22%;
+    transform: rotate(-65deg);
+  }
+  &.position8 {
+    top: 27%;
+    left: 20%;
+    transform: rotate(-75deg);
+  }
+  &.position9 {
+    top: auto;
+    bottom: 19%;
+    left: 19%;
+    transform: rotate(64deg);
+  }
+  &.position10 {
+    top: auto;
+    bottom: 3%;
+    left: 5%;
+    transform: rotate(-88deg);
+  }
+  &.position11 {
+    top: auto;
+    bottom: 19%;
+    right: 3%;
+    transform: rotate(19deg);
+  }
+  &.position12 {
+    top: 7%;
+    right: 16%;
+    transform: rotate(48deg);
+  }
+  &.position13 {
+    top: 27%;
+    left: 17%;
+    transform: rotate(36deg);
+  }
+  &.position14 {
+    top: 20%;
+    left: 20%;
+    transform: rotate(-99deg);
+  }
 }

@@ -11,8 +11,9 @@ type CardProps = {
   imgSrc?: string | StaticImageData
   videoSrc?: string
   onClick?: React.MouseEventHandler<HTMLButtonElement>
-  stampSrc?: string | StaticImageData
   linkUrl?: string
+  stampSrc?: string | StaticImageData
+  stampPosition?: number
 }
 type WrapperProps = {
   linkUrl?: string
@@ -43,8 +44,10 @@ const Card: FunctionComponent<CardProps> = ({
   priceUnit = 'WETH',
   stampSrc,
   onClick,
-  linkUrl
+  linkUrl,
+  stampPosition
 }) => {
+  console.log(stampPosition)
   return (
     <Wrapper linkUrl={linkUrl} onClick={onClick}>
       <div className={`${style.cardMediaContainer} `}>
@@ -54,7 +57,11 @@ const Card: FunctionComponent<CardProps> = ({
           ))}
 
         {stampSrc && (
-          <div className={style.cardStamp}>
+          <div
+            className={`${style.cardStamp} ${
+              stampPosition && style[`position${stampPosition.toString()}`]
+            }`}
+          >
             <Image src={stampSrc} alt="planet" layout="fill" />
           </div>
         )}
