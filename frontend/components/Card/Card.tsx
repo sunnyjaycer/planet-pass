@@ -47,7 +47,6 @@ const Card: FunctionComponent<CardProps> = ({
   linkUrl,
   stampPosition
 }) => {
-  console.log(stampPosition)
   return (
     <Wrapper linkUrl={linkUrl} onClick={onClick}>
       <div className={`${style.cardMediaContainer} `}>
