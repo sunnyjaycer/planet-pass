@@ -19,16 +19,6 @@ describe("TravelAgency", function () {
     beforeEach(async function () {
         accounts = await ethers.getSigners();
 
-        const zero = "0x0000000000000000000000000000000000000000000000000000000000000000"
-        const Planets = await ethers.getContractFactory("WanderersPlanet");
-        planets = await Planets.connect(accounts[0]).deploy("example.com/", zero);
-        await planets.deployed();
-
-        const Pass = await ethers.getContractFactory("WanderersPass");
-        pass = await Pass.connect(accounts[0]).deploy(planets.address);
-        await pass.deployed();
-        await pass.unpause();
-
         const DummyWeth = await ethers.getContractFactory("DummyWETH");
         dummyWeth = await DummyWeth.connect(accounts[0]).deploy();
         await dummyWeth.deployed();
@@ -36,6 +26,16 @@ describe("TravelAgency", function () {
         const Stardust = await ethers.getContractFactory("Stardust");
         stardust = await Stardust.connect(accounts[0]).deploy();
         await stardust.deployed();
+
+        const zero = "0x0000000000000000000000000000000000000000000000000000000000000000"
+        const Planets = await ethers.getContractFactory("WanderersPlanet");
+        planets = await Planets.connect(accounts[0]).deploy("example.com/", zero, stardust.address);
+        await planets.deployed();
+
+        const Pass = await ethers.getContractFactory("WanderersPass");
+        pass = await Pass.connect(accounts[0]).deploy(planets.address);
+        await pass.deployed();
+        await pass.unpause();
 
         const Agency = await ethers.getContractFactory("TravelAgency");
         agency = await Agency.connect(accounts[0]).deploy(
@@ -54,7 +54,7 @@ describe("TravelAgency", function () {
         beforeEach(async function () {
             const zero = "0x0000000000000000000000000000000000000000000000000000000000000000"
             const Planets = await ethers.getContractFactory("WanderersPlanet");
-            newPlanets = await Planets.connect(accounts[0]).deploy("new.com/", zero);
+            newPlanets = await Planets.connect(accounts[0]).deploy("new.com/", zero, stardust.address);
             await newPlanets.deployed();
         });
 

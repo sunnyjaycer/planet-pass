@@ -38,11 +38,12 @@ contract WanderersPlanet is
     /// Stardust burn cost for renaming planet
     uint256 public renameCost;
 
-    constructor(string memory baseURI_, bytes32 _root)
+    constructor(string memory baseURI_, bytes32 _root, Stardust _stardustContract)
         ERC721("Wanderers Planet", "WANDERER-PLANET")
     {
         baseURI = baseURI_;
         root = _root;
+        stardustContract = _stardustContract;
         claimEnabled = false;
         _pause();
     }

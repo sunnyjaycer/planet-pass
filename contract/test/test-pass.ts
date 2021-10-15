@@ -8,15 +8,20 @@ use(solidity);
 
 describe("WanderersPass", function () {
     let accounts: Signer[];
+    let stardust: any;
     let planets: any;
     let pass: any;
 
     beforeEach(async function () {
         accounts = await ethers.getSigners();
 
+        const Stardust = await ethers.getContractFactory("Stardust");
+        stardust = await Stardust.connect(accounts[0]).deploy();
+        await stardust.deployed();
+
         const zero = "0x0000000000000000000000000000000000000000000000000000000000000000"
         const Planets = await ethers.getContractFactory("WanderersPlanet");
-        planets = await Planets.connect(accounts[0]).deploy("example.com/", zero);
+        planets = await Planets.connect(accounts[0]).deploy("example.com/", zero, stardust.address);
         await planets.deployed();
 
         const Pass = await ethers.getContractFactory("WanderersPass");
@@ -240,7 +245,7 @@ describe("WanderersPass", function () {
         it("should be able to update Planet contract address", async function () {
             const zero = "0x0000000000000000000000000000000000000000000000000000000000000000"
             const Planets = await ethers.getContractFactory("WanderersPlanet");
-            const planetsTwo = await Planets.connect(accounts[0]).deploy("updated.com/", zero);
+            const planetsTwo = await Planets.connect(accounts[0]).deploy("updated.com/", zero, stardust.address);
             await planetsTwo.deployed();
 
             expect(await pass.planetContract()).to.equal(planets.address);

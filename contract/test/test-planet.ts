@@ -36,14 +36,19 @@ export async function makeTestMerkleTree(accounts: Signer[]): Promise<MerkleTree
 describe("WanderersPlanet", function () {
     let accounts: Signer[];
     let planets: any;
+    let stardust: any;
     let merkleTree: MerkleTree;
 
     beforeEach(async function () {
         accounts = await ethers.getSigners();
         merkleTree = await makeTestMerkleTree(accounts);
 
+        const Stardust = await ethers.getContractFactory("Stardust");
+        stardust = await Stardust.connect(accounts[0]).deploy();
+        await stardust.deployed();
+
         const Planets = await ethers.getContractFactory("WanderersPlanet");
-        planets = await Planets.connect(accounts[0]).deploy("example.com/", merkleTree.getHexRoot());
+        planets = await Planets.connect(accounts[0]).deploy("example.com/", merkleTree.getHexRoot(), stardust.address);
         await planets.deployed();
 
         // We know Pausable works (it's from OpenZeppelin), so we just unpause.
