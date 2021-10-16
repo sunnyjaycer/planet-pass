@@ -22,7 +22,7 @@ contract WanderersPass is
     /// A strictly monotonically increasing counter of token IDs.
     Counters.Counter private _tokenIdCounter;
 
-    /// Identifier for stamps.
+    /// Identifier for visits.
     bytes32 public constant STAMP_IDENT = keccak256("STAMP");
 
     /// The contents of a single stamp.
@@ -35,12 +35,12 @@ contract WanderersPass is
         uint256 stampId;
     }
 
-    /// Mapping of Passes to array of stamps
-    mapping(uint256 => Visit[]) private stamps;
+    /// Mapping of Passes to array of visits
+    mapping(uint256 => Visit[]) private visits;
 
     /// Mapping of owners to visit() approvals
     /// This is basically setApprovalForAll() but ONLY for creating Visits.
-    mapping(address => mapping(address => bool)) public visitDelegationApprovals; 
+    mapping(address => mapping(address => bool)) private visitDelegationApprovals; 
 
     /// Location of Planet contract
     WanderersPlanet public planetContract;
@@ -101,6 +101,13 @@ contract WanderersPass is
         planetPassItemsContract = _planetPassItemsContract;
     }
 
+    /// Return visitDelegationApprovals mapping.
+    /// @param owner the owner address
+    /// @param operator the operator address
+    function isVisitDelegationApproved(address owner, address operator) external view returns (bool) {
+        return visitDelegationApprovals[owner][operator];
+    }
+
     /// Mint a new Pass.
     /// @param to the address to send the Pass to
     /// @param _passName the name for the Pass
@@ -113,11 +120,11 @@ contract WanderersPass is
         _tokenIdCounter.increment();
     }
 
-    /// Gets all stamps of a Pass
+    /// Gets all visits of a Pass
     /// @param id the token ID of the Pass
-    /// @return an array of all stamps
+    /// @return an array of all visits
     function getVisits(uint256 id) external view returns (Visit[] memory) {
-        return stamps[id];
+        return visits[id];
     }
 
     /// @dev create a Visit struct
@@ -140,7 +147,7 @@ contract WanderersPass is
         uint256 planetId,
         uint256 stampId
     ) internal {
-        stamps[id].push(_makeVisit(planetId, stampId));
+        visits[id].push(_makeVisit(planetId, stampId));
 
         emit Stamp(
             msg.sender,
