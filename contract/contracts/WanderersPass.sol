@@ -22,12 +22,17 @@ contract WanderersPass is
     /// A strictly monotonically increasing counter of token IDs.
     Counters.Counter private _tokenIdCounter;
 
+    /// Identifier for stamps.
+    bytes32 public constant STAMP_IDENT = keccak256("STAMP");
+
     /// The contents of a single stamp.
     struct Visit {
         /// Token ID of Planet
         uint256 planetId;
         /// State of planet at time to stamping
         uint256 state;
+        /// The type of stamp being used
+        uint256 stampId;
     }
 
     /// Mapping of Passes to array of stamps
@@ -48,7 +53,8 @@ contract WanderersPass is
         address indexed from,
         uint256 indexed passId,
         uint256 indexed planetId,
-        uint256 planetState
+        uint256 planetState,
+        uint256 stampId
     );
 
     constructor(
@@ -100,13 +106,6 @@ contract WanderersPass is
         _tokenIdCounter.increment();
     }
 
-    /// @dev create a Visit struct
-    /// @param planetId the token ID of the Planet
-    /// @return a Visit struct
-    function makeVisit(uint256 planetId) internal view returns (Visit memory) {
-        return Visit(planetId, planetContract.planetState(planetId));
-    }
-
     /// Gets all stamps of a Pass
     /// @param id the token ID of the Pass
     /// @return an array of all stamps
@@ -114,10 +113,34 @@ contract WanderersPass is
         return stamps[id];
     }
 
+    /// @dev create a Visit struct
+    /// @param planetId the token ID of the Planet
+    /// @return a Visit struct
+    function _makeVisit(uint256 planetId, uint256 stampId) internal view returns (Visit memory) {
+        return Visit(planetId, planetContract.planetState(planetId), stampId);
+    }
+
     /// Visit a planet
     /// @param id the token ID of the Pass
     /// @param planetId the token ID of the Planet to visit
-    function visitPlanet(uint256 id, uint256 planetId) external whenNotPaused {
+    /// @param stampId the token ID of the stamp to use
+    function _visitPlanet(uint256 id, uint256 planetId, uint256 stampId) internal {
+        stamps[id].push(_makeVisit(planetId, stampId));
+
+        emit Stamp(
+            msg.sender,
+            id,
+            planetId,
+            planetContract.planetState(planetId),
+            stampId
+        );
+    }
+
+    /// Visit a planet
+    /// @param id the token ID of the Pass
+    /// @param planetId the token ID of the Planet to visit
+    /// @param stampId the token ID of the stamp to use
+    function visitPlanet(uint256 id, uint256 planetId, uint256 stampId) external whenNotPaused {
         // Make sure planet is owned by sender
         require(
             planetContract.ownerOf(planetId) == msg.sender,
@@ -126,23 +149,23 @@ contract WanderersPass is
         // Make sure pass is owned by sender
         require(ownerOf(id) == msg.sender, "Not owner of pass");
 
-        stamps[id].push(makeVisit(planetId));
+        // Make sure stamp item is a stamp
+        require(planetPassItemsContract.itemType(stampId) == STAMP_IDENT, "Item not a stamp");
+        // Make sure sender has the stamp type
+        require(planetPassItemsContract.balanceOf(msg.sender, stampId) != 0, "Item not owned");
 
-        emit Stamp(
-            msg.sender,
-            id,
-            planetId,
-            planetContract.planetState(planetId)
-        );
+        _visitPlanet(id, planetId, stampId);
     }
 
     /// Visit multiple Planets
     /// @param id the token ID of the Pass
     /// @param planetId an array of IDs of Planets to visit
-    function visitPlanet(uint256 id, uint256[] calldata planetId)
+    function visitPlanet(uint256 id, uint256[] calldata planetId, uint256[] calldata stampId)
         external
         whenNotPaused
     {
+        // Make sure lengths match
+        require(planetId.length == stampId.length, "Array length mismatch");
         // Make sure pass is owned by sender
         require(ownerOf(id) == msg.sender, "Not owner of pass");
 
@@ -152,16 +175,13 @@ contract WanderersPass is
                 planetContract.ownerOf(planetId[i]) == msg.sender,
                 "Not owner of planet"
             );
-            uint256 _planetId = planetId[i];
 
-            stamps[id].push(makeVisit(_planetId));
+            // Make sure stamp item is a stamp
+            require(planetPassItemsContract.itemType(stampId[i]) == STAMP_IDENT, "Item not a stamp");
+            // Make sure sender has the stamp type
+            require(planetPassItemsContract.balanceOf(msg.sender, stampId[i]) != 0, "Item not owned");
 
-            emit Stamp(
-                msg.sender,
-                id,
-                _planetId,
-                planetContract.planetState(_planetId)
-            );
+            _visitPlanet(id, planetId[i], stampId[i]);
         }
     }
 

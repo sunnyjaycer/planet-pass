@@ -154,7 +154,8 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         passContract.safeTransferFrom(msg.sender, address(this), passId);
 
         // Stamp
-        passContract.visitPlanet(passId, planetId);
+        // TODO: Remove placeholder
+        passContract.visitPlanet(passId, planetId, 0);
 
         // Disable pass deposit
         acceptPass = false;
