@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "./WanderersPlanet.sol";
 import "./Nameable.sol";
+import "./PlanetPassItems.sol";
 
 contract WanderersPass is
     ERC721,
@@ -35,6 +36,9 @@ contract WanderersPass is
     /// Location of Planet contract
     WanderersPlanet public planetContract;
 
+    /// Location of Items contract
+    PlanetPassItems public planetPassItemsContract;
+
     /// Event emitted when a stamp occurs
     /// @param from address which initiated the stamp
     /// @param passId the Pass that was stamped
@@ -47,10 +51,12 @@ contract WanderersPass is
         uint256 planetState
     );
 
-    constructor(WanderersPlanet _planetContract)
-        ERC721("WanderersPass", "WANDERER-PASS")
-    {
+    constructor(
+        WanderersPlanet _planetContract,
+        PlanetPassItems _planetPassItemsContract
+    ) ERC721("WanderersPass", "WANDERER-PASS") {
         planetContract = _planetContract;
+        planetPassItemsContract = _planetPassItemsContract;
         _pause();
     }
 
@@ -73,6 +79,15 @@ contract WanderersPass is
         planetContract = _planetContract;
     }
 
+    /// Updates the location of the Item contract.
+    /// @param _planetPassItemsContract the new location of the Planet contract
+    function updatePlanetPassItems(PlanetPassItems _planetPassItemsContract)
+        external
+        onlyOwner
+    {
+        planetPassItemsContract = _planetPassItemsContract;
+    }
+
     /// Mint a new Pass.
     /// @param to the address to send the Pass to
     /// @param _passName the name for the Pass
@@ -88,11 +103,7 @@ contract WanderersPass is
     /// @dev create a Visit struct
     /// @param planetId the token ID of the Planet
     /// @return a Visit struct
-    function makeVisit(uint256 planetId)
-        internal
-        view
-        returns (Visit memory)
-    {
+    function makeVisit(uint256 planetId) internal view returns (Visit memory) {
         return Visit(planetId, planetContract.planetState(planetId));
     }
 

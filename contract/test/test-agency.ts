@@ -11,6 +11,7 @@ describe("TravelAgency", function () {
     let accounts: Signer[];
     let planets: any;
     let pass: any;
+    let items: any;
     let agency: any;
     let dummyWeth: any;
 
@@ -22,8 +23,12 @@ describe("TravelAgency", function () {
         planets = await Planets.connect(accounts[0]).deploy("example.com/", zero);
         await planets.deployed();
 
+        const Items = await ethers.getContractFactory("PlanetPassItems");
+        items = await Items.connect(accounts[0]).deploy();
+        await items.deployed();
+
         const Pass = await ethers.getContractFactory("WanderersPass");
-        pass = await Pass.connect(accounts[0]).deploy(planets.address);
+        pass = await Pass.connect(accounts[0]).deploy(planets.address, items.address);
         await pass.deployed();
         await pass.unpause();
 
@@ -63,7 +68,7 @@ describe("TravelAgency", function () {
 
         beforeEach(async function () {
             const Pass = await ethers.getContractFactory("WanderersPass");
-            newPass = await Pass.connect(accounts[0]).deploy(planets.address);
+            newPass = await Pass.connect(accounts[0]).deploy(planets.address, items.address);
             await newPass.deployed();
         });
 
