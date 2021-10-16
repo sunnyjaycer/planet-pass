@@ -117,11 +117,11 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     }
 
     /// Perform a flash-stamp of planetId onto passId.
-    /// Note: this requires an approval from Planet Pass for passId, otherwise it will revert.
+    /// Note: this requires visitDelegationApproval from Planet Pass for this contract, otherwise it will revert.
     /// Note: this requqires ERC-20 spending approval for WETH, otherwise it will revert.
     /// @param planetId token ID of the planet to visit.
     /// @param passId token ID of the pass that will used for stamping.
-    function flashStamp(uint256 planetId, uint256 passId)
+    function flashStamp(uint256 planetId, uint256 passId, uint256 stampId)
         external
         whenNotPaused
     {
@@ -147,21 +147,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
             require(success, "Token transfer failed");
         }
 
-        // Enable pass deposit
-        acceptPass = true;
-
-        // Temporarily take Pass from sender
-        passContract.safeTransferFrom(msg.sender, address(this), passId);
-
-        // Stamp
-        // TODO: Remove placeholder
-        passContract.visitPlanet(passId, planetId, 0);
-
-        // Disable pass deposit
-        acceptPass = false;
-
-        // Return it to the sender
-        passContract.safeTransferFrom(address(this), msg.sender, passId);
+        passContract.delegateVisitPlanet(msg.sender, passId, planetId, stampId);
 
         emit FlashStamp(msg.sender, planetOwner, planetId, passId);
     }
@@ -226,17 +212,12 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         uint256 tokenId,
         bytes calldata data
     ) external override whenNotPaused returns (bytes4) {
-        if (msg.sender == address(planetContract)) {
-            uint256 fee = data.toUint256(0);
-            planetOwners[tokenId] = operator;
-            planetFees[tokenId] = fee;
-        } else if (msg.sender == address(passContract)) {
-            if (!acceptPass) {
-                revert("Cannot accept Pass");
-            }
-        } else {
+        if (msg.sender != address(planetContract)) {
             revert("Token not accepted");
         }
+        uint256 fee = data.toUint256(0);
+        planetOwners[tokenId] = operator;
+        planetFees[tokenId] = fee;
 
         // Make compiler shut up
         from;

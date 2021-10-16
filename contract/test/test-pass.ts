@@ -150,62 +150,6 @@ describe("WanderersPass", function () {
                 .to.be.revertedWith("Not owner of pass");
         });
 
-        it("should be able to batch-stamp", async function () {
-            const stampPlanets = [0, 1, 2];
-            const stampIds = [0, 0, 0];
-            await expect(
-                pass.connect(accounts[0])['visitPlanet(uint256,uint256[],uint256[])'](0, stampPlanets, stampIds)
-            )
-                .to.emit(pass, 'Stamp')
-                .withArgs(
-                    accounts[0].getAddress,
-                    0,
-                    0,
-                    0,
-                    0
-                )
-                .to.emit(pass, 'Stamp')
-                .withArgs(
-                    accounts[0].getAddress,
-                    0,
-                    1,
-                    0,
-                    0
-                )
-                .to.emit(pass, 'Stamp')
-                .withArgs(
-                    accounts[0].getAddress,
-                    0,
-                    2,
-                    0,
-                    0
-                );
-
-            const stamps = await pass.getVisits(0);
-
-            expect(stamps.length).to.equal(3);
-            for (let i = 0; i < 3; i++) {
-                expect(stamps[i]["planetId"]).to.equal(stampPlanets[i]);
-                expect(stamps[i]["state"]).to.equal(0);
-                expect(stamps[i]["stampId"]).to.equal(0);
-            }
-        })
-
-        it("should not be able to batch-stamp with non-owned Planet", async function () {
-            // 9 is not owned
-            await expect(
-                pass.connect(accounts[0])['visitPlanet(uint256,uint256[],uint256[])'](0, [0, 1, 2, 9], [0, 0, 0, 0])
-            )
-                .to.be.revertedWith("Not owner of planet");
-        });
-
-        it("should not be able to batch-stamp a non-owned Pass", async function () {
-            await expect(
-                pass.connect(accounts[0])['visitPlanet(uint256,uint256[],uint256[])'](1, [0, 1, 2, 3], [0, 0, 0, 0])
-            )
-                .to.be.revertedWith("Not owner of pass");
-        });
-
         it("should be able to stamp into the correct Passport", async function () {
             // ID = 2
             await pass.connect(accounts[0]).safeMint(accounts[0].getAddress(), "Another One");

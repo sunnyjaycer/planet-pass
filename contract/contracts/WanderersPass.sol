@@ -38,6 +38,10 @@ contract WanderersPass is
     /// Mapping of Passes to array of stamps
     mapping(uint256 => Visit[]) private stamps;
 
+    /// Mapping of owners to visit() approvals
+    /// This is basically setApprovalForAll() but ONLY for creating Visits.
+    mapping(address => mapping(address => bool)) public visitDelegationApprovals; 
+
     /// Location of Planet contract
     WanderersPlanet public planetContract;
 
@@ -56,6 +60,9 @@ contract WanderersPass is
         uint256 planetState,
         uint256 stampId
     );
+
+    /// Event emitted when the visit delegation approval of an address is updated.
+    event VisitDelegationApproval(address indexed owner, address indexed operator, bool approved);
 
     constructor(
         WanderersPlanet _planetContract,
@@ -157,32 +164,30 @@ contract WanderersPass is
         _visitPlanet(id, planetId, stampId);
     }
 
-    /// Visit multiple Planets
+    /// Delegated visiting of a planet.
+    /// Note: `msg.sender` must be approved by `owner`, otherwise this will revert.
+    /// Note: `owner` must own the Stamp required, otherwise this will revert.
+    /// @param owner the owner of the Pass
     /// @param id the token ID of the Pass
-    /// @param planetId an array of IDs of Planets to visit
-    function visitPlanet(uint256 id, uint256[] calldata planetId, uint256[] calldata stampId)
-        external
-        whenNotPaused
-    {
-        // Make sure lengths match
-        require(planetId.length == stampId.length, "Array length mismatch");
-        // Make sure pass is owned by sender
-        require(ownerOf(id) == msg.sender, "Not owner of pass");
+    /// @param planetId the token ID of the Planet to visit
+    /// @param stampId the token ID of the stamp to use
+    function delegateVisitPlanet(address owner, uint256 id, uint256 planetId, uint256 stampId) external whenNotPaused {
+        // Make sure the Delegated is approved
+        require(visitDelegationApprovals[owner][msg.sender], "Not approved for delegate visit");
+        // Make sure the Delegated owns the planet
+        require(
+            planetContract.ownerOf(planetId) == msg.sender,
+            "Delegated not owner of planet"
+        );
+        // Make sure pass is owned by `owner`
+        require(ownerOf(id) == owner, "Not owner of pass");
 
-        for (uint256 i = 0; i < planetId.length; i++) {
-            // Make sure planet is owned by sender
-            require(
-                planetContract.ownerOf(planetId[i]) == msg.sender,
-                "Not owner of planet"
-            );
+        // Make sure stamp item is a stamp
+        require(planetPassItemsContract.itemType(stampId) == STAMP_IDENT, "Item not a stamp");
+        // Make sure sender has the stamp type
+        require(planetPassItemsContract.balanceOf(owner, stampId) != 0, "Item not owned");
 
-            // Make sure stamp item is a stamp
-            require(planetPassItemsContract.itemType(stampId[i]) == STAMP_IDENT, "Item not a stamp");
-            // Make sure sender has the stamp type
-            require(planetPassItemsContract.balanceOf(msg.sender, stampId[i]) != 0, "Item not owned");
-
-            _visitPlanet(id, planetId[i], stampId[i]);
-        }
+        _visitPlanet(id, planetId, stampId);
     }
 
     /// Return the tokens owned by a owner
@@ -200,6 +205,16 @@ contract WanderersPass is
         }
 
         return tokens;
+    }
+
+    /// Set the visit delegation approval.
+    /// If set to `true`, the `operator` will be allowed to visit planets on the sender's behalf.
+    /// @param operator the address of the operator
+    /// @param approved whether the operator is approved
+    function setVisitDelegationApproval(address operator, bool approved) external {
+        require(operator != msg.sender, "Approval to caller");
+        visitDelegationApprovals[msg.sender][operator] = approved;
+        emit VisitDelegationApproval(msg.sender, operator, approved);
     }
 
     // The following functions are overrides required by Solidity.

@@ -26,6 +26,11 @@ describe("TravelAgency", function () {
         const Items = await ethers.getContractFactory("PlanetPassItems");
         items = await Items.connect(accounts[0]).deploy();
         await items.deployed();
+        await items.connect(accounts[0]).setItemType(0, "STAMP");
+        // Airdrop stamps to everyone
+        for (let i = 0; i < 5; i++) {
+            await items.connect(accounts[0]).mint(accounts[i].getAddress(), 0, 1, []);
+        }
 
         const Pass = await ethers.getContractFactory("WanderersPass");
         pass = await Pass.connect(accounts[0]).deploy(planets.address, items.address);
@@ -243,7 +248,7 @@ describe("TravelAgency", function () {
 
     const flashStampTests = {
         "should be able to be used by other users": async function () {
-            await agency.connect(accounts[2]).flashStamp(0, 2);
+            await agency.connect(accounts[2]).flashStamp(0, 2, 0);
 
             expect(await pass.ownerOf(2)).to.equal(await accounts[2].getAddress());
 
@@ -258,7 +263,7 @@ describe("TravelAgency", function () {
         },
 
         "should be able to be used by Planet owner": async function () {
-            await agency.connect(accounts[0]).flashStamp(0, 0);
+            await agency.connect(accounts[0]).flashStamp(0, 0, 0);
 
             expect(await pass.ownerOf(0)).to.equal(await accounts[0].getAddress());
 
@@ -291,10 +296,10 @@ describe("TravelAgency", function () {
             await dummyWeth.connect(accounts[1]).approve(agency.address, parseEther("1000000"));
             await dummyWeth.connect(accounts[2]).approve(agency.address, parseEther("1000000"));
 
-            // Allow TravelAgency to use Passes
-            await pass.connect(accounts[0]).setApprovalForAll(agency.address, true);
-            await pass.connect(accounts[1]).setApprovalForAll(agency.address, true);
-            await pass.connect(accounts[2]).setApprovalForAll(agency.address, true);
+            // Allow TravelAgency to perform delegate visits
+            await pass.connect(accounts[0]).setVisitDelegationApproval(agency.address, true);
+            await pass.connect(accounts[1]).setVisitDelegationApproval(agency.address, true);
+            await pass.connect(accounts[2]).setVisitDelegationApproval(agency.address, true);
         });
 
         context("when paused", function () {
@@ -317,9 +322,9 @@ describe("TravelAgency", function () {
                 }
             });
 
-            it("should not able to use flashStamp", async function () {
+            it("should not be able to use flashStamp", async function () {
                 await expect(
-                    agency.connect(accounts[2]).flashStamp(0, 2)
+                    agency.connect(accounts[2]).flashStamp(0, 2, 0)
                 )
                     .to.be.revertedWith("Pausable: paused");
             });
@@ -418,7 +423,7 @@ describe("TravelAgency", function () {
 
             it("should not be able to flash-stamp a planet not in contract", async function () {
                 await expect(
-                    agency.connect(accounts[2]).flashStamp(5, 0)
+                    agency.connect(accounts[2]).flashStamp(5, 0, 0)
                 )
                     .to.be.revertedWith("Planet not in contract");
             });
@@ -442,7 +447,7 @@ describe("TravelAgency", function () {
             await dummyWeth.connect(accounts[2]).approve(agency.address, parseEther("1000000"));
 
             // Allow TravelAgency to use Passes
-            await pass.connect(accounts[2]).setApprovalForAll(agency.address, true);
+            await pass.connect(accounts[2]).setVisitDelegationApproval(agency.address, true);
 
             // Make sure operator fee is 0
             await agency.updateOperatorFeeBp(0);
@@ -462,7 +467,7 @@ describe("TravelAgency", function () {
             );
 
             // Account 1 uses travel agency on planet 0 for pass 0
-            await agency.connect(accounts[2]).flashStamp(0, 0);
+            await agency.connect(accounts[2]).flashStamp(0, 0, 0);
         });
 
         it("should be able to withdraw fees", async function () {
@@ -481,7 +486,7 @@ describe("TravelAgency", function () {
 
         it("should be able to withdraw fees after multiple visits", async function () {
             // Visit again
-            await agency.connect(accounts[2]).flashStamp(0, 0);
+            await agency.connect(accounts[2]).flashStamp(0, 0, 0);
 
             await expect(
                 agency.connect(accounts[1]).withdrawOwnerFees(await accounts[1].getAddress())
@@ -529,7 +534,7 @@ describe("TravelAgency", function () {
             await dummyWeth.connect(accounts[1]).approve(agency.address, parseEther("1000000"));
 
             // Allow TravelAgency to use Passes
-            await pass.connect(accounts[1]).setApprovalForAll(agency.address, true);
+            await pass.connect(accounts[1]).setVisitDelegationApproval(agency.address, true);
 
             // Make sure operator fee is 0
             await agency.updateOperatorFeeBp(500);
@@ -549,7 +554,7 @@ describe("TravelAgency", function () {
             );
 
             // Account 1 uses travel agency on planet 0 for pass 0
-            await agency.connect(accounts[1]).flashStamp(0, 0);
+            await agency.connect(accounts[1]).flashStamp(0, 0, 0);
 
             const feeBp = await agency.operatorFeeBp();
             const cost = await agency.planetFees(0);
@@ -572,7 +577,7 @@ describe("TravelAgency", function () {
 
         it("should be able to withdraw fees after multiple visits", async function () {
             // Visit again
-            await agency.connect(accounts[1]).flashStamp(0, 0);
+            await agency.connect(accounts[1]).flashStamp(0, 0, 0);
 
             await expect(
                 agency.connect(accounts[0]).withdrawOperatorFees(await accounts[0].getAddress())
@@ -670,7 +675,7 @@ describe("TravelAgency", function () {
                     0
                 )
             )
-                .to.be.revertedWith("Cannot accept Pass");
+                .to.be.revertedWith("Token not accepted");
         });
     });
 });
