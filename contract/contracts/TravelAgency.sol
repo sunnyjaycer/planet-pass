@@ -53,10 +53,20 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     /// Switch for turning rewards on and off (initially false!)
     bool public rewardSwitch;
 
-    /// Prevent non-stamping Pass deposits into this contract.
-    /// This variable is temporarily set to true during a call to flashStamp() and is required
-    /// to be true for a Pass deposit in onERC721Received().
-    bool private acceptPass;
+    /// Event emitted when the travel agency is used.
+    event FlashStamp(
+        address indexed from,
+        address indexed planetOwner,
+        uint256 indexed planetId,
+        uint256 passId
+    );
+
+    /// Event emitted when a Planet's fee is updated.
+    event UpdatePlanetFee(
+        address indexed from,
+        uint256 indexed planetId,
+        uint256 fee
+    );
 
     constructor(
         uint256 _operatorFeeBp,
@@ -70,7 +80,6 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         planetContract = _planetContract;
         passContract = _passContract;
         wrappedEthContract = _wrappedEthContract;
-        acceptPass = false;
         rewardSwitch = false;
         _pause();
     }
@@ -138,11 +147,11 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
 
     // TODO: test stardust reward dispersal
     /// Perform a flash-stamp of planetId onto passId.
-    /// Note: this requires an approval from Planet Pass for passId, otherwise it will revert.
+    /// Note: this requires visitDelegationApproval from Planet Pass for this contract, otherwise it will revert.
     /// Note: this requqires ERC-20 spending approval for WETH, otherwise it will revert.
     /// @param planetId token ID of the planet to visit.
     /// @param passId token ID of the pass that will used for stamping.
-    function flashStamp(uint256 planetId, uint256 passId)
+    function flashStamp(uint256 planetId, uint256 passId, uint256 stampId)
         external
         whenNotPaused
     {
@@ -154,36 +163,21 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         // Send WETH to contract
         // The owner of the planet never pays any fees
         if (fee != 0 && msg.sender != planetOwner) {
-            // Calculate contract deployer's cut and planet owner's cut
-            uint256 ownerFee = calculateOperatorFee(fee);
-            uint256 payoutFee = fee - ownerFee;
+            // Calculate operator's cut and owner's cut
+            (uint256 operatorCut, uint256 ownerCut) = calculateFee(fee);
 
             ownerFeesAccrued[planetOwner] += ownerCut;
-            // NOTE: Great, we increase the fees accrued, but where do we actually take that fee from the traveler??
             operatorFeeAccrued += operatorCut;
 
             bool success = wrappedEthContract.transferFrom(
                 msg.sender,
                 address(this),
-                payoutFee
+                fee
             );
             require(success, "Token transfer failed");
         }
 
-        // Enable pass deposit
-        acceptPass = true;
-
-        // Temporarily take Pass from sender
-        passContract.safeTransferFrom(msg.sender, address(this), passId);
-
-        // Stamp
-        passContract.visitPlanet(passId, planetId);
-
-        // Disable pass deposit
-        acceptPass = false;
-
-        // Return it to the sender
-        passContract.safeTransferFrom(address(this), msg.sender, passId);
+        passContract.delegateVisitPlanet(msg.sender, passId, planetId, stampId);
 
         // If TravelAgency has been approved for minting and rewards are active
         if (stardustContract.hasRole(keccak256("MINTER_ROLE"), address(this)) && rewardSwitch) {
@@ -192,21 +186,28 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
             uint256 feeReward = (fee * starDustRewardBp) / BASIS_POINTS_DIVISOR;
             stardustContract.mint(msg.sender, stateReward + feeReward);
         }
+        
+        emit FlashStamp(msg.sender, planetOwner, planetId, passId);
     }
 
-
-    /// @dev calculates the fee designated for the operator (owner of contract).
+    /// @dev calculates the fee designated for operator (owner of contract) and owner (owner of planet).
     /// @param fee the fee charged by the planet owner
-    function calculateOperatorFee(uint256 fee) internal view returns (uint256) {
-        return (fee * operatorFeeBp) / BASIS_POINTS_DIVISOR;
+    function calculateFee(uint256 fee)
+        internal
+        view
+        returns (uint256 operatorCut, uint256 ownerCut)
+    {
+        operatorCut = (fee * operatorFeeBp) / BASIS_POINTS_DIVISOR;
+        ownerCut = fee - operatorCut;
     }
 
     /// Updates the fee charged by the Planet owner.
     /// @param id the token ID of the planet
     /// @param _fee the new fee charged by the planet owner
-    function setOwnerFee(uint256 id, uint256 _fee) external whenNotPaused {
+    function updatePlanetFee(uint256 id, uint256 _fee) external whenNotPaused {
         require(msg.sender == planetOwners[id], "Not owner of planet");
         planetFees[id] = _fee;
+        emit UpdatePlanetFee(msg.sender, id, _fee);
     }
 
     /// Withdraws the accured operator fees to a designated address.
@@ -249,17 +250,12 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         uint256 tokenId,
         bytes calldata data
     ) external override whenNotPaused returns (bytes4) {
-        if (msg.sender == address(planetContract)) {
-            uint256 fee = data.toUint256(0);
-            planetOwners[tokenId] = operator;
-            planetFees[tokenId] = fee;
-        } else if (msg.sender == address(passContract)) {
-            if (!acceptPass) {
-                revert("Cannot accept Pass");
-            }
-        } else {
+        if (msg.sender != address(planetContract)) {
             revert("Token not accepted");
         }
+        uint256 fee = data.toUint256(0);
+        planetOwners[tokenId] = operator;
+        planetFees[tokenId] = fee;
 
         // Make compiler shut up
         from;

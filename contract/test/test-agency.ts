@@ -4,7 +4,6 @@ import { BigNumber, Signer } from "ethers";
 import { expect, use } from "chai";
 import { solidity } from "ethereum-waffle";
 import { parseEther, solidityPack } from "ethers/lib/utils";
-import { start } from "repl";
 
 use(solidity);
 
@@ -12,6 +11,7 @@ describe("TravelAgency", function () {
     let accounts: Signer[];
     let planets: any;
     let pass: any;
+    let items: any;
     let agency: any;
     let dummyWeth: any;
     let stardust: any;
@@ -32,8 +32,17 @@ describe("TravelAgency", function () {
         planets = await Planets.connect(accounts[0]).deploy("example.com/", zero, stardust.address);
         await planets.deployed();
 
+        const Items = await ethers.getContractFactory("PlanetPassItems");
+        items = await Items.connect(accounts[0]).deploy();
+        await items.deployed();
+        await items.connect(accounts[0]).setItemType(0, "STAMP");
+        // Airdrop stamps to everyone
+        for (let i = 0; i < 5; i++) {
+            await items.connect(accounts[0]).mint(accounts[i].getAddress(), 0, 1, []);
+        }
+
         const Pass = await ethers.getContractFactory("WanderersPass");
-        pass = await Pass.connect(accounts[0]).deploy(planets.address);
+        pass = await Pass.connect(accounts[0]).deploy(planets.address, items.address);
         await pass.deployed();
         await pass.unpause();
 
@@ -70,7 +79,7 @@ describe("TravelAgency", function () {
 
         beforeEach(async function () {
             const Pass = await ethers.getContractFactory("WanderersPass");
-            newPass = await Pass.connect(accounts[0]).deploy(planets.address);
+            newPass = await Pass.connect(accounts[0]).deploy(planets.address, items.address);
             await newPass.deployed();
         });
 
@@ -97,7 +106,7 @@ describe("TravelAgency", function () {
         });
     });
 
-    describe("updateOwnerFee", async function () {
+    describe("updatePlanetFee", async function () {
         let oldCost: string;
         let newCost: string;
 
@@ -123,13 +132,13 @@ describe("TravelAgency", function () {
 
         it("planet owner should be able to update fee", async function () {
             expect(await agency.planetFees(0)).to.equal(oldCost);
-            await agency.connect(accounts[0]).setOwnerFee(0, newCost);
+            await agency.updatePlanetFee(0, newCost);
             expect(await agency.planetFees(0)).to.equal(newCost);
         });
 
         it("non-owner should not be able to update fee", async function () {
             expect(await agency.planetFees(0)).to.equal(oldCost);
-            await expect(agency.connect(accounts[1]).setOwnerFee(0, newCost))
+            await expect(agency.connect(accounts[1]).updatePlanetFee(0, newCost))
                 .to.be.revertedWith("Not owner of planet");
         });
     })
@@ -245,11 +254,11 @@ describe("TravelAgency", function () {
 
     const flashStampTests = {
         "should be able to be used by other users": async function () {
-            await agency.connect(accounts[2]).flashStamp(0, 2);
+            await agency.connect(accounts[2]).flashStamp(0, 2, 0);
 
             expect(await pass.ownerOf(2)).to.equal(await accounts[2].getAddress());
 
-            const stamps = await pass.getStamps(2);
+            const stamps = await pass.getVisits(2);
             expect(stamps.length).to.equal(1);
             expect(stamps[0]["planetId"]).to.equal(0);
 
@@ -260,11 +269,11 @@ describe("TravelAgency", function () {
         },
 
         "should be able to be used by Planet owner": async function () {
-            await agency.connect(accounts[0]).flashStamp(0, 0);
+            await agency.connect(accounts[0]).flashStamp(0, 0, 0);
 
             expect(await pass.ownerOf(0)).to.equal(await accounts[0].getAddress());
 
-            const stamps = await pass.getStamps(0);
+            const stamps = await pass.getVisits(0);
             expect(stamps.length).to.equal(1);
             expect(stamps[0]["planetId"]).to.equal(0);
 
@@ -293,10 +302,10 @@ describe("TravelAgency", function () {
             await dummyWeth.connect(accounts[1]).approve(agency.address, parseEther("1000000"));
             await dummyWeth.connect(accounts[2]).approve(agency.address, parseEther("1000000"));
 
-            // Allow TravelAgency to use Passes
-            await pass.connect(accounts[0]).setApprovalForAll(agency.address, true);
-            await pass.connect(accounts[1]).setApprovalForAll(agency.address, true);
-            await pass.connect(accounts[2]).setApprovalForAll(agency.address, true);
+            // Allow TravelAgency to perform delegate visits
+            await pass.connect(accounts[0]).setVisitDelegationApproval(agency.address, true);
+            await pass.connect(accounts[1]).setVisitDelegationApproval(agency.address, true);
+            await pass.connect(accounts[2]).setVisitDelegationApproval(agency.address, true);
         });
 
         context("when paused", function () {
@@ -319,9 +328,9 @@ describe("TravelAgency", function () {
                 }
             });
 
-            it("should not able to use flashStamp", async function () {
+            it("should not be able to use flashStamp", async function () {
                 await expect(
-                    agency.connect(accounts[2]).flashStamp(0, 2)
+                    agency.connect(accounts[2]).flashStamp(0, 2, 0)
                 )
                     .to.be.revertedWith("Pausable: paused");
             });
@@ -420,7 +429,7 @@ describe("TravelAgency", function () {
 
             it("should not be able to flash-stamp a planet not in contract", async function () {
                 await expect(
-                    agency.connect(accounts[2]).flashStamp(5, 0)
+                    agency.connect(accounts[2]).flashStamp(5, 0, 0)
                 )
                     .to.be.revertedWith("Planet not in contract");
             });
@@ -444,7 +453,7 @@ describe("TravelAgency", function () {
             await dummyWeth.connect(accounts[2]).approve(agency.address, parseEther("1000000"));
 
             // Allow TravelAgency to use Passes
-            await pass.connect(accounts[2]).setApprovalForAll(agency.address, true);
+            await pass.connect(accounts[2]).setVisitDelegationApproval(agency.address, true);
 
             // Make sure operator fee is 0
             await agency.setOperatorFeeBp(0);
@@ -464,7 +473,7 @@ describe("TravelAgency", function () {
             );
 
             // Account 1 uses travel agency on planet 0 for pass 0
-            await agency.connect(accounts[2]).flashStamp(0, 0);
+            await agency.connect(accounts[2]).flashStamp(0, 0, 0);
         });
 
         it("should be able to withdraw fees", async function () {
@@ -483,7 +492,7 @@ describe("TravelAgency", function () {
 
         it("should be able to withdraw fees after multiple visits", async function () {
             // Visit again
-            await agency.connect(accounts[2]).flashStamp(0, 0);
+            await agency.connect(accounts[2]).flashStamp(0, 0, 0);
 
             await expect(
                 agency.connect(accounts[1]).withdrawOwnerFees(await accounts[1].getAddress())
@@ -531,7 +540,7 @@ describe("TravelAgency", function () {
             await dummyWeth.connect(accounts[1]).approve(agency.address, parseEther("1000000"));
 
             // Allow TravelAgency to use Passes
-            await pass.connect(accounts[1]).setApprovalForAll(agency.address, true);
+            await pass.connect(accounts[1]).setVisitDelegationApproval(agency.address, true);
 
             // Make sure operator fee is 0
             await agency.setOperatorFeeBp(500);
@@ -551,7 +560,7 @@ describe("TravelAgency", function () {
             );
 
             // Account 1 uses travel agency on planet 0 for pass 0
-            await agency.connect(accounts[1]).flashStamp(0, 0);
+            await agency.connect(accounts[1]).flashStamp(0, 0, 0);
 
             const feeBp = await agency.operatorFeeBp();
             const cost = await agency.planetFees(0);
@@ -574,7 +583,7 @@ describe("TravelAgency", function () {
 
         it("should be able to withdraw fees after multiple visits", async function () {
             // Visit again
-            await agency.connect(accounts[1]).flashStamp(0, 0);
+            await agency.connect(accounts[1]).flashStamp(0, 0, 0);
 
             await expect(
                 agency.connect(accounts[0]).withdrawOperatorFees(await accounts[0].getAddress())
@@ -672,7 +681,7 @@ describe("TravelAgency", function () {
                     0
                 )
             )
-                .to.be.revertedWith("Cannot accept Pass");
+                .to.be.revertedWith("Token not accepted");
         });
     });
 });
