@@ -94,7 +94,7 @@ contract WanderersPass is
 
     /// Updates the location of the Item contract.
     /// @param _planetPassItemsContract the new location of the Planet contract
-    function updatePlanetPassItems(PlanetPassItems _planetPassItemsContract)
+    function setPlanetPassItemsContract(PlanetPassItems _planetPassItemsContract)
         external
         onlyOwner
     {
@@ -123,7 +123,11 @@ contract WanderersPass is
     /// @dev create a Visit struct
     /// @param planetId the token ID of the Planet
     /// @return a Visit struct
-    function _makeVisit(uint256 planetId, uint256 stampId) internal view returns (Visit memory) {
+    function _makeVisit(uint256 planetId, uint256 stampId)
+        internal
+        view
+        returns (Visit memory)
+    {
         return Visit(planetId, planetContract.planetState(planetId), stampId);
     }
 
@@ -131,7 +135,11 @@ contract WanderersPass is
     /// @param id the token ID of the Pass
     /// @param planetId the token ID of the Planet to visit
     /// @param stampId the token ID of the stamp to use
-    function _visitPlanet(uint256 id, uint256 planetId, uint256 stampId) internal {
+    function _visitPlanet(
+        uint256 id,
+        uint256 planetId,
+        uint256 stampId
+    ) internal {
         stamps[id].push(_makeVisit(planetId, stampId));
 
         emit Stamp(
@@ -147,7 +155,11 @@ contract WanderersPass is
     /// @param id the token ID of the Pass
     /// @param planetId the token ID of the Planet to visit
     /// @param stampId the token ID of the stamp to use
-    function visitPlanet(uint256 id, uint256 planetId, uint256 stampId) external whenNotPaused {
+    function visitPlanet(
+        uint256 id,
+        uint256 planetId,
+        uint256 stampId
+    ) external whenNotPaused {
         // Make sure planet is owned by sender
         require(
             planetContract.ownerOf(planetId) == msg.sender,
@@ -157,9 +169,15 @@ contract WanderersPass is
         require(ownerOf(id) == msg.sender, "Not owner of pass");
 
         // Make sure stamp item is a stamp
-        require(planetPassItemsContract.itemType(stampId) == STAMP_IDENT, "Item not a stamp");
+        require(
+            planetPassItemsContract.itemType(stampId) == STAMP_IDENT,
+            "Item not a stamp"
+        );
         // Make sure sender has the stamp type
-        require(planetPassItemsContract.balanceOf(msg.sender, stampId) != 0, "Item not owned");
+        require(
+            planetPassItemsContract.balanceOf(msg.sender, stampId) != 0,
+            "Item not owned"
+        );
 
         _visitPlanet(id, planetId, stampId);
     }
@@ -171,9 +189,17 @@ contract WanderersPass is
     /// @param id the token ID of the Pass
     /// @param planetId the token ID of the Planet to visit
     /// @param stampId the token ID of the stamp to use
-    function delegateVisitPlanet(address owner, uint256 id, uint256 planetId, uint256 stampId) external whenNotPaused {
+    function delegateVisitPlanet(
+        address owner,
+        uint256 id,
+        uint256 planetId,
+        uint256 stampId
+    ) external whenNotPaused {
         // Make sure the Delegated is approved
-        require(visitDelegationApprovals[owner][msg.sender], "Not approved for delegate visit");
+        require(
+            visitDelegationApprovals[owner][msg.sender],
+            "Not approved for delegate visit"
+        );
         // Make sure the Delegated owns the planet
         require(
             planetContract.ownerOf(planetId) == msg.sender,
@@ -183,9 +209,15 @@ contract WanderersPass is
         require(ownerOf(id) == owner, "Not owner of pass");
 
         // Make sure stamp item is a stamp
-        require(planetPassItemsContract.itemType(stampId) == STAMP_IDENT, "Item not a stamp");
+        require(
+            planetPassItemsContract.itemType(stampId) == STAMP_IDENT,
+            "Item not a stamp"
+        );
         // Make sure sender has the stamp type
-        require(planetPassItemsContract.balanceOf(owner, stampId) != 0, "Item not owned");
+        require(
+            planetPassItemsContract.balanceOf(owner, stampId) != 0,
+            "Item not owned"
+        );
 
         _visitPlanet(id, planetId, stampId);
     }
@@ -211,7 +243,9 @@ contract WanderersPass is
     /// If set to `true`, the `operator` will be allowed to visit planets on the sender's behalf.
     /// @param operator the address of the operator
     /// @param approved whether the operator is approved
-    function setVisitDelegationApproval(address operator, bool approved) external {
+    function setVisitDelegationApproval(address operator, bool approved)
+        external
+    {
         require(operator != msg.sender, "Approval to caller");
         visitDelegationApprovals[msg.sender][operator] = approved;
         emit VisitDelegationApproval(msg.sender, operator, approved);
