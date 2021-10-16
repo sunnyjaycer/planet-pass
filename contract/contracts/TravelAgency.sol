@@ -39,11 +39,6 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     /// Mapping of owners to fees accured
     mapping(address => uint256) public ownerFeesAccrued;
 
-    /// Prevent non-stamping Pass deposits into this contract.
-    /// This variable is temporarily set to true during a call to flashStamp() and is required
-    /// to be true for a Pass deposit in onERC721Received().
-    bool private acceptPass;
-
     /// Event emitted when the travel agency is used.
     event FlashStamp(
         address indexed from,
@@ -69,7 +64,6 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         planetContract = _planetContract;
         passContract = _passContract;
         wrappedEthContract = _wrappedEthContract;
-        acceptPass = false;
         _pause();
     }
 
