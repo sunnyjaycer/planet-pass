@@ -26,9 +26,36 @@ describe("WanderersPass", function () {
         await items.connect(accounts[0]).setItemType(0, "STAMP");
 
         const Pass = await ethers.getContractFactory("WanderersPass");
-        pass = await Pass.connect(accounts[0]).deploy(planets.address, items.address);
+        pass = await Pass.connect(accounts[0]).deploy("example.com/", planets.address, items.address);
         await pass.deployed();
     })
+
+    describe("uri", function () {
+        beforeEach(async function () {
+            if (await pass.paused()) {
+                await pass.unpause();
+            }
+
+            await pass.connect(accounts[0]).safeMint(accounts[0].getAddress(), "Test");
+        });
+
+        it("should revert for a non-existent token", async function () {
+            await expect(
+                pass.tokenURI(1)
+            )
+                .to.be.revertedWith("ERC721Metadata: URI query for nonexistent token");
+        });
+
+        it("should have the right uri", async function () {
+            expect(await pass.tokenURI(0)).to.equal("example.com/0");
+        });
+
+        it("should be able to change uri", async function () {
+            await pass.connect(accounts[0]).updateBaseURI("emmy.org/");
+
+            expect(await pass.tokenURI(0)).to.equal("emmy.org/0");
+        });
+    });
 
     describe("safeMint", function () {
         context("when Pass creation is disabled", function () {

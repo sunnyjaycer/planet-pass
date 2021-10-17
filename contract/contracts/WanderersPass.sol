@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "./WanderersPlanet.sol";
 import "./Nameable.sol";
 import "./PlanetPassItems.sol";
@@ -18,6 +19,10 @@ contract WanderersPass is
     Nameable
 {
     using Counters for Counters.Counter;
+    using Strings for uint256;
+
+    /// Base URI for metadata.
+    string private baseURI;
 
     /// A strictly monotonically increasing counter of token IDs.
     Counters.Counter private _tokenIdCounter;
@@ -65,9 +70,11 @@ contract WanderersPass is
     event VisitDelegationApproval(address indexed owner, address indexed operator, bool approved);
 
     constructor(
+        string memory baseURI_,
         WanderersPlanet _planetContract,
         PlanetPassItems _planetPassItemsContract
     ) ERC721("WanderersPass", "WANDERER-PASS") {
+        baseURI = baseURI_;
         planetContract = _planetContract;
         planetPassItemsContract = _planetPassItemsContract;
         _pause();
@@ -81,6 +88,42 @@ contract WanderersPass is
     /// Unpauses the contract.
     function unpause() external onlyOwner {
         _unpause();
+    }
+
+    /// @dev override for base URI
+    /// @return the variable `baseURI`
+    function _baseURI() internal view override returns (string memory) {
+        return baseURI;
+    }
+
+    /// Updates the base URI.
+    /// @param newBaseURI the new base URI to be used
+    function updateBaseURI(string calldata newBaseURI) external onlyOwner {
+        baseURI = newBaseURI;
+    }
+
+    /// @dev override for token URI
+    /// @return the token URI of a given token
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override
+        returns (string memory)
+    {
+        require(
+            _exists(tokenId),
+            "ERC721Metadata: URI query for nonexistent token"
+        );
+
+        return
+            bytes(_baseURI()).length > 0
+                ? string(
+                    abi.encodePacked(
+                        _baseURI(),
+                        tokenId.toString()
+                    )
+                )
+                : "";
     }
 
     /// Updates the location of the Planet contract.
