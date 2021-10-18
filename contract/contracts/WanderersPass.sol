@@ -58,6 +58,7 @@ contract WanderersPass is
     /// @param passId the Pass that was stamped
     /// @param planetId the Planet that was stamped
     /// @param planetState the state of the Planet at the time of stamping
+    /// @param stampId the token ID of the stamp used for the visit
     event Stamp(
         address indexed from,
         uint256 indexed passId,
