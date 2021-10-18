@@ -32,6 +32,7 @@ const DetailsModal: FunctionComponent<DetailsModalProps> = ({
 }) => {
   const [activeStamp, setActiveStamp] = useState('Basic Green')
   const [currentPrice, setCurrentPrice] = useState('0.15')
+  const [currentName, setCurrentName] = useState(name)
 
   const transactionContext = useContext(TransactionContext)
 
@@ -42,8 +43,8 @@ const DetailsModal: FunctionComponent<DetailsModalProps> = ({
     handleClose && handleClose()
   }
 
-  const handlePriceClick = () => {
-    alert('TODO: Handle Update Price')
+  const handlePlanetUpdate = () => {
+    alert('TODO: Handle Update Planet')
   }
   return (
     <Modal
@@ -66,17 +67,19 @@ const DetailsModal: FunctionComponent<DetailsModalProps> = ({
         </button>
         <div className={style.planetInfo}>
           <div>
-            <div className={style.videoContainer}>
-              <LazyMedia videoSrc={videoSrc} videoControls />
-            </div>
-            <div className={style.planetHeader}>
-              <h1 className={style.planetName}>{name}</h1>
+            <div className={style.leftBar}>
+              <div className={style.videoContainer}>
+                <LazyMedia videoSrc={videoSrc} videoControls />
+              </div>
+              <div className={style.planetHeader}>
+                <h1 className={style.planetName}>{name}</h1>
 
-              <Button
-                text="View on OpenSea"
-                buttonStyle="tertiary"
-                linkUrl="https://opensea.io/collection/the-wanderers"
-              />
+                <Button
+                  text="View on OpenSea"
+                  buttonStyle="tertiary"
+                  linkUrl="https://opensea.io/collection/the-wanderers"
+                />
+              </div>
             </div>
           </div>
           <div className={style.planetText}>
@@ -85,7 +88,7 @@ const DetailsModal: FunctionComponent<DetailsModalProps> = ({
               <div className={style.ownerInputs}>
                 <div className={style.textInputWrap}>
                   <label className={style.label} htmlFor="VisitPrice">
-                    Set Visit Price (WETH)
+                    Visit Price (WETH)
                   </label>
                   <input
                     id="VisitPrice"
@@ -97,13 +100,28 @@ const DetailsModal: FunctionComponent<DetailsModalProps> = ({
                     }}
                   />
                 </div>
-                <div className={style.priceBtn}>
-                  <Button
-                    text="Update Price"
-                    buttonStyle="secondary"
-                    handleClick={handlePriceClick}
+                <div className={style.textInputWrap}>
+                  <label className={style.label} htmlFor="SetPlanetName">
+                    Planet Name
+                  </label>
+                  <input
+                    id="SetPlanetName"
+                    type="text"
+                    className={style.textInput}
+                    value={currentName}
+                    onChange={(e) => {
+                      setCurrentName(e.target.value)
+                    }}
                   />
                 </div>
+              </div>
+              <div className={style.formBottom}>
+                <div />
+                <Button
+                  text="Update Planet"
+                  buttonStyle="secondary"
+                  handleClick={handlePlanetUpdate}
+                />
               </div>
             </div>
 

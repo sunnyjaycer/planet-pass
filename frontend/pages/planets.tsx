@@ -23,7 +23,13 @@ const Home: NextPage = () => {
           return fetch(url).then((response) => response.json())
         })
       )
+      const data = metadata.map((d) => {
+        d.price = '0.15'
+        d.name = 'Planet Name'
+        return d
+      })
       setIsLoading(false)
+
       setData(metadata)
     })()
   }, [])

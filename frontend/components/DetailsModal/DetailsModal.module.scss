@@ -104,7 +104,7 @@
 .planetInfo {
   @include break-md {
     display: grid;
-    grid-template-columns: 0.9fr 1fr;
+    grid-template-columns: 0.8fr 1fr;
     gap: 5rem;
   }
 }
@@ -144,7 +144,7 @@
 }
 .planetAttributes {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 2rem;
 }
 .attribute {
@@ -176,7 +176,7 @@
   background: $c-grey;
   border: 1px solid $c-green;
   border-radius: 8px;
-  padding: 2rem;
+  padding: 2rem 2rem 1.5rem;
   margin: 3rem 0;
 }
 
@@ -198,11 +198,11 @@
 }
 .formBottom {
   position: relative;
-  padding-top: 2rem;
+  padding-top: 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 2rem;
+  margin-top: 1rem;
   &:before {
     position: absolute;
     left: -2rem;
@@ -216,7 +216,6 @@
 
 .textInputWrap {
   margin: 1rem 0;
-  max-width: 15rem;
 }
 
 .textInput {
@@ -227,10 +226,10 @@
   margin: 1rem 0;
   color: $c-green;
   width: 100%;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-family: $f-mono;
   transition: all 0.2s;
-  font-weight: 900;
+
   &:focus {
     background: rgba($c-green, 0.025);
     outline: 0;
@@ -245,18 +244,16 @@
   left: 1rem;
 }
 .ownerInputs {
-  & > * {
-    margin-bottom: rem;
-  }
   @include break-lg {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    & > * {
-      margin-bottom: 0;
-    }
-    .priceBtn {
-      transform: translateY(10px);
-    }
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+.leftBar {
+  @media (min-height: 768px) {
+    position: sticky;
+    top: 0;
   }
 }
