@@ -1,18 +1,17 @@
-import { FunctionComponent, useRef, useContext } from 'react'
+import { FunctionComponent, useState, useContext } from 'react'
 import { TransactionContext } from '../../context/TransactionContext'
 import style from './DetailsModal.module.scss'
 import { CloseIcon } from '../Icons'
-import SelectPassport from '../SelectPassport'
+import Select from '../Select'
 import Button from '../Button'
 import Modal from 'react-modal'
 import LazyMedia from '../LazyMedia'
+import Image from 'next/image'
+import { Attribute } from '../../types'
+import stampGreen from '../../assets/stamps/stamp-basic-green.png'
+import stampPink from '../../assets/stamps/stamp-basic-pink.png'
 
-type Attribute = {
-  trait_type: string
-  value: string | number
-}
-
-type DetailsModal = {
+type DetailsModalProps = {
   name: string
   attributes: Attribute[]
   price: number
@@ -22,7 +21,7 @@ type DetailsModal = {
   isOpen: boolean
 }
 
-const DetailsModal: FunctionComponent<DetailsModal> = ({
+const DetailsModal: FunctionComponent<DetailsModalProps> = ({
   name,
   attributes,
   price,
@@ -31,6 +30,9 @@ const DetailsModal: FunctionComponent<DetailsModal> = ({
   handleClose,
   isOpen
 }) => {
+  const [activeStamp, setActiveStamp] = useState('Basic Green')
+  const [currentPrice, setCurrentPrice] = useState('0.15')
+
   const transactionContext = useContext(TransactionContext)
 
   const handleVisitClick = () => {
@@ -40,11 +42,16 @@ const DetailsModal: FunctionComponent<DetailsModal> = ({
     handleClose && handleClose()
   }
 
+  const handlePriceClick = () => {
+    alert('TODO: Handle Update Price')
+  }
   return (
     <Modal
       isOpen={isOpen}
       contentLabel="Planet Details"
-      onRequestClose={handleClose}
+      onRequestClose={() => {
+        handleClose && handleClose()
+      }}
       className={style.modal}
       overlayClassName={style.overlay}
       shouldCloseOnOverlayClick={true}
@@ -58,42 +65,93 @@ const DetailsModal: FunctionComponent<DetailsModal> = ({
           <CloseIcon />
         </button>
         <div className={style.planetInfo}>
-          <div className={style.planetMedia}>
+          <div>
             <div className={style.videoContainer}>
               <LazyMedia videoSrc={videoSrc} videoControls />
             </div>
+            <div className={style.planetHeader}>
+              <h1 className={style.planetName}>{name}</h1>
+
+              <Button
+                text="View on OpenSea"
+                buttonStyle="tertiary"
+                linkUrl="https://opensea.io/collection/the-wanderers"
+              />
+            </div>
           </div>
           <div className={style.planetText}>
-            <h1 className={style.planetName}>{name}</h1>
-
-            <div className={style.travelerInfo}>
-              Visit Price{' '}
-              <strong>
-                {price} {priceUnit}
-              </strong>
-              <span className={style.priceSpacer}>/</span>
-              <a href="https://opensea.io/collection/the-wanderers">
-                View on OPENSEA{' '}
-              </a>
+            <div className={style.formWrap}>
+              <h2 className={style.subhead}>Owner Information</h2>
+              <div className={style.ownerInputs}>
+                <div className={style.textInputWrap}>
+                  <label className={style.label} htmlFor="VisitPrice">
+                    Set Visit Price (WETH)
+                  </label>
+                  <input
+                    id="VisitPrice"
+                    type="text"
+                    value={currentPrice}
+                    className={style.textInput}
+                    onChange={(e) => {
+                      setCurrentPrice(e.target.value)
+                    }}
+                  />
+                </div>
+                <div className={style.priceBtn}>
+                  <Button
+                    text="Update Price"
+                    buttonStyle="secondary"
+                    handleClick={handlePriceClick}
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className={style.visitTransactionWrap}>
-              <strong style={{ fontSize: 14 }}>
-                TODO: if owned, manage visit price
-              </strong>
-            </div>
+            <div className={style.formWrap}>
+              <h2 className={style.subhead}>Visitor Information</h2>
 
-            <div className={style.visitTransactionWrap}>
-              <div>
-                <SelectPassport
+              <div className={style.visitInputs}>
+                <div className={style.activeStamp}>
+                  <Image
+                    src={activeStamp === 'Basic Green' ? stampGreen : stampPink}
+                    alt="greenStamp"
+                    layout="fixed"
+                    width={100}
+                    height={100}
+                  />
+                </div>
+                <div className={style.selectStamp}>
+                  <Select
+                    label="Choose Stamp"
+                    id="ChooseStamp"
+                    handleSelect={(val) => {
+                      setActiveStamp(val)
+                    }}
+                    defaultValue={activeStamp}
+                    options={['Basic Green', 'Basic Pink']}
+                  />
+                </div>
+
+                <Select
+                  label="Choose Passport"
+                  id="ChoosePassport"
                   options={['BigBigOceans', 'JustWanderin', 'The Pyramids']}
                 />
               </div>
-              <Button
-                text="visit"
-                buttonStyle="secondary"
-                handleClick={handleVisitClick}
-              />
+
+              <div className={style.formBottom}>
+                <div className={style.priceInfo}>
+                  Visit Price{' '}
+                  <strong>
+                    <span className={style.price}>{price}</span> {priceUnit}
+                  </strong>
+                </div>
+                <Button
+                  text="visit"
+                  buttonStyle="secondary"
+                  handleClick={handleVisitClick}
+                />
+              </div>
             </div>
 
             <h2 className={style.attributesHeader}>Attributes</h2>

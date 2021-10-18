@@ -5,30 +5,44 @@ type ButtonProps = {
   text: string
   handleClick?: () => void
   icon?: 'add'
-  buttonStyle?: 'primary' | 'secondary'
+  buttonStyle?: 'primary' | 'secondary' | 'tertiary'
+  linkUrl?: string
 }
 
 const Button: FunctionComponent<ButtonProps> = ({
   text,
   handleClick,
   icon,
-  buttonStyle
+  buttonStyle,
+  linkUrl
 }) => {
-  return (
-    <button
-      className={`${style.button} ${
-        icon ? `${style.icon} ${style['icon-' + icon]}` : ''
-      } ${
-        buttonStyle && buttonStyle === 'secondary'
-          ? style.buttonSecondary
-          : style.buttonPrimary
-      }`}
-      onClick={() => {
-        if (handleClick) {
-          handleClick()
-        }
-      }}
+  const className = `${style.button} ${
+    icon ? `${style.icon} ${style['icon-' + icon]}` : ''
+  } ${
+    buttonStyle && buttonStyle === 'secondary'
+      ? style.buttonSecondary
+      : buttonStyle === 'tertiary'
+      ? style.buttonTertiary
+      : style.buttonPrimary
+  }`
+
+  const onClick = () => {
+    if (handleClick) {
+      handleClick()
+    }
+  }
+  return typeof linkUrl !== 'undefined' ? (
+    <a
+      className={className}
+      onClick={onClick}
+      href={linkUrl}
+      target="_blank"
+      rel="noopener noreferrer"
     >
+      {text}
+    </a>
+  ) : (
+    <button className={className} onClick={onClick}>
       {text}
     </button>
   )

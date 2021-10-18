@@ -15,6 +15,7 @@
 }
 
 .buttonSecondary {
+  line-height: 1;
   background: $c-green;
   border: none;
   border-radius: 5rem;
@@ -25,10 +26,21 @@
   color: $c-grey;
 
   font-weight: 900;
-  font-size: 1.2rem;
-  @include break-md {
-    font-size: 1.4rem;
-  }
+  font-size: 1.3rem;
+}
+.buttonTertiary {
+  line-height: 1;
+  background: $c-grey;
+  border: 1px solid $c-green;
+  border-radius: 5rem;
+  padding: 1rem 3rem;
+
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: $c-green;
+
+  font-weight: 400;
+  font-size: 1.3rem;
 }
 
 .button.icon {

@@ -57,7 +57,7 @@
     padding: 4rem;
   }
   @include break-xl {
-    padding: 6rem;
+    padding: 6rem 4rem;
   }
 
   opacity: 0;
@@ -104,8 +104,8 @@
 .planetInfo {
   @include break-md {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6rem;
+    grid-template-columns: 0.9fr 1fr;
+    gap: 5rem;
   }
 }
 .videoContainer {
@@ -119,6 +119,16 @@
     margin-bottom: 0;
   }
 }
+
+.planetHeader {
+  padding: 3rem 0;
+}
+.planetName {
+  @include headerTitle;
+  @include break-lg {
+    margin-bottom: 2rem;
+  }
+}
 .video {
   width: 100%;
   height: 100%;
@@ -128,12 +138,7 @@
 .planetText {
   padding-right: 3rem;
 }
-.planetName {
-  @include header2;
-  @include break-lg {
-    margin-bottom: 2rem;
-  }
-}
+
 .attributesHeader {
   @include header4;
 }
@@ -158,29 +163,100 @@
   text-transform: capitalize;
 }
 
-.travelerInfo {
-  padding: 2rem 0 0;
+.priceInfo {
   @include smallCapsMd;
-  margin-bottom: 2rem;
-}
-
-.visitTransactionWrap {
-  background: $c-grey-mid;
-  border: 1px solid $c-grey-dark;
-  border-radius: 8px;
-  padding: 2rem 2rem 2rem 1.5rem;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 2rem 0 3rem;
-
-  @include break-md {
-    margin: 2rem -2.5rem 3rem -2.5rem;
-    padding: 2rem 2.5rem 2rem 1.5rem;
+  .price {
+    font-size: 2rem;
+    display: inline-block;
+    padding-left: 0.75rem;
   }
 }
-.priceSpacer {
-  display: inline-block;
-  padding: 0 2rem;
+
+.formWrap {
+  background: $c-grey;
+  border: 1px solid $c-green;
+  border-radius: 8px;
+  padding: 2rem;
+  margin: 3rem 0;
+}
+
+.subhead {
+  @include header4;
+}
+.visitInputs {
+  width: 100%;
+  & > * {
+    margin-bottom: 1.5rem;
+  }
+  @include break-lg {
+    display: flex;
+    align-items: center;
+    & > * {
+      margin-bottom: 0;
+    }
+  }
+}
+.formBottom {
+  position: relative;
+  padding-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  &:before {
+    position: absolute;
+    left: -2rem;
+    top: 0;
+    content: '';
+    display: block;
+    width: calc(100% + 4rem);
+    border-top: 1px solid $c-green;
+  }
+}
+
+.textInputWrap {
+  margin: 1rem 0;
+  max-width: 15rem;
+}
+
+.textInput {
+  background: $c-grey;
+  border: 1px solid $c-green;
+  border-radius: 3px;
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+  color: $c-green;
+  width: 100%;
+  font-size: 1.8rem;
+  font-family: $f-mono;
+  transition: all 0.2s;
+  font-weight: 900;
+  &:focus {
+    background: rgba($c-green, 0.025);
+    outline: 0;
+    box-shadow: 0 0 4px 1px rgba($c-green, 0.65);
+  }
+}
+.label {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  top: 0;
+  left: 1rem;
+}
+.ownerInputs {
+  & > * {
+    margin-bottom: rem;
+  }
+  @include break-lg {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    & > * {
+      margin-bottom: 0;
+    }
+    .priceBtn {
+      transform: translateY(10px);
+    }
+  }
 }

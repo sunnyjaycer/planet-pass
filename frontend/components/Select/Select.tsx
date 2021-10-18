@@ -1,24 +1,28 @@
 import { FunctionComponent } from 'react'
-import style from './SelectPassport.module.scss'
+import style from './Select.module.scss'
 
-type SelectPassportProps = {
+type SelectProps = {
   options: string[]
-  label?: string
+  label: string
   handleSelect?: (s: string) => void
+  id: string
+  defaultValue?: string
 }
 
-const SelectPassport: FunctionComponent<SelectPassportProps> = ({
-  label = 'Choose Passport',
+const Select: FunctionComponent<SelectProps> = ({
+  label,
   options,
-  handleSelect
+  handleSelect,
+  id,
+  defaultValue
 }) => {
   return (
     <div className={style.selectWrap}>
-      <label htmlFor="choose-passport" className={style.label}>
+      <label htmlFor={id} className={style.label}>
         {label}
       </label>
       <select
-        id="choose-passport"
+        id={id}
         className={style.select}
         onChange={(e) => {
           if (handleSelect) {
@@ -27,7 +31,11 @@ const SelectPassport: FunctionComponent<SelectPassportProps> = ({
         }}
       >
         {options.map((option) => (
-          <option key={option} value={option}>
+          <option
+            key={option}
+            value={option}
+            selected={option === defaultValue}
+          >
             {option}
           </option>
         ))}
@@ -36,4 +44,4 @@ const SelectPassport: FunctionComponent<SelectPassportProps> = ({
   )
 }
 
-export default SelectPassport
+export default Select

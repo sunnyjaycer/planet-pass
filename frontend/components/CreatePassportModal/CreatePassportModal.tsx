@@ -2,7 +2,7 @@ import { FunctionComponent, useContext, useState } from 'react'
 import { TransactionContext } from '../../context/TransactionContext'
 import style from './CreatePassport.module.scss'
 import { CloseIcon } from '../Icons'
-import SelectPassport from '../SelectPassport'
+import Select from '../Select'
 import Button from '../Button'
 import Modal from 'react-modal'
 import LazyMedia from '../LazyMedia'
@@ -74,12 +74,13 @@ const CreatePassportModal: FunctionComponent<CreatePassportModalProps> = ({
               <h2 className={style.subhead}>Passport Info</h2>
 
               <div className={style.selectWrap}>
-                <SelectPassport
+                <Select
                   label="Passport Style"
                   options={['Basic Black', 'Basic Pink']}
                   handleSelect={(s) => {
                     setCurrentPassport(s)
                   }}
+                  id="PassportStyle"
                 />
               </div>
               <div className={style.textInputWrap}>
