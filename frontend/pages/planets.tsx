@@ -29,9 +29,9 @@ const Home: NextPage = () => {
   }, [])
 
   return (
-    <Layout title={'The Atlas'}>
+    <Layout title={'Planets'}>
       <PageHeader
-        title="The Atlas"
+        title="All Planets"
         description="Your ticket to every available planet in the galaxy."
       />
       {isLoading ? <Loader /> : <FilterableGrid itemData={data} />}

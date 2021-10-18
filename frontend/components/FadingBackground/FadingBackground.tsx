@@ -66,7 +66,7 @@ const FadingBackground: FunctionComponent = ({}) => {
   const activeBackground: BackgroundKey =
     router.pathname === '/'
       ? 'purplePlanets'
-      : router.pathname === '/atlas'
+      : router.pathname === '/planets'
       ? 'darkPlanets'
       : router.pathname === '/passports'
       ? 'orangePlanets'
