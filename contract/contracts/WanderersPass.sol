@@ -27,8 +27,11 @@ contract WanderersPass is
     /// A strictly monotonically increasing counter of token IDs.
     Counters.Counter private _tokenIdCounter;
 
-    /// Identifier for visits.
+    /// Identifier for Stamp item.
     bytes32 public constant STAMP_IDENT = keccak256("STAMP");
+
+    /// Identifier for Template item.
+    bytes32 public constant TEMPLATE_IDENT = keccak256("TEMPLATE");
 
     /// The contents of a single stamp.
     struct Visit {
@@ -155,10 +158,23 @@ contract WanderersPass is
     /// Mint a new Pass.
     /// @param to the address to send the Pass to
     /// @param passName the name for the Pass
-    function safeMint(address to, string calldata passName)
+    /// @param templateId the token ID of the template to use
+    function safeMint(address to, string calldata passName, uint256 templateId)
         external
         whenNotPaused
     {
+        // Make sure stamp item is a stamp
+        require(
+            planetPassItemsContract.itemType(templateId) == TEMPLATE_IDENT,
+            "Item not a template"
+        );
+        // Make sure sender has the stamp type
+        require(
+            planetPassItemsContract.balanceOf(msg.sender, templateId) > 0,
+            "Item not owned"
+        );
+        planetPassItemsContract.burn(msg.sender, templateId, 1);
+        
         _setName(_tokenIdCounter.current(), passName);
         _safeMint(to, _tokenIdCounter.current());
         _tokenIdCounter.increment();

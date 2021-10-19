@@ -26,10 +26,14 @@ describe("TravelAgency", function () {
         const Items = await ethers.getContractFactory("PlanetPassItems");
         items = await Items.connect(accounts[0]).deploy();
         await items.deployed();
+
         await items.connect(accounts[0]).setItemType(0, "STAMP");
+        await items.connect(accounts[0]).setItemType(1, "TEMPLATE");
+
         // Airdrop stamps to everyone
         for (let i = 0; i < 5; i++) {
             await items.connect(accounts[0]).mint(accounts[i].getAddress(), 0, 10, []);
+            await items.connect(accounts[0]).mint(accounts[i].getAddress(), 1, 10, []);
         }
 
         const Pass = await ethers.getContractFactory("WanderersPass");
@@ -289,9 +293,9 @@ describe("TravelAgency", function () {
             await planets.connect(accounts[0])['safeMint(address,uint256[])'](accounts[1].getAddress(), [5, 6, 7, 8, 9]);
 
             // Set up passes
-            await pass.connect(accounts[0]).safeMint(accounts[0].getAddress(), "Zero");
-            await pass.connect(accounts[1]).safeMint(accounts[1].getAddress(), "One");
-            await pass.connect(accounts[2]).safeMint(accounts[2].getAddress(), "Two");
+            await pass.connect(accounts[0]).safeMint(accounts[0].getAddress(), "Zero", 1);
+            await pass.connect(accounts[1]).safeMint(accounts[1].getAddress(), "One", 1);
+            await pass.connect(accounts[2]).safeMint(accounts[2].getAddress(), "Two", 1);
 
             // Send 100 WETH to Address 1 and 2
             await dummyWeth.connect(accounts[0]).transfer(await accounts[1].getAddress(), parseEther("100"));
@@ -452,7 +456,7 @@ describe("TravelAgency", function () {
             await planets.connect(accounts[0])['safeMint(address,uint256[])'](accounts[1].getAddress(), [0, 1, 2, 3, 4]);
 
             // Set up passes
-            await pass.connect(accounts[2]).safeMint(accounts[2].getAddress(), "Two");
+            await pass.connect(accounts[2]).safeMint(accounts[2].getAddress(), "Two", 1);
 
             // Send 100 WETH to Address 2
             await dummyWeth.connect(accounts[0]).transfer(await accounts[2].getAddress(), parseEther("100"));
@@ -538,7 +542,7 @@ describe("TravelAgency", function () {
             await planets.connect(accounts[0])['safeMint(address,uint256[])'](accounts[0].getAddress(), [0, 1, 2, 3, 4]);
 
             // Set up passes
-            await pass.connect(accounts[1]).safeMint(accounts[1].getAddress(), "One");
+            await pass.connect(accounts[1]).safeMint(accounts[1].getAddress(), "One", 1);
 
             // Send 100 WETH to Address 1 and 2
             await dummyWeth.connect(accounts[0]).transfer(await accounts[1].getAddress(), parseEther("100"));
@@ -675,7 +679,7 @@ describe("TravelAgency", function () {
 
     describe("onERC721Received", function () {
         beforeEach(async function () {
-            await pass.connect(accounts[0]).safeMint(accounts[0].getAddress(), "I am a pass");
+            await pass.connect(accounts[0]).safeMint(accounts[0].getAddress(), "I am a pass", 1);
             if (await agency.paused()) {
                 await agency.unpause();
             }
