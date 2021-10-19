@@ -154,12 +154,12 @@ contract WanderersPass is
 
     /// Mint a new Pass.
     /// @param to the address to send the Pass to
-    /// @param _passName the name for the Pass
-    function safeMint(address to, string calldata _passName)
+    /// @param passName the name for the Pass
+    function safeMint(address to, string calldata passName)
         external
         whenNotPaused
     {
-        _setName(_tokenIdCounter.current(), _passName);
+        _setName(_tokenIdCounter.current(), passName);
         _safeMint(to, _tokenIdCounter.current());
         _tokenIdCounter.increment();
     }
