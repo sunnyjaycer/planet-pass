@@ -202,7 +202,9 @@ contract WanderersPass is
         );
     }
 
-    /// Visit a planet
+    /// Visit a planet.
+    /// Note: This requires approval for the contract to burn an item from `msg.sender`. Otherwise it will revert.
+    /// Note: An item of token Id `stampId` will be burned from `msg.sender`.
     /// @param id the token ID of the Pass
     /// @param planetId the token ID of the Planet to visit
     /// @param stampId the token ID of the stamp to use
@@ -226,9 +228,12 @@ contract WanderersPass is
         );
         // Make sure sender has the stamp type
         require(
-            planetPassItemsContract.balanceOf(msg.sender, stampId) != 0,
+            planetPassItemsContract.balanceOf(msg.sender, stampId) > 0,
             "Item not owned"
         );
+
+        // Burn the stamp
+        planetPassItemsContract.burn(msg.sender, stampId, 1);
 
         _visitPlanet(id, planetId, stampId);
     }
@@ -236,6 +241,8 @@ contract WanderersPass is
     /// Delegated visiting of a planet.
     /// Note: `msg.sender` must be approved by `owner`, otherwise this will revert.
     /// Note: `owner` must own the Stamp required, otherwise this will revert.
+    /// Note: This requires approval for the contract to burn an item from `owner`. Otherwise it will revert.
+    /// Note: An item of token Id `stampId` will be burned from `owner`.
     /// @param owner the owner of the Pass
     /// @param id the token ID of the Pass
     /// @param planetId the token ID of the Planet to visit
@@ -266,9 +273,12 @@ contract WanderersPass is
         );
         // Make sure sender has the stamp type
         require(
-            planetPassItemsContract.balanceOf(owner, stampId) != 0,
+            planetPassItemsContract.balanceOf(owner, stampId) > 0,
             "Item not owned"
         );
+
+        // Burn the stamp
+        planetPassItemsContract.burn(owner, stampId, 1);
 
         _visitPlanet(id, planetId, stampId);
     }

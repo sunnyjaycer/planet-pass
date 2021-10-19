@@ -28,6 +28,11 @@ describe("WanderersPass", function () {
         const Pass = await ethers.getContractFactory("WanderersPass");
         pass = await Pass.connect(accounts[0]).deploy("example.com/", planets.address, items.address);
         await pass.deployed();
+
+        // ALlow Pass to burn
+        for (let i = 0; i < 5; i++) {
+            await items.connect(accounts[i]).setApprovalForAll(pass.address, true);
+        }
     })
 
     describe("uri", function () {
@@ -137,7 +142,7 @@ describe("WanderersPass", function () {
             await pass.connect(accounts[0]).safeMint(accounts[0].getAddress(), "One");
             await pass.connect(accounts[1]).safeMint(accounts[1].getAddress(), "Two");
             
-            await items.connect(accounts[0]).mint(accounts[0].getAddress(), 0, 1, []);
+            await items.connect(accounts[0]).mint(accounts[0].getAddress(), 0, 10, []);
 
         });
 

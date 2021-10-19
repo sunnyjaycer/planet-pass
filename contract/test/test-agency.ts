@@ -29,7 +29,7 @@ describe("TravelAgency", function () {
         await items.connect(accounts[0]).setItemType(0, "STAMP");
         // Airdrop stamps to everyone
         for (let i = 0; i < 5; i++) {
-            await items.connect(accounts[0]).mint(accounts[i].getAddress(), 0, 1, []);
+            await items.connect(accounts[0]).mint(accounts[i].getAddress(), 0, 10, []);
         }
 
         const Pass = await ethers.getContractFactory("WanderersPass");
@@ -49,6 +49,12 @@ describe("TravelAgency", function () {
             dummyWeth.address
         );
         await agency.deployed();
+
+        // ALlow Pass to burn
+        for (let i = 0; i < 5; i++) {
+            await items.connect(accounts[i]).setApprovalForAll(pass.address, true);
+        }
+
     });
 
     describe("updatePlanetContract", function () {
