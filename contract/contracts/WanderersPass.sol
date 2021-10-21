@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "./WanderersPlanet.sol";
 import "./Nameable.sol";
 import "./PlanetPassItems.sol";
@@ -18,12 +19,19 @@ contract WanderersPass is
     Nameable
 {
     using Counters for Counters.Counter;
+    using Strings for uint256;
+
+    /// Base URI for metadata.
+    string private baseURI;
 
     /// A strictly monotonically increasing counter of token IDs.
     Counters.Counter private _tokenIdCounter;
 
-    /// Identifier for visits.
+    /// Identifier for Stamp item.
     bytes32 public constant STAMP_IDENT = keccak256("STAMP");
+
+    /// Identifier for Template item.
+    bytes32 public constant TEMPLATE_IDENT = keccak256("TEMPLATE");
 
     /// The contents of a single stamp.
     struct Visit {
@@ -53,6 +61,7 @@ contract WanderersPass is
     /// @param passId the Pass that was stamped
     /// @param planetId the Planet that was stamped
     /// @param planetState the state of the Planet at the time of stamping
+    /// @param stampId the token ID of the stamp used for the visit
     event Stamp(
         address indexed from,
         uint256 indexed passId,
@@ -65,9 +74,11 @@ contract WanderersPass is
     event VisitDelegationApproval(address indexed owner, address indexed operator, bool approved);
 
     constructor(
+        string memory baseURI_,
         WanderersPlanet _planetContract,
         PlanetPassItems _planetPassItemsContract
     ) ERC721("WanderersPass", "WANDERER-PASS") {
+        baseURI = baseURI_;
         planetContract = _planetContract;
         planetPassItemsContract = _planetPassItemsContract;
         _pause();
@@ -81,6 +92,42 @@ contract WanderersPass is
     /// Unpauses the contract.
     function unpause() external onlyOwner {
         _unpause();
+    }
+
+    /// @dev override for base URI
+    /// @return the variable `baseURI`
+    function _baseURI() internal view override returns (string memory) {
+        return baseURI;
+    }
+
+    /// Updates the base URI.
+    /// @param newBaseURI the new base URI to be used
+    function updateBaseURI(string calldata newBaseURI) external onlyOwner {
+        baseURI = newBaseURI;
+    }
+
+    /// @dev override for token URI
+    /// @return the token URI of a given token
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override
+        returns (string memory)
+    {
+        require(
+            _exists(tokenId),
+            "ERC721Metadata: URI query for nonexistent token"
+        );
+
+        return
+            bytes(_baseURI()).length > 0
+                ? string(
+                    abi.encodePacked(
+                        _baseURI(),
+                        tokenId.toString()
+                    )
+                )
+                : "";
     }
 
     /// Updates the location of the Planet contract.
@@ -110,12 +157,25 @@ contract WanderersPass is
 
     /// Mint a new Pass.
     /// @param to the address to send the Pass to
-    /// @param _passName the name for the Pass
-    function safeMint(address to, string calldata _passName)
+    /// @param passName the name for the Pass
+    /// @param templateId the token ID of the template to use
+    function safeMint(address to, string calldata passName, uint256 templateId)
         external
         whenNotPaused
     {
-        _setName(_tokenIdCounter.current(), _passName);
+        // Make sure stamp item is a stamp
+        require(
+            planetPassItemsContract.itemType(templateId) == TEMPLATE_IDENT,
+            "Item not a template"
+        );
+        // Make sure sender has the stamp type
+        require(
+            planetPassItemsContract.balanceOf(msg.sender, templateId) > 0,
+            "Item not owned"
+        );
+        planetPassItemsContract.burn(msg.sender, templateId, 1);
+        
+        _setName(_tokenIdCounter.current(), passName);
         _safeMint(to, _tokenIdCounter.current());
         _tokenIdCounter.increment();
     }
@@ -158,7 +218,9 @@ contract WanderersPass is
         );
     }
 
-    /// Visit a planet
+    /// Visit a planet.
+    /// Note: This requires approval for the contract to burn an item from `msg.sender`. Otherwise it will revert.
+    /// Note: An item of token Id `stampId` will be burned from `msg.sender`.
     /// @param id the token ID of the Pass
     /// @param planetId the token ID of the Planet to visit
     /// @param stampId the token ID of the stamp to use
@@ -182,9 +244,12 @@ contract WanderersPass is
         );
         // Make sure sender has the stamp type
         require(
-            planetPassItemsContract.balanceOf(msg.sender, stampId) != 0,
+            planetPassItemsContract.balanceOf(msg.sender, stampId) > 0,
             "Item not owned"
         );
+
+        // Burn the stamp
+        planetPassItemsContract.burn(msg.sender, stampId, 1);
 
         _visitPlanet(id, planetId, stampId);
     }
@@ -192,6 +257,8 @@ contract WanderersPass is
     /// Delegated visiting of a planet.
     /// Note: `msg.sender` must be approved by `owner`, otherwise this will revert.
     /// Note: `owner` must own the Stamp required, otherwise this will revert.
+    /// Note: This requires approval for the contract to burn an item from `owner`. Otherwise it will revert.
+    /// Note: An item of token Id `stampId` will be burned from `owner`.
     /// @param owner the owner of the Pass
     /// @param id the token ID of the Pass
     /// @param planetId the token ID of the Planet to visit
@@ -222,9 +289,12 @@ contract WanderersPass is
         );
         // Make sure sender has the stamp type
         require(
-            planetPassItemsContract.balanceOf(owner, stampId) != 0,
+            planetPassItemsContract.balanceOf(owner, stampId) > 0,
             "Item not owned"
         );
+
+        // Burn the stamp
+        planetPassItemsContract.burn(owner, stampId, 1);
 
         _visitPlanet(id, planetId, stampId);
     }

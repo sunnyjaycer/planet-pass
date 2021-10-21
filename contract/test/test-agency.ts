@@ -35,14 +35,18 @@ describe("TravelAgency", function () {
         const Items = await ethers.getContractFactory("PlanetPassItems");
         items = await Items.connect(accounts[0]).deploy();
         await items.deployed();
+
         await items.connect(accounts[0]).setItemType(0, "STAMP");
+        await items.connect(accounts[0]).setItemType(1, "TEMPLATE");
+
         // Airdrop stamps to everyone
         for (let i = 0; i < 5; i++) {
-            await items.connect(accounts[0]).mint(accounts[i].getAddress(), 0, 1, []);
+            await items.connect(accounts[0]).mint(accounts[i].getAddress(), 0, 10, []);
+            await items.connect(accounts[0]).mint(accounts[i].getAddress(), 1, 10, []);
         }
 
         const Pass = await ethers.getContractFactory("WanderersPass");
-        pass = await Pass.connect(accounts[0]).deploy(planets.address, items.address);
+        pass = await Pass.connect(accounts[0]).deploy("", planets.address, items.address);
         await pass.deployed();
         await pass.unpause();
 
@@ -55,6 +59,12 @@ describe("TravelAgency", function () {
             stardust.address
         );
         await agency.deployed();
+
+        // ALlow Pass to burn
+        for (let i = 0; i < 5; i++) {
+            await items.connect(accounts[i]).setApprovalForAll(pass.address, true);
+        }
+
     });
 
     describe("updatePlanetContract", function () {
@@ -79,7 +89,7 @@ describe("TravelAgency", function () {
 
         beforeEach(async function () {
             const Pass = await ethers.getContractFactory("WanderersPass");
-            newPass = await Pass.connect(accounts[0]).deploy(planets.address, items.address);
+            newPass = await Pass.connect(accounts[0]).deploy("", planets.address, items.address);
             await newPass.deployed();
         });
 
@@ -254,7 +264,7 @@ describe("TravelAgency", function () {
 
     const flashStampTests = {
         "should be able to be used by other users": async function () {
-            await agency.connect(accounts[2]).flashStamp(0, 2, 0);
+            await agency.connect(accounts[2]).flashStamp(0, 2, 0, ethers.constants.MaxUint256);
 
             expect(await pass.ownerOf(2)).to.equal(await accounts[2].getAddress());
 
@@ -269,7 +279,7 @@ describe("TravelAgency", function () {
         },
 
         "should be able to be used by Planet owner": async function () {
-            await agency.connect(accounts[0]).flashStamp(0, 0, 0);
+            await agency.connect(accounts[0]).flashStamp(0, 0, 0, ethers.constants.MaxUint256);
 
             expect(await pass.ownerOf(0)).to.equal(await accounts[0].getAddress());
 
@@ -289,9 +299,9 @@ describe("TravelAgency", function () {
             await planets.connect(accounts[0])['safeMint(address,uint256[])'](accounts[1].getAddress(), [5, 6, 7, 8, 9]);
 
             // Set up passes
-            await pass.connect(accounts[0]).safeMint(accounts[0].getAddress(), "Zero");
-            await pass.connect(accounts[1]).safeMint(accounts[1].getAddress(), "One");
-            await pass.connect(accounts[2]).safeMint(accounts[2].getAddress(), "Two");
+            await pass.connect(accounts[0]).safeMint(accounts[0].getAddress(), "Zero", 1);
+            await pass.connect(accounts[1]).safeMint(accounts[1].getAddress(), "One", 1);
+            await pass.connect(accounts[2]).safeMint(accounts[2].getAddress(), "Two", 1);
 
             // Send 100 WETH to Address 1 and 2
             await dummyWeth.connect(accounts[0]).transfer(await accounts[1].getAddress(), parseEther("100"));
@@ -330,7 +340,7 @@ describe("TravelAgency", function () {
 
             it("should not be able to use flashStamp", async function () {
                 await expect(
-                    agency.connect(accounts[2]).flashStamp(0, 2, 0)
+                    agency.connect(accounts[2]).flashStamp(0, 2, 0, ethers.constants.MaxUint256)
                 )
                     .to.be.revertedWith("Pausable: paused");
             });
@@ -425,11 +435,19 @@ describe("TravelAgency", function () {
                     )
                         .to.be.reverted;
                 });
+
+                it("should not be able to flash-stamp if price is over specified limit", async function () {
+                    const newCost = parseEther("20");
+                    await agency.connect(accounts[0]).updatePlanetFee(0, newCost);
+
+                    await expect(agency.connect(accounts[2]).flashStamp(0, 2, 0, costWei))
+                    .to.be.revertedWith("Fee exceeds maximum spend");
+                })
             });
 
             it("should not be able to flash-stamp a planet not in contract", async function () {
                 await expect(
-                    agency.connect(accounts[2]).flashStamp(5, 0, 0)
+                    agency.connect(accounts[2]).flashStamp(5, 0, 0, ethers.constants.MaxUint256)
                 )
                     .to.be.revertedWith("Planet not in contract");
             });
@@ -444,7 +462,7 @@ describe("TravelAgency", function () {
             await planets.connect(accounts[0])['safeMint(address,uint256[])'](accounts[1].getAddress(), [0, 1, 2, 3, 4]);
 
             // Set up passes
-            await pass.connect(accounts[2]).safeMint(accounts[2].getAddress(), "Two");
+            await pass.connect(accounts[2]).safeMint(accounts[2].getAddress(), "Two", 1);
 
             // Send 100 WETH to Address 2
             await dummyWeth.connect(accounts[0]).transfer(await accounts[2].getAddress(), parseEther("100"));
@@ -473,7 +491,7 @@ describe("TravelAgency", function () {
             );
 
             // Account 1 uses travel agency on planet 0 for pass 0
-            await agency.connect(accounts[2]).flashStamp(0, 0, 0);
+            await agency.connect(accounts[2]).flashStamp(0, 0, 0, ethers.constants.MaxUint256);
         });
 
         it("should be able to withdraw fees", async function () {
@@ -492,7 +510,7 @@ describe("TravelAgency", function () {
 
         it("should be able to withdraw fees after multiple visits", async function () {
             // Visit again
-            await agency.connect(accounts[2]).flashStamp(0, 0, 0);
+            await agency.connect(accounts[2]).flashStamp(0, 0, 0, ethers.constants.MaxUint256);
 
             await expect(
                 agency.connect(accounts[1]).withdrawOwnerFees(await accounts[1].getAddress())
@@ -530,7 +548,7 @@ describe("TravelAgency", function () {
             await planets.connect(accounts[0])['safeMint(address,uint256[])'](accounts[0].getAddress(), [0, 1, 2, 3, 4]);
 
             // Set up passes
-            await pass.connect(accounts[1]).safeMint(accounts[1].getAddress(), "One");
+            await pass.connect(accounts[1]).safeMint(accounts[1].getAddress(), "One", 1);
 
             // Send 100 WETH to Address 1 and 2
             await dummyWeth.connect(accounts[0]).transfer(await accounts[1].getAddress(), parseEther("100"));
@@ -560,7 +578,7 @@ describe("TravelAgency", function () {
             );
 
             // Account 1 uses travel agency on planet 0 for pass 0
-            await agency.connect(accounts[1]).flashStamp(0, 0, 0);
+            await agency.connect(accounts[1]).flashStamp(0, 0, 0, ethers.constants.MaxUint256);
 
             const feeBp = await agency.operatorFeeBp();
             const cost = await agency.planetFees(0);
@@ -583,7 +601,7 @@ describe("TravelAgency", function () {
 
         it("should be able to withdraw fees after multiple visits", async function () {
             // Visit again
-            await agency.connect(accounts[1]).flashStamp(0, 0, 0);
+            await agency.connect(accounts[1]).flashStamp(0, 0, 0, ethers.constants.MaxUint256);
 
             await expect(
                 agency.connect(accounts[0]).withdrawOperatorFees(await accounts[0].getAddress())
@@ -667,7 +685,7 @@ describe("TravelAgency", function () {
 
     describe("onERC721Received", function () {
         beforeEach(async function () {
-            await pass.connect(accounts[0]).safeMint(accounts[0].getAddress(), "I am a pass");
+            await pass.connect(accounts[0]).safeMint(accounts[0].getAddress(), "I am a pass", 1);
             if (await agency.paused()) {
                 await agency.unpause();
             }

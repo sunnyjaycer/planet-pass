@@ -150,8 +150,10 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     /// Note: this requires visitDelegationApproval from Planet Pass for this contract, otherwise it will revert.
     /// Note: this requqires ERC-20 spending approval for WETH, otherwise it will revert.
     /// @param planetId token ID of the planet to visit.
-    /// @param passId token ID of the pass that will used for stamping.
-    function flashStamp(uint256 planetId, uint256 passId, uint256 stampId)
+    /// @param passId token ID of the pass that will used for visit.
+    /// @param stampId token ID of the stamp that will be used for the visit.
+    /// @param maxSpend the maximum amount in WETH the user is willing to spend for this visit.
+    function flashStamp(uint256 planetId, uint256 passId, uint256 stampId, uint256 maxSpend)
         external
         whenNotPaused
     {
@@ -159,6 +161,9 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
 
         uint256 fee = planetFees[planetId];
         address planetOwner = planetOwners[planetId];
+
+        // If the fee exceeds maximum spend (e.g. fee was updated between tx submission and tx mined), revert.
+        require(fee <= maxSpend, "Fee exceeds maximum spend");
 
         // Send WETH to contract
         // The owner of the planet never pays any fees
