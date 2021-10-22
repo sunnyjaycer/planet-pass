@@ -47,19 +47,22 @@ abstract contract AgencyMagic is Ownable {
     }
 
     /// @dev override function for what action should be performed when a planet is visited.
+    /// Note: `data` is passed in directly from the user without validation!
     /// @param user the user that initiated the Visit (through the Agency)
     /// @param planetId the token ID of the Planet being visited
     /// @param passId the token ID of the Pass being visited
     /// @param stampId the token ID of the Stamp being used
     /// @param spent the amount of WETH spent on the visit
     /// @param proof the proof that the planet ID is part of the tree
+    /// @param data extra data intended for the contract.
     function performMagic(
         address user,
         uint256 planetId,
         uint256 passId,
         uint256 stampId,
         uint256 spent,
-        bytes32[] memory proof
+        bytes32[] memory proof,
+        bytes memory data
     ) public virtual;
 
     /// @dev verifies if the leaf can be proven to be part of the merkle tree defined by `root`.
