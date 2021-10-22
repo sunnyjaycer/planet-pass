@@ -258,7 +258,7 @@ describe("TravelAgency", function () {
 
     const flashStampTests = {
         "should be able to be used by other users": async function () {
-            await agency.connect(accounts[2]).flashStamp(0, 2, 0, ethers.constants.MaxUint256);
+            await agency.connect(accounts[2]).flashStamp(0, 2, 0, ethers.constants.MaxUint256, []);
 
             expect(await pass.ownerOf(2)).to.equal(await accounts[2].getAddress());
 
@@ -273,7 +273,7 @@ describe("TravelAgency", function () {
         },
 
         "should be able to be used by Planet owner": async function () {
-            await agency.connect(accounts[0]).flashStamp(0, 0, 0, ethers.constants.MaxUint256);
+            await agency.connect(accounts[0]).flashStamp(0, 0, 0, ethers.constants.MaxUint256, []);
 
             expect(await pass.ownerOf(0)).to.equal(await accounts[0].getAddress());
 
@@ -334,7 +334,7 @@ describe("TravelAgency", function () {
 
             it("should not be able to use flashStamp", async function () {
                 await expect(
-                    agency.connect(accounts[2]).flashStamp(0, 2, 0, ethers.constants.MaxUint256)
+                    agency.connect(accounts[2]).flashStamp(0, 2, 0, ethers.constants.MaxUint256, [])
                 )
                     .to.be.revertedWith("Pausable: paused");
             });
@@ -425,7 +425,7 @@ describe("TravelAgency", function () {
                     // Revoke permission for ETH
                     await dummyWeth.connect(accounts[2]).approve(agency.address, 0);
                     await expect(
-                        agency.connect(accounts[2]).flashStamp(0, 0)
+                        agency.connect(accounts[2]).flashStamp(0, 0, [])
                     )
                         .to.be.reverted;
                 });
@@ -434,14 +434,14 @@ describe("TravelAgency", function () {
                     const newCost = parseEther("20");
                     await agency.connect(accounts[0]).updatePlanetFee(0, newCost);
 
-                    await expect(agency.connect(accounts[2]).flashStamp(0, 2, 0, costWei))
+                    await expect(agency.connect(accounts[2]).flashStamp(0, 2, 0, costWei, []))
                     .to.be.revertedWith("Fee exceeds maximum spend");
                 })
             });
 
             it("should not be able to flash-stamp a planet not in contract", async function () {
                 await expect(
-                    agency.connect(accounts[2]).flashStamp(5, 0, 0, ethers.constants.MaxUint256)
+                    agency.connect(accounts[2]).flashStamp(5, 0, 0, ethers.constants.MaxUint256, [])
                 )
                     .to.be.revertedWith("Planet not in contract");
             });
@@ -485,7 +485,7 @@ describe("TravelAgency", function () {
             );
 
             // Account 1 uses travel agency on planet 0 for pass 0
-            await agency.connect(accounts[2]).flashStamp(0, 0, 0, ethers.constants.MaxUint256);
+            await agency.connect(accounts[2]).flashStamp(0, 0, 0, ethers.constants.MaxUint256, []);
         });
 
         it("should be able to withdraw fees", async function () {
@@ -504,7 +504,7 @@ describe("TravelAgency", function () {
 
         it("should be able to withdraw fees after multiple visits", async function () {
             // Visit again
-            await agency.connect(accounts[2]).flashStamp(0, 0, 0, ethers.constants.MaxUint256);
+            await agency.connect(accounts[2]).flashStamp(0, 0, 0, ethers.constants.MaxUint256, []);
 
             await expect(
                 agency.connect(accounts[1]).withdrawOwnerFees(await accounts[1].getAddress())
@@ -572,7 +572,7 @@ describe("TravelAgency", function () {
             );
 
             // Account 1 uses travel agency on planet 0 for pass 0
-            await agency.connect(accounts[1]).flashStamp(0, 0, 0, ethers.constants.MaxUint256);
+            await agency.connect(accounts[1]).flashStamp(0, 0, 0, ethers.constants.MaxUint256, []);
 
             const feeBp = await agency.operatorFeeBp();
             const cost = await agency.planetFees(0);
@@ -595,7 +595,7 @@ describe("TravelAgency", function () {
 
         it("should be able to withdraw fees after multiple visits", async function () {
             // Visit again
-            await agency.connect(accounts[1]).flashStamp(0, 0, 0, ethers.constants.MaxUint256);
+            await agency.connect(accounts[1]).flashStamp(0, 0, 0, ethers.constants.MaxUint256, []);
 
             await expect(
                 agency.connect(accounts[0]).withdrawOperatorFees(await accounts[0].getAddress())

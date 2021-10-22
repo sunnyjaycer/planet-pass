@@ -44,6 +44,12 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     /// Mapping of MAGIC (unique bytes32 identifier) to contract address.
     mapping(bytes32 => AgencyMagic) public magicContracts;
 
+    struct MagicAction {
+        bytes32 identifier;
+        bytes32[] proof;
+        bytes data;
+    }
+
     /// Event emitted when the travel agency is used.
     event FlashStamp(
         address indexed from,
@@ -129,7 +135,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     /// @param passId token ID of the pass that will used for visit.
     /// @param stampId token ID of the stamp that will be used for the visit.
     /// @param maxSpend the maximum amount in WETH the user is willing to spend for this visit.
-    function flashStamp(uint256 planetId, uint256 passId, uint256 stampId, uint256 maxSpend)
+    function flashStamp(uint256 planetId, uint256 passId, uint256 stampId, uint256 maxSpend, MagicAction[] memory actions)
         external
         whenNotPaused
     {
@@ -137,6 +143,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
 
         uint256 fee = planetFees[planetId];
         address planetOwner = planetOwners[planetId];
+        uint256 spent = 0;
 
         // If the fee exceeds maximum spend (e.g. fee was updated between tx submission and tx mined), revert.
         require(fee <= maxSpend, "Fee exceeds maximum spend");
@@ -144,6 +151,7 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         // Send WETH to contract
         // The owner of the planet never pays any fees
         if (fee != 0 && msg.sender != planetOwner) {
+            spent = fee;
             // Calculate operator's cut and owner's cut
             (uint256 operatorCut, uint256 ownerCut) = calculateFee(fee);
 
@@ -159,6 +167,27 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
         }
 
         passContract.delegateVisitPlanet(msg.sender, passId, planetId, stampId);
+
+        // Perform actions
+        MagicAction memory action;
+        for (uint256 i = 0; i < actions.length; i++) {
+            action = actions[i];
+            AgencyMagic dest = magicContracts[action.identifier];
+
+            // Must have contract defined
+            require(address(dest) != address(0), "Identifier not found");
+
+            // Do action
+            dest.performMagic(
+                msg.sender,
+                planetId,
+                passId,
+                stampId,
+                spent,
+                action.proof,
+                action.data
+            );
+        }
 
         emit FlashStamp(msg.sender, planetOwner, planetId, passId);
     }
