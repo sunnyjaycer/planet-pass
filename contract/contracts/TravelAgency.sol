@@ -3,6 +3,8 @@ pragma solidity ^0.8.2;
 
 import "./WanderersPlanet.sol";
 import "./WanderersPass.sol";
+import "./agency_magic/AgencyMagic.sol";
+
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -38,6 +40,9 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
 
     /// Mapping of owners to fees accured
     mapping(address => uint256) public ownerFeesAccrued;
+
+    /// Mapping of MAGIC (unique bytes32 identifier) to contract address.
+    mapping(bytes32 => AgencyMagic) public magicContracts;
 
     /// Event emitted when the travel agency is used.
     event FlashStamp(
@@ -108,6 +113,13 @@ contract TravelAgency is IERC721Receiver, Ownable, Pausable {
     /// @param _operatorFeeBp the new fee charged, in basis points
     function updateOperatorFeeBp(uint256 _operatorFeeBp) external onlyOwner {
         operatorFeeBp = _operatorFeeBp;
+    }
+
+    /// Updates the contract address associated with a magic identifier.
+    /// @param magic the magic identifier
+    /// @param action the new contract associated with the magic
+    function setContractForMagic(bytes32 magic, AgencyMagic action) external onlyOwner {
+        magicContracts[magic] = action;
     }
 
     /// Perform a flash-stamp of planetId onto passId.
