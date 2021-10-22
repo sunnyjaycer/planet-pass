@@ -28,4 +28,7 @@
   display: block;
   position: absolute;
   object-fit: contain;
+  .cover & {
+    object-fit: cover;
+  }
 }

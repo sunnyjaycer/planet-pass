@@ -6,15 +6,13 @@ import Select from '../Select'
 import Button from '../Button'
 import Modal from 'react-modal'
 import LazyMedia from '../LazyMedia'
-import fpoPassport from '../../assets/fpoPassport.png'
-import fpoPassportPink from '../../assets/fpoPassportPink.png'
 
 type CreatePassportModalProps = {
   handleClose: () => void
   isOpen: boolean
 }
 
-const defaultPassport = 'Basic Black'
+const defaultPassport = 'Basic Green'
 
 const CreatePassportModal: FunctionComponent<CreatePassportModalProps> = ({
   handleClose,
@@ -56,14 +54,15 @@ const CreatePassportModal: FunctionComponent<CreatePassportModalProps> = ({
           <div className={style.planetMedia}>
             <div className={style.mediaContainer}>
               <LazyMedia
-                imgSrc={
-                  currentPassport === 'Basic Black'
-                    ? fpoPassport
-                    : fpoPassportPink
+                videoSrc={
+                  currentPassport === 'Basic Green'
+                    ? '/passports/passport-green.mp4'
+                    : '/passports/passport-pink.mp4'
                 }
                 altText="passport"
-                aspect={248 / 351}
+                aspect={248 / 340}
                 noBk
+                cover
               />
             </div>
           </div>
@@ -76,7 +75,7 @@ const CreatePassportModal: FunctionComponent<CreatePassportModalProps> = ({
               <div className={style.selectWrap}>
                 <Select
                   label="Passport Style"
-                  options={['Basic Black', 'Basic Pink']}
+                  options={['Basic Green', 'Basic Pink']}
                   handleSelect={(s) => {
                     setCurrentPassport(s)
                   }}
