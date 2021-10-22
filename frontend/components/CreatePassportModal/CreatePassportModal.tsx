@@ -60,7 +60,6 @@ const CreatePassportModal: FunctionComponent<CreatePassportModalProps> = ({
                     : '/passports/passport-pink.mp4'
                 }
                 altText="passport"
-                aspect={248 / 340}
                 noBk
                 cover
               />

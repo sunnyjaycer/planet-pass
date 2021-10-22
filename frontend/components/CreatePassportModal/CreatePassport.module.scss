@@ -92,7 +92,9 @@
 }
 .mediaContainer {
   width: 100%;
-
+  height: 0;
+  position: relative;
+  padding-bottom: 142%;
   margin-bottom: 1rem;
   @include break-md {
     margin-bottom: 0;
