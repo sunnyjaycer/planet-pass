@@ -23,6 +23,26 @@ contract Hyperstore is AccessControl {
     // Mapping of bundle IDs to Bundle structs
     mapping(uint256 => Bundle) public bundles;
 
+    /// Event emitted when a Bundle is updated.
+    /// @param id the ID of the modified bundle
+    /// @param cost the new cost of the modified bundle
+    /// @param available the new availability of the modified bundle
+    event BundleUpdate(
+        uint256 indexed id,
+        uint256 indexed cost,
+        bool indexed available
+    );
+
+    /// Event emitted when a Bundle is purchased
+    /// @param buyer the address of the buyer
+    /// @param id the ID of the purchased bundle
+    /// @param cost the cost of the purchased bundle
+    event BundlePurchase(
+        address indexed buyer,
+        uint256 indexed id,
+        uint256 cost
+    );
+
     constructor(Stardust _stardust, PlanetPassItems _planetPassItems) {
         stardust = _stardust;
         planetPassItems = _planetPassItems;
@@ -62,6 +82,7 @@ contract Hyperstore is AccessControl {
 
         Bundle memory bundle = Bundle(cost, false, items, quantities);
         bundles[id] = bundle;
+        emit BundleUpdate(id, cost, false);
     }
 
     /// Set whether a Bundle is available for purchase.
@@ -72,6 +93,7 @@ contract Hyperstore is AccessControl {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         bundles[id].available = available;
+        emit BundleUpdate(id, bundles[id].cost, available);
     }
 
     /// Set the cost of a Bundle.
@@ -82,6 +104,7 @@ contract Hyperstore is AccessControl {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         bundles[id].cost = cost;
+        emit BundleUpdate(id, cost, bundles[id].available);
     }
 
     /// Set the list of items and their quantities in a Bundle.
@@ -97,14 +120,17 @@ contract Hyperstore is AccessControl {
 
         bundles[id].items = items;
         bundles[id].quantities = quantities;
+        emit BundleUpdate(id, bundles[id].cost, bundles[id].available);
     }
 
     /// Buy an item from the store, burning Stardust in the process.
+    /// Note: This requires Stardust spend permission from `msg.sender`. Otherwise will revert.
     /// @param id the ID of the bundle to purchase
     function buy(uint256 id) public {
         require(bundles[id].available, "Bundle not available for sale");
         // Burn stardust
         stardust.burnFrom(msg.sender, bundles[id].cost);
         planetPassItems.mintBatch(msg.sender, bundles[id].items, bundles[id].quantities, "");
+        emit BundlePurchase(msg.sender, id, bundles[id].cost);
     }
 }
