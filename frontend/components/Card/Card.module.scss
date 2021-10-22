@@ -54,6 +54,20 @@
     justify-content: space-between;
   }
 }
+
+.tag {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  background: $c-green;
+  padding: 0.75rem 1.5rem;
+  color: $c-grey;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
 .cardStamp {
   position: absolute;
   top: 10%;

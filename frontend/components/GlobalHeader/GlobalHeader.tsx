@@ -15,11 +15,12 @@ const navLinks = [
   {
     url: '/passports',
     name: 'My Passports'
+  },
+  {
+    url: '/store',
+    name: 'Store',
+    alerts: 4
   }
-  // {
-  //   url: '/',
-  //   name: 'Space Store'
-  // }
 ]
 
 const GlobalHeader = () => {
@@ -47,6 +48,9 @@ const GlobalHeader = () => {
                     }
                   >
                     {linkItem.name}
+                    {linkItem.alerts && (
+                      <span className={style.alert}>{linkItem.alerts}</span>
+                    )}
                   </a>
                 </Link>
               </li>

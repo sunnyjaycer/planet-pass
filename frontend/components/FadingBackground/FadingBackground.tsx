@@ -9,7 +9,6 @@ import style from './FadingBackground.module.scss'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
-import bkGateway from '../../assets/backgrounds/bk-gateway.png'
 import bkClouds from '../../assets/backgrounds/bk-clouds.png'
 import bkPlanetsDark from '../../assets/backgrounds/bk-planets-dark.png'
 import bkPlanetsPurple from '../../assets/backgrounds/bk-planets-purple.png'

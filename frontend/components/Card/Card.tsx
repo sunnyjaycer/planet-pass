@@ -14,6 +14,7 @@ type CardProps = {
   linkUrl?: string
   stampSrc?: string | StaticImageData
   stampPosition?: number
+  tag?: string
 }
 type WrapperProps = {
   linkUrl?: string
@@ -45,7 +46,8 @@ const Card: FunctionComponent<CardProps> = ({
   stampSrc,
   onClick,
   linkUrl,
-  stampPosition
+  stampPosition,
+  tag
 }) => {
   return (
     <Wrapper linkUrl={linkUrl} onClick={onClick}>
@@ -64,6 +66,7 @@ const Card: FunctionComponent<CardProps> = ({
             <Image src={stampSrc} alt="planet" layout="fill" />
           </div>
         )}
+        {tag && <div className={style.tag}>{tag}</div>}
       </div>
       <div className={style.cardDetails}>
         <div className={style.cardName}>{name}</div>

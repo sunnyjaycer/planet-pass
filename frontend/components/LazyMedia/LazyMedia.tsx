@@ -9,6 +9,7 @@ type LazyMediaProps = {
   aspect?: number
   videoControls?: boolean
   noBk?: boolean
+  cover?: boolean
 }
 
 const LazyMedia: FunctionComponent<LazyMediaProps> = ({
@@ -17,15 +18,18 @@ const LazyMedia: FunctionComponent<LazyMediaProps> = ({
   altText,
   aspect,
   videoControls,
-  noBk
+  noBk,
+  cover
 }) => {
   const [isLoaded, setIsLoaded] = useState(false)
 
   return (
     <div
-      className={`${style.mediaContainer} ${noBk ? style.noBk : ''}`}
+      className={`${style.mediaContainer} ${noBk ? style.noBk : ''} ${
+        cover ? style.cover : ''
+      }`}
       style={{
-        paddingBottom: aspect ? (1 / aspect) * 100 + '%' : '100%'
+        paddingBottom: aspect ? (1 / aspect) * 100 + '%' : cover ? 0 : '100%'
       }}
     >
       <div className={`${style.mediaFade} ${isLoaded ? style.loaded : ''}`}>
@@ -46,7 +50,8 @@ const LazyMedia: FunctionComponent<LazyMediaProps> = ({
             src={imgSrc}
             alt={altText ? altText : ''}
             layout="fill"
-            className={style.cardImage}
+            className={style.image}
+            objectFit="cover"
             onLoadingComplete={() => {
               setIsLoaded(true)
             }}
