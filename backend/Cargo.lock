@@ -3,5 +3,13 @@
 version = 3
 
 [[package]]
-name = "backend"
+name = "metadata-db"
+version = "0.1.0"
+
+[[package]]
+name = "metadata-modtool"
+version = "0.1.0"
+
+[[package]]
+name = "server"
 version = "0.1.0"
