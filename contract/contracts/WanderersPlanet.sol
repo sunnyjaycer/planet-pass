@@ -31,6 +31,15 @@ contract WanderersPlanet is
     /// Mapping of Planets to states (see internal docs for what they represent)
     mapping(uint256 => uint256) public planetState;
 
+
+    /// Event emitted when the state of a Planet is updated.
+    /// @param id the token ID of the Planet
+    /// @param state the new state of the Planet
+    event StateUpdate(
+        uint256 indexed id,
+        uint256 indexed state
+    );
+
     constructor(string memory baseURI_, bytes32 _root)
         ERC721("Wanderers Planet", "WANDERER-PLANET")
     {
@@ -134,10 +143,11 @@ contract WanderersPlanet is
     /// @param state the state to update to
     function setPlanetState(uint256 id, uint256 state) external onlyOwner {
         planetState[id] = state;
+        emit StateUpdate(id, state);
     }
 
     /// Update the states of Planets.
-    /// @param id the token ID of the Planet
+    /// @param id the token IDs of Planets
     /// @param state the state to update to
     function setPlanetState(uint256[] calldata id, uint256 state)
         external
@@ -145,6 +155,7 @@ contract WanderersPlanet is
     {
         for (uint256 i = 0; i < id.length; i++) {
             planetState[id[i]] = state;
+            emit StateUpdate(id[i], state);
         }
     }
 
