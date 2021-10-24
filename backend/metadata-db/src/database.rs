@@ -49,4 +49,14 @@ impl Database {
 
         Ok((!metadatas.is_empty()).then(|| metadatas))
     }
+
+    /// Returns whether a key exists
+    pub fn contains(&self, key: DatabaseKey) -> Result<bool, DatabaseError> {
+        Ok(self.db.contains_key(bincode::serialize(&key)?)?)
+    }
+
+    /// Returns whether a planet ID exists
+    pub fn contains_planet(&self, planet: Id) -> Result<bool, DatabaseError> {
+        Ok(self.db.scan_prefix(bincode::serialize(&planet)?).count() != 0)
+    }
 }

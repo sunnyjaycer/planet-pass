@@ -1,9 +1,9 @@
-use metadata_db::prelude::Metadata;
+use metadata_db::prelude::{Id, Metadata, State};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct AddItem {
-    id: u32,
-    state: u32,
-    metadata: Metadata,
+    pub id: Id,
+    pub state: State,
+    pub metadata: Metadata,
 }
