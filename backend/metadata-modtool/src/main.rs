@@ -3,7 +3,7 @@ use anyhow::{anyhow, Context, Result};
 use clap::{load_yaml, App, ArgMatches};
 use metadata_db::{
     database::Database,
-    prelude::{DatabaseKey, Id, Metadata, State},
+    prelude::{Id, IdState, Metadata, State},
 };
 use serde::de::DeserializeOwned;
 use std::{fs, path::Path};
@@ -39,14 +39,14 @@ fn add_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
             .map(|item| {
                 Ok((
                     item,
-                    database.get_metadata(DatabaseKey::from((item.id, item.state)))?,
+                    database.get_metadata(IdState::from((item.id, item.state)))?,
                 ))
             })
             .collect::<Result<Vec<(_, _)>>>()?
             .into_iter()
             .filter_map(|(item, odbm)| odbm.map(|dbm| (item, dbm)))
             .filter_map(|(item, dbm)| {
-                (item.metadata != dbm).then(|| DatabaseKey::from((item.id, item.state)))
+                (item.metadata != dbm).then(|| IdState::from((item.id, item.state)))
             })
             .collect::<Vec<_>>();
 
@@ -65,7 +65,7 @@ fn add_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
 
     // Write to database
     for item in additions {
-        let key = DatabaseKey::from((item.id, item.state));
+        let key = IdState::from((item.id, item.state));
         let old = database.add_metadata(key, item.metadata)?;
         if old.is_some() {
             println!("{:?} was overwritten", key);
@@ -87,7 +87,7 @@ fn remove_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
     let mut nops = 0;
 
     for item in removals {
-        let key = DatabaseKey::from((item.id, item.state));
+        let key = IdState::from((item.id, item.state));
         let old = database.remove_metadata(key)?;
         if old.is_none() {
             println!("{:?} was empty already", key);
@@ -141,7 +141,7 @@ fn init_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
                     .parse::<u32>()?,
             );
 
-            DatabaseKey::new(id, State::new(state))
+            IdState::new(id, State::new(state))
         };
         database.add_metadata(key, metadata)?;
         count += 1;

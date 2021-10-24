@@ -1,39 +1,48 @@
 use crate::{
     error::DatabaseError,
-    prelude::{DatabaseKey, Id, Metadata},
+    prelude::{Id, IdState, Metadata},
 };
 
 /// Wrapper over the sled database.
 #[derive(Debug)]
 pub struct Database {
     db: sled::Db,
+    planets: sled::Tree,
+    inverted: sled::Tree,
 }
 
 impl Database {
     /// Create a new Database wrapper.
-    pub fn new(db: sled::Db) -> Self {
-        Self { db }
+    pub fn new(db: sled::Db) -> Result<Self, DatabaseError> {
+        Ok(Self {
+            planets: db.open_tree("planets")?,
+            inverted: db.open_tree("inverted")?,
+            db,
+        })
     }
 
     /// Add a piece of metadata to the database, given a key (ID + state).
     /// Returns the previous entry, if any.
     pub fn add_metadata(
         &self,
-        key: DatabaseKey,
+        id_state: IdState,
         metadata: Metadata,
     ) -> Result<Option<Metadata>, DatabaseError> {
         Ok(self
-            .db
-            .insert(bincode::serialize(&key)?, bincode::serialize(&metadata)?)?
+            .planets
+            .insert(
+                bincode::serialize(&id_state)?,
+                bincode::serialize(&metadata)?,
+            )?
             .map(|v| bincode::deserialize(&v))
             .transpose()?)
     }
 
     /// Gets a piece of metadata, given a key (ID + state).
-    pub fn get_metadata(&self, key: DatabaseKey) -> Result<Option<Metadata>, DatabaseError> {
+    pub fn get_metadata(&self, id_state: IdState) -> Result<Option<Metadata>, DatabaseError> {
         Ok(self
-            .db
-            .get(bincode::serialize(&key)?)?
+            .planets
+            .get(bincode::serialize(&id_state)?)?
             .map(|v| bincode::deserialize(&v))
             .transpose()?)
     }
@@ -43,7 +52,7 @@ impl Database {
     pub fn get_all_metadata(&self, planet: Id) -> Result<Option<Vec<Metadata>>, DatabaseError> {
         let mut metadatas = Vec::new();
 
-        for kv in self.db.scan_prefix(bincode::serialize(&planet)?) {
+        for kv in self.planets.scan_prefix(bincode::serialize(&planet)?) {
             let (_, v) = kv?;
             let v = bincode::deserialize(&v)?;
             metadatas.push(v);
@@ -53,22 +62,22 @@ impl Database {
     }
 
     /// Removes a given ID.
-    pub fn remove_metadata(&self, key: DatabaseKey) -> Result<Option<Metadata>, DatabaseError> {
+    pub fn remove_metadata(&self, id_state: IdState) -> Result<Option<Metadata>, DatabaseError> {
         Ok(self
-            .db
-            .remove(bincode::serialize(&key)?)?
+            .planets
+            .remove(bincode::serialize(&id_state)?)?
             .map(|v| bincode::deserialize(&v))
             .transpose()?)
     }
 
     /// Returns whether a key exists
-    pub fn contains(&self, key: DatabaseKey) -> Result<bool, DatabaseError> {
-        Ok(self.db.contains_key(bincode::serialize(&key)?)?)
+    pub fn contains(&self, id_state: IdState) -> Result<bool, DatabaseError> {
+        Ok(self.planets.contains_key(bincode::serialize(&id_state)?)?)
     }
 
     /// Returns whether a planet ID exists
     pub fn contains_planet(&self, planet: Id) -> Result<bool, DatabaseError> {
-        Ok(self.db.scan_prefix(bincode::serialize(&planet)?).count() != 0)
+        Ok(self.planets.scan_prefix(bincode::serialize(&planet)?).count() != 0)
     }
 
     /// Provide inner access to the database.

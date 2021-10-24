@@ -5,7 +5,7 @@ use std::{
 };
 
 /// The token ID of a Planet.
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Id(u32);
 
 impl Id {
@@ -23,7 +23,7 @@ impl Deref for Id {
 }
 
 /// The state of a Planet.
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, Default, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, Default, PartialEq, Eq, Hash)]
 pub struct State(u32);
 
 impl State {
@@ -40,11 +40,10 @@ impl Deref for State {
     }
 }
 
-/// The key for the database, comprising of the ID and the State.
 #[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
-pub struct DatabaseKey(Id, State);
+pub struct IdState(Id, State);
 
-impl DatabaseKey {
+impl IdState {
     pub fn new(id: Id, state: State) -> Self {
         Self(id, state)
     }
@@ -58,18 +57,52 @@ impl DatabaseKey {
     }
 }
 
-impl From<(Id, State)> for DatabaseKey {
+impl From<(Id, State)> for IdState {
     fn from((id, state): (Id, State)) -> Self {
         Self(id, state)
     }
 }
 
-/// Metadata for a given Key.
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub struct Category(String);
+
+impl Category {
+    pub fn new(category: String) -> Self {
+        Self(category)
+    }
+}
+
+impl Deref for Category {
+    type Target = String;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub struct Attribute(String);
+
+impl Attribute {
+    pub fn new(attribute: String) -> Self {
+        Self(attribute)
+    }
+}
+
+impl Deref for Attribute {
+    type Target = String;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+/// Metadata for a given (id, state).
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
-pub struct Metadata(pub HashMap<String, HashSet<String>>);
+pub struct Metadata(pub HashMap<Category, HashSet<Attribute>>);
 
 impl Deref for Metadata {
-    type Target = HashMap<String, HashSet<String>>;
+    type Target = HashMap<Category, HashSet<Attribute>>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
