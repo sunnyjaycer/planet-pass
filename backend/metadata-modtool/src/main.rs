@@ -5,7 +5,7 @@ use clap::{load_yaml, App, ArgMatches};
 use metadata_db::{database::Database, prelude::DatabaseKey};
 use serde::de::DeserializeOwned;
 
-use crate::items::AddItem;
+use crate::items::{AddItem, RemoveItem};
 
 pub mod items;
 
@@ -59,6 +59,8 @@ fn add_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
             ));
         }
     }
+    let mut written = 0;
+    let mut overwritten = 0;
 
     // Write to database
     for item in additions {
@@ -66,14 +68,39 @@ fn add_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
         let old = database.add_metadata(key, item.metadata)?;
         if old.is_some() {
             println!("{:?} was overwritten", key);
+            overwritten += 1;
+        } else {
+            written += 1;
         }
     }
+
+    println!("Added {} items, overwrote {}", written, overwritten);
 
     Ok(())
 }
 
-fn remove_subcommand(_database: Database, _config: &ArgMatches) -> Result<()> {
-    println!("Removing");
+fn remove_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
+    let removals = get_from_file::<Vec<RemoveItem>>(config, "input")?;
+
+    let mut removed = 0;
+    let mut nops = 0;
+
+    for item in removals {
+        let key = DatabaseKey::from((item.id, item.state));
+        let old = database.remove_metadata(key)?;
+        if old.is_none() {
+            println!("{:?} was empty already", key);
+            nops += 1;
+        } else {
+            removed += 1;
+        }
+    }
+
+    println!(
+        "Removed {} items, and {} items did not exist",
+        removed, nops
+    );
+
     Ok(())
 }
 
