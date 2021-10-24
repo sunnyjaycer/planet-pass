@@ -3,10 +3,11 @@ use std::{fs, path::Path};
 use anyhow::{anyhow, Context, Result};
 use clap::{load_yaml, App, ArgMatches};
 use metadata_db::{database::Database, prelude::DatabaseKey};
+use serde::de::DeserializeOwned;
 
-use crate::add::AddItem;
+use crate::items::AddItem;
 
-pub mod add;
+pub mod items;
 
 fn main() -> Result<()> {
     let yaml = load_yaml!("cli.yml");
@@ -28,15 +29,7 @@ fn main() -> Result<()> {
 
 fn add_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
     // Find and deserialze JSON file
-    let additions = {
-        let location = config.value_of("input").map(|s| Path::new(s)).unwrap();
-
-        let file_contents = fs::read_to_string(location)
-            .context("Could not find input file at specified location.")?;
-
-        serde_json::from_str::<Vec<AddItem>>(&file_contents)
-    }
-    .context("Could not decode JSON file. Is it properly defined?")?;
+    let additions = get_from_file::<Vec<AddItem>>(config, "input")?;
 
     // If `--no-overwrite` is set, check whether any additions will overwrite
     if config.is_present("no-overwrite") {
@@ -87,4 +80,15 @@ fn remove_subcommand(_database: Database, _config: &ArgMatches) -> Result<()> {
 fn init_subcommand(_database: Database, _config: &ArgMatches) -> Result<()> {
     println!("Initialising");
     Ok(())
+}
+
+fn get_from_file<T>(config: &ArgMatches, name: &str) -> Result<T>
+where
+    T: DeserializeOwned,
+{
+    let location = config.value_of(name).map(|s| Path::new(s)).unwrap();
+    let file_contents =
+        fs::read_to_string(location).context("Could not find input file at specified location.")?;
+    serde_json::from_str::<T>(&file_contents)
+        .context("Could not decode JSON file. Is it properly defined?")
 }

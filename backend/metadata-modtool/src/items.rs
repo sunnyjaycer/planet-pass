@@ -7,3 +7,9 @@ pub struct AddItem {
     pub state: State,
     pub metadata: Metadata,
 }
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+pub struct RemoveItem {
+    pub id: Id,
+    pub state: State,
+}
