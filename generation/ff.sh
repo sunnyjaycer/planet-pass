@@ -17,7 +17,7 @@ for i in {0..8888}; do
     output_stage2.wav
 
     # Pass 1 for loudnorm
-    ffmpeg -hide_banner -i output_stage2.wav -af "loudnorm=i=-16:tp=-1.5:lra=11:print_format=json" -f null - 2>&1 >/dev/null | tail -n12 > loudnorm_pass.json
+    ffmpeg -hide_banner -i output_stage2.wav -af "loudnorm=i=-16:tp=-2:lra=11:print_format=json" -f null - 2>&1 >/dev/null | tail -n12 > loudnorm_pass.json
     
     # Read variables
     input_i=$(jq -r '.input_i' loudnorm_pass.json)
