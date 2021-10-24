@@ -3,7 +3,7 @@ use anyhow::{anyhow, Context, Result};
 use clap::{load_yaml, App, ArgMatches};
 use metadata_db::{
     database::Database,
-    prelude::{Id, IdState, Metadata, State},
+    prelude::{CategoryAttribute, Id, IdState, IdStates, Metadata, State},
 };
 use serde::de::DeserializeOwned;
 use std::{fs, path::Path};
@@ -21,6 +21,7 @@ fn main() -> Result<()> {
         ("add", Some(sc)) => add_subcommand(database, sc),
         ("remove", Some(sc)) => remove_subcommand(database, sc),
         ("init", Some(sc)) => init_subcommand(database, sc),
+        ("print", Some(sc)) => print_subcommand(database, sc),
         _ => {
             println!("Database was opened, but no subcommand was selected. I will do nothing!");
             Ok(())
@@ -149,6 +150,31 @@ fn init_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
 
     println!("Initialised {} items, {} could not be read", count, failed);
 
+    Ok(())
+}
+
+fn print_subcommand(database: Database, _config: &ArgMatches) -> Result<()> {
+    let inner = database.into_inner();
+
+    println!("Main table:");
+    for planet in inner.open_tree("planets")?.iter() {
+        let (k, v) = planet?;
+        let k = bincode::deserialize::<IdState>(&k)?;
+        let v = bincode::deserialize::<Metadata>(&v)?;
+        println!("{:#?}", k);
+        println!("{:#?}", v);
+        println!("-----");
+    }
+
+    println!("Inverted index:");
+    for inverted in inner.open_tree("inverted")?.iter() {
+        let (k, v) = inverted?;
+        let k = bincode::deserialize::<CategoryAttribute>(&k)?;
+        let v = bincode::deserialize::<IdStates>(&v)?;
+        println!("{:#?}", k);
+        println!("{:#?}", v);
+        println!("-----");
+    }
     Ok(())
 }
 

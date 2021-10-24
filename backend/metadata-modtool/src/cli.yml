@@ -56,3 +56,6 @@ subcommands:
             short: a
             long: allow-already-init
             help: Allow the database to be already initialised
+  - print:
+      about: Print a database
+      version: "0.1.0"

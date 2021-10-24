@@ -206,6 +206,7 @@ name = "metadata-modtool"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "bincode",
  "clap",
  "metadata-db",
  "serde",
