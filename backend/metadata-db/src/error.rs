@@ -1,3 +1,4 @@
+use sled::transaction::TransactionError;
 use thiserror::Error;
 
 /// Errors encountered when interacting with the database.
@@ -7,4 +8,13 @@ pub enum DatabaseError {
     Sled(#[from] sled::Error),
     #[error("(de)serialization error")]
     Bincode(#[from] bincode::Error),
+}
+
+impl From<TransactionError<DatabaseError>> for DatabaseError {
+    fn from(txe: TransactionError<DatabaseError>) -> Self {
+        match txe {
+            TransactionError::Abort(a) => a,
+            TransactionError::Storage(s) => DatabaseError::Sled(s),
+        }
+    }
 }

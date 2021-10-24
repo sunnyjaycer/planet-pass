@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::{
     collections::{HashMap, HashSet},
-    ops::Deref,
+    ops::{Deref, DerefMut},
 };
 
 /// The token ID of a Planet.
@@ -40,7 +40,8 @@ impl Deref for State {
     }
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+/// Combination of a Planet's token ID and State
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct IdState(Id, State);
 
 impl IdState {
@@ -63,6 +64,7 @@ impl From<(Id, State)> for IdState {
     }
 }
 
+/// A metadata category.
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Category(String);
 
@@ -80,6 +82,7 @@ impl Deref for Category {
     }
 }
 
+/// A metadata attribute.
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Attribute(String);
 
@@ -97,15 +100,51 @@ impl Deref for Attribute {
     }
 }
 
+/// Combination of category and attribute. This uniquely identifies an attribute.
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+pub struct CategoryAttribute(Category, Attribute);
+
+impl CategoryAttribute {
+    pub fn new(category: Category, attribute: Attribute) -> Self {
+        Self(category, attribute)
+    }
+
+    pub fn category(&self) -> &Category {
+        &self.0
+    }
+
+    pub fn attribute(&self) -> &Attribute {
+        &self.1
+    }
+}
+
+impl From<(Category, Attribute)> for CategoryAttribute {
+    fn from((category, attribute): (Category, Attribute)) -> Self {
+        Self(category, attribute)
+    }
+}
+
 /// Metadata for a given (id, state).
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
-pub struct Metadata(pub HashMap<Category, HashSet<Attribute>>);
+pub struct Metadata(HashMap<Category, HashSet<Attribute>>);
+
+impl Metadata {
+    pub fn into_inner(self) -> HashMap<Category, HashSet<Attribute>> {
+        self.0
+    }
+}
 
 impl Deref for Metadata {
     type Target = HashMap<Category, HashSet<Attribute>>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+impl DerefMut for Metadata {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
     }
 }
 
@@ -116,3 +155,35 @@ impl PartialEq for Metadata {
 }
 
 impl Eq for Metadata {}
+
+/// A set of IdStates.
+#[derive(Clone, Debug, Serialize, Deserialize, Default)]
+pub struct IdStates(HashSet<IdState>);
+
+impl IdStates {
+    pub fn into_inner(self) -> HashSet<IdState> {
+        self.0
+    }
+}
+
+impl Deref for IdStates {
+    type Target = HashSet<IdState>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for IdStates {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+impl PartialEq for IdStates {
+    fn eq(&self, other: &Self) -> bool {
+        self.0 == other.0
+    }
+}
+
+impl Eq for IdStates {}

@@ -15,7 +15,7 @@ fn main() -> Result<()> {
     let config = App::from_yaml(yaml).get_matches();
 
     // Grab sled database
-    let database = Database::new(sled::open(config.value_of("DATABASE").unwrap())?);
+    let database = Database::new(sled::open(config.value_of("DATABASE").unwrap())?)?;
 
     match config.subcommand() {
         ("add", Some(sc)) => add_subcommand(database, sc),
