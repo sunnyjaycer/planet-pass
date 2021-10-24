@@ -70,4 +70,10 @@ impl Database {
     pub fn contains_planet(&self, planet: Id) -> Result<bool, DatabaseError> {
         Ok(self.db.scan_prefix(bincode::serialize(&planet)?).count() != 0)
     }
+
+    /// Provide inner access to the database.
+    /// Using this function voids your warranty.
+    pub fn into_inner(&self) -> &sled::Db {
+        &self.db
+    }
 }

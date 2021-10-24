@@ -1,11 +1,12 @@
-use std::{fs, path::Path};
-
+use crate::items::{AddItem, RemoveItem};
 use anyhow::{anyhow, Context, Result};
 use clap::{load_yaml, App, ArgMatches};
-use metadata_db::{database::Database, prelude::DatabaseKey};
+use metadata_db::{
+    database::Database,
+    prelude::{DatabaseKey, Id, Metadata, State},
+};
 use serde::de::DeserializeOwned;
-
-use crate::items::{AddItem, RemoveItem};
+use std::{fs, path::Path};
 
 pub mod items;
 
@@ -104,8 +105,50 @@ fn remove_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
     Ok(())
 }
 
-fn init_subcommand(_database: Database, _config: &ArgMatches) -> Result<()> {
-    println!("Initialising");
+fn init_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
+    // Prevent overwriting an already-populated database
+    if !config.is_present("allow-already-init") && !database.into_inner().is_empty() {
+        return Err(anyhow!(
+            "Database is already populated. Will not re-initialise!"
+        ));
+    }
+
+    let state = config.value_of("state").unwrap().parse::<u32>()?;
+
+    let mut count = 0;
+    let mut failed = 0;
+
+    // For each file in the directory, read as metadata and insert
+    for path in fs::read_dir(config.value_of("input").unwrap())? {
+        let path = path.unwrap().path();
+        let metadata = match serde_json::from_str::<Metadata>(&fs::read_to_string(&path)?) {
+            Ok(v) => v,
+            // Do not exit on fail
+            Err(e) => {
+                eprintln!("{}", e);
+                failed += 1;
+                continue;
+            }
+        };
+
+        let key = {
+            let id = Id::new(
+                path.file_stem()
+                    .unwrap()
+                    .to_os_string()
+                    .into_string()
+                    .map_err(|e| anyhow!("{:?}", e))?
+                    .parse::<u32>()?,
+            );
+
+            DatabaseKey::new(id, State::new(state))
+        };
+        database.add_metadata(key, metadata)?;
+        count += 1;
+    }
+
+    println!("Initialised {} items, {} could not be read", count, failed);
+
     Ok(())
 }
 

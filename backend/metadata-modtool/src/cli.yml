@@ -42,6 +42,17 @@ subcommands:
             short: i
             long: input
             value_name: DIR
-            help: Directory where JSON metadata is stored.
+            help: Directory where JSON metadata is stored
             takes_value: true
             required: true
+        - state:
+            short: s
+            long: state
+            value_name: INT
+            help: Default state for planets
+            takes_value: true
+            default_value: "0"
+        - allow-already-init:
+            short: a
+            long: allow-already-init
+            help: Allow the database to be already initialised

@@ -8,13 +8,55 @@ use std::{
 #[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Id(u32);
 
+impl Id {
+    pub fn new(id: u32) -> Self {
+        Self(id)
+    }
+}
+
+impl Deref for Id {
+    type Target = u32;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
 /// The state of a Planet.
 #[derive(Clone, Copy, Debug, Serialize, Deserialize, Default, PartialEq, Eq)]
 pub struct State(u32);
 
+impl State {
+    pub fn new(state: u32) -> Self {
+        Self(state)
+    }
+}
+
+impl Deref for State {
+    type Target = u32;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
 /// The key for the database, comprising of the ID and the State.
 #[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct DatabaseKey(Id, State);
+
+impl DatabaseKey {
+    pub fn new(id: Id, state: State) -> Self {
+        Self(id, state)
+    }
+
+    pub fn id(self) -> Id {
+        self.0
+    }
+
+    pub fn state(self) -> State {
+        self.1
+    }
+}
 
 impl From<(Id, State)> for DatabaseKey {
     fn from((id, state): (Id, State)) -> Self {
