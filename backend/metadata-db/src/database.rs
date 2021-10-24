@@ -35,13 +35,10 @@ impl Database {
             |(tx_planets, tx_inverted): &(TransactionalTree, TransactionalTree)| {
                 // First, find existing entries
                 let existing_metadata = tx_planets
-                    .get(
-                        &bincode::serialize(&id_state)
-                            .map_err(|e| Abort(DatabaseError::from(e)))?,
-                    )?
+                    .get(&bincode::serialize(&id_state).map_err(DatabaseError::from)?)?
                     .map(|v| bincode::deserialize::<Metadata>(&v))
                     .transpose()
-                    .map_err(|e| Abort(DatabaseError::from(e)))?
+                    .map_err(DatabaseError::from)?
                     .unwrap_or_default();
 
                 // Delete existing inverted index entries
@@ -70,8 +67,8 @@ impl Database {
                 // Write new metadata
                 tx_planets
                     .insert(
-                        bincode::serialize(&id_state).map_err(|e| Abort(DatabaseError::from(e)))?,
-                        bincode::serialize(&metadata).map_err(|e| Abort(DatabaseError::from(e)))?,
+                        bincode::serialize(&id_state).map_err(DatabaseError::from)?,
+                        bincode::serialize(&metadata).map_err(DatabaseError::from)?,
                     )?
                     .map(|v| bincode::deserialize(&v))
                     .transpose()
@@ -110,12 +107,10 @@ impl Database {
             |(tx_planets, tx_inverted): &(TransactionalTree, TransactionalTree)| {
                 // Fetch metadata
                 let metadata = tx_planets
-                    .remove(
-                        bincode::serialize(&id_state).map_err(|e| Abort(DatabaseError::from(e)))?,
-                    )?
+                    .remove(bincode::serialize(&id_state).map_err(DatabaseError::from)?)?
                     .map(|v| bincode::deserialize::<Metadata>(&v))
                     .transpose()
-                    .map_err(|e| Abort(DatabaseError::from(e)))?;
+                    .map_err(DatabaseError::from)?;
 
                 // Update inverted index
                 if let Some(metadata) = &metadata {
@@ -167,13 +162,10 @@ impl Database {
     {
         // Fetch set from inverted index
         let mut set = transactional_tree
-            .get(
-                bincode::serialize(category_attribute)
-                    .map_err(|e| Abort(DatabaseError::from(e)))?,
-            )?
+            .get(bincode::serialize(category_attribute).map_err(DatabaseError::from)?)?
             .map(|v| bincode::deserialize::<IdStates>(&v))
             .transpose()
-            .map_err(|e| Abort(DatabaseError::from(e)))?
+            .map_err(DatabaseError::from)?
             .unwrap_or_default();
 
         // Perform op
@@ -181,8 +173,8 @@ impl Database {
 
         // Write-back
         transactional_tree.insert(
-            bincode::serialize(&category_attribute).map_err(|e| Abort(DatabaseError::from(e)))?,
-            bincode::serialize(&set).map_err(|e| Abort(DatabaseError::from(e)))?,
+            bincode::serialize(&category_attribute).map_err(DatabaseError::from)?,
+            bincode::serialize(&set).map_err(DatabaseError::from)?,
         )?;
 
         Ok(r)

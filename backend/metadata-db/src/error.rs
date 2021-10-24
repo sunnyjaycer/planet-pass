@@ -1,4 +1,4 @@
-use sled::transaction::TransactionError;
+use sled::transaction::{ConflictableTransactionError, TransactionError};
 use thiserror::Error;
 
 /// Errors encountered when interacting with the database.
@@ -16,5 +16,11 @@ impl From<TransactionError<DatabaseError>> for DatabaseError {
             TransactionError::Abort(a) => a,
             TransactionError::Storage(s) => DatabaseError::Sled(s),
         }
+    }
+}
+
+impl From<DatabaseError> for ConflictableTransactionError<DatabaseError> {
+    fn from(dbe: DatabaseError) -> Self {
+        Self::Abort(dbe)
     }
 }
