@@ -18,10 +18,10 @@ subcommands:
             help: Input file for entries to add. See README for file structure
             takes_value: true
             required: true
-        - no-overwrite:
-            short: "n"
-            long: no-overwrite
-            help: Whether existing entries should be overwritten.
+        - overwrite:
+            short: o
+            long: overwrite
+            help: Allow existing entries to be overwritten
 
   - remove:
       about: Remove entries from the database

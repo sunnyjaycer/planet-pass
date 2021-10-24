@@ -31,8 +31,8 @@ fn add_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
     // Find and deserialze JSON file
     let additions = get_from_file::<Vec<AddItem>>(config, "input")?;
 
-    // If `--no-overwrite` is set, check whether any additions will overwrite
-    if config.is_present("no-overwrite") {
+    // If `--overwrite` is not set, check whether any additions will overwrite
+    if !config.is_present("overwrite") {
         let overwrites = additions
             .iter()
             .map(|item| {
