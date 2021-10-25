@@ -1,12 +1,13 @@
 use crate::items::{AddItem, RemoveItem};
 use anyhow::{anyhow, Context, Result};
 use clap::{load_yaml, App, ArgMatches};
+use items::DatabaseDump;
 use metadata_db::{
     database::Database,
     prelude::{CategoryAttribute, Id, IdState, IdStates, Metadata, State},
 };
 use serde::de::DeserializeOwned;
-use std::{fs, path::Path};
+use std::{collections::HashMap, fs, path::Path};
 
 pub mod items;
 
@@ -21,7 +22,7 @@ fn main() -> Result<()> {
         ("add", Some(sc)) => add_subcommand(database, sc),
         ("remove", Some(sc)) => remove_subcommand(database, sc),
         ("init", Some(sc)) => init_subcommand(database, sc),
-        ("print", Some(sc)) => print_subcommand(database, sc),
+        ("dump", Some(sc)) => dump_subcommand(database, sc),
         _ => {
             println!("Database was opened, but no subcommand was selected. I will do nothing!");
             Ok(())
@@ -153,28 +154,52 @@ fn init_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
     Ok(())
 }
 
-fn print_subcommand(database: Database, _config: &ArgMatches) -> Result<()> {
+fn dump_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
     let inner = database.into_inner();
+    let no_tree_restriction = !config.is_present("planets") && !config.is_present("inverted");
 
-    println!("Main table:");
-    for planet in inner.open_tree("planets")?.iter() {
-        let (k, v) = planet?;
-        let k = bincode::deserialize::<IdState>(&k)?;
-        let v = bincode::deserialize::<Metadata>(&v)?;
-        println!("{:#?}", k);
-        println!("{:#?}", v);
-        println!("-----");
+    let planets = if config.is_present("planets") || no_tree_restriction {
+        Some(
+            inner
+                .open_tree("planets")?
+                .iter()
+                .map(|rv| {
+                    let (k, v) = rv?;
+                    let k = bincode::deserialize::<IdState>(&k)?;
+                    let v = bincode::deserialize::<Metadata>(&v)?;
+                    Ok::<_, anyhow::Error>((k, v))
+                })
+                .collect::<Result<HashMap<_, _>, _>>()?,
+        )
+    } else {
+        None
+    };
+
+    let inverted = if config.is_present("inverted") || no_tree_restriction {
+        Some(
+            inner
+                .open_tree("inverted")?
+                .iter()
+                .map(|rv| {
+                    let (k, v) = rv?;
+                    let k = bincode::deserialize::<CategoryAttribute>(&k)?;
+                    let v = bincode::deserialize::<IdStates>(&v)?;
+                    Ok::<_, anyhow::Error>((k, v))
+                })
+                .collect::<Result<HashMap<_, _>, _>>()?,
+        )
+    } else {
+        None
+    };
+
+    let dump = DatabaseDump { planets, inverted };
+
+    if let Some(output) = config.value_of("output") {
+        fs::write(output, serde_json::to_string(&dump)?)?;
+    } else {
+        println!("{}", serde_json::to_string(&dump)?);
     }
 
-    println!("Inverted index:");
-    for inverted in inner.open_tree("inverted")?.iter() {
-        let (k, v) = inverted?;
-        let k = bincode::deserialize::<CategoryAttribute>(&k)?;
-        let v = bincode::deserialize::<IdStates>(&v)?;
-        println!("{:#?}", k);
-        println!("{:#?}", v);
-        println!("-----");
-    }
     Ok(())
 }
 

@@ -101,7 +101,7 @@ impl Deref for Attribute {
 }
 
 /// Combination of category and attribute. This uniquely identifies an attribute.
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct CategoryAttribute(Category, Attribute);
 
 impl CategoryAttribute {
@@ -187,3 +187,21 @@ impl PartialEq for IdStates {
 }
 
 impl Eq for IdStates {}
+
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+pub struct PlanetsTree(HashMap<IdState, Metadata>);
+
+impl PlanetsTree {
+    pub fn new(planets_tree: HashMap<IdState, Metadata>) -> Self {
+        Self(planets_tree)
+    }
+}
+
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+pub struct InvertedTree(HashMap<CategoryAttribute, IdStates>);
+
+impl InvertedTree {
+    pub fn new(inverted_tree: HashMap<CategoryAttribute, IdStates>) -> Self {
+        Self(inverted_tree)
+    }
+}

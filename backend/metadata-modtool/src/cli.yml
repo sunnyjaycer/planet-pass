@@ -34,6 +34,7 @@ subcommands:
             help: Input file for entries to remove. See README for file structure
             takes_value: true
             required: true
+
   - init:
       about: Initialises the database
       version: "0.1.0"
@@ -56,6 +57,22 @@ subcommands:
             short: a
             long: allow-already-init
             help: Allow the database to be already initialised
-  - print:
-      about: Print a database
+            
+  - dump:
+      about: Dump all information in the database as JSON
       version: "0.1.0"
+      args:
+        - planets:
+            short: p
+            long: planets
+            help: Restrict output to the "planets" tree
+        - inverted:
+            short: i
+            long: inverted
+            help: Restrict output to the "inverted" tree
+        - output:
+            short: o
+            long: output
+            value_name: FILE
+            help: Set output file
+            takes_value: true
