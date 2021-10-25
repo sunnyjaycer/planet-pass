@@ -58,7 +58,7 @@ fn add_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
                 eprintln!("{:?}", key);
             }
             return Err(anyhow!(
-                "Items will be overwritten with no-overwrite mode enabled."
+                "Items will be overwritten, but --overwrite flag was not specified"
             ));
         }
     }
@@ -109,10 +109,13 @@ fn remove_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
 
 fn init_subcommand(database: Database, config: &ArgMatches) -> Result<()> {
     // Prevent overwriting an already-populated database
-    if !config.is_present("allow-already-init") && !database.into_inner().is_empty() {
-        return Err(anyhow!(
-            "Database is already populated. Will not re-initialise!"
-        ));
+    if !config.is_present("allow-already-init") {
+        let inner = database.into_inner();
+        if !inner.open_tree("planets")?.is_empty() || !inner.open_tree("inverted")?.is_empty() {
+            return Err(anyhow!(
+                "Database is already populated. Will not re-initialise!"
+            ));
+        }
     }
 
     let state = config.value_of("state").unwrap().parse::<u32>()?;
